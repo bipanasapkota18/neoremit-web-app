@@ -1,4 +1,4 @@
-import { Center, HStack, Image, Stack, VStack } from "@chakra-ui/react";
+import { Center, HStack, Image, Stack, Text, VStack } from "@chakra-ui/react";
 import { imageAssets } from "@neoWeb/assets/images";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import useWindowSize from "@neoWeb/hooks/useWindowResize";
@@ -7,23 +7,16 @@ import React from "react";
 interface IChildrenType {
   children: React.ReactNode;
   hasSideDiv?: boolean;
-  isPassword?: boolean;
   screen?: string;
 }
-const AuthPageWrapper = ({
-  children,
-  hasSideDiv = true,
-  isPassword
-}: IChildrenType) => {
+const AuthPageWrapper = ({ children, hasSideDiv = true }: IChildrenType) => {
   const window = useWindowSize();
   hasSideDiv = window.width > 768 ? hasSideDiv : false;
   return (
     <Center
       position="relative"
-      backgroundColor="#F7FAFC"
       height="100vh"
       maxWidth={"100%"}
-      // backgroundImage={hasSideDiv ? `url(${imageAssets.LoginBackground}) ` : ""}
       backgroundImage={hasSideDiv ? `url(${imageAssets.BgBackdropImage}) ` : ""}
       backgroundPosition={"100% 100%"}
       backgroundRepeat={"no-repeat"}
@@ -37,50 +30,57 @@ const AuthPageWrapper = ({
         justifyContent={hasSideDiv ? "center" : "left"}
         margin="0 auto"
         padding={"42px, 64px, 42px, 64px"}
-        boxShadow={hasSideDiv ? "lg" : "none"}
         borderRadius={"16px"}
-        maxWidth="1120px"
-        bg="white"
+        minWidth="1240px"
       >
         {hasSideDiv ? (
           <>
             <HStack
-              width="50%"
+              width="48%"
               py={16}
               px={{
                 base: 14,
                 "2xl": 20
               }}
+              flexDir={"column"}
+              gap={12}
             >
-              <Image src={imageAssets.LoginBanner} />
-            </HStack>
-            <HStack>
-              <svgAssets.Line height={"400px"} />
-            </HStack>
-            <VStack
-              alignItems={"stretch"}
-              gap={"32px"}
-              width="50%"
-              py={16}
-              px={{
-                base: 14,
-                "2xl": 20
-              }}
-            >
-              {!isPassword && (
-                <HStack
-                  justifyContent={"space-between"}
-                  alignItems={"flex-start"}
-                >
-                  <Image src={imageAssets.Logo} />
+              <Stack gap={4} alignItems={"flex-start"}>
+                <Image src={imageAssets.Logo} />
+                <HStack flexDir={"column"} alignItems={"flex-start"}>
+                  <Text textStyle={"boldText"}>
+                    Fast and Secure Money Transfers
+                  </Text>
+                  <Text textStyle={"normalStyle"}>
+                    Experience the speed and security of international money
+                    transfers with Neo Money Transfer. Your money, your way its
+                    that simple
+                  </Text>
                 </HStack>
-              )}
+              </Stack>
+              <svgAssets.Banner />
+            </HStack>
 
+            <VStack
+              borderRadius={24}
+              boxShadow="4px 0px 26px 0px rgba(0, 0, 0, 0.06)"
+              alignItems={"stretch"}
+              gap={8}
+              maxWidth={"500px"}
+              p={10}
+            >
               {children}
             </VStack>
           </>
         ) : (
-          <Stack width="100%" p={16}>
+          <Stack
+            borderRadius={24}
+            boxShadow="4px 0px 26px 0px rgba(0, 0, 0, 0.06)"
+            alignItems={"stretch"}
+            gap={8}
+            maxWidth={"500px"}
+            p={10}
+          >
             {children}
           </Stack>
         )}

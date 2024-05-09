@@ -1,18 +1,16 @@
-import { Flex, Image, VStack } from "@chakra-ui/react";
-import { imageAssets } from "@neoWeb/assets/images";
+import { Flex, HStack, Text, VStack } from "@chakra-ui/react";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import { categorizedNavlinks } from "@neoWeb/utility/helper";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import NavItem from "./NavItem";
 import { navLinks } from "./navLinks";
 
 interface SidebarProps {
-  width: number;
-  isCollapsed: boolean;
+  isCollapsed?: boolean;
   animate: string;
-  onEnterSidebar: () => void;
-  onExitSidebar: () => void;
-  isHovered: boolean;
+  onEnterSidebar?: () => void;
+  onExitSidebar?: () => void;
+  isHovered?: boolean;
   labelSideData?: string | number;
 }
 
@@ -21,14 +19,12 @@ export const parentNavRoutes = {
 };
 
 export default function Sidebar({
-  width,
   isCollapsed,
   animate,
   onEnterSidebar,
   onExitSidebar,
   isHovered
 }: SidebarProps) {
-  const navigate = useNavigate();
   const [activeLink, setActiveLink] = useState("");
   const [activeCollapse, setActiveCollapse] = useState("");
 
@@ -66,17 +62,16 @@ export default function Sidebar({
       return navLabelValue.value ?? null;
     }
   };
+  const allNavlinks = categorizedNavlinks(navLinks);
 
   return (
     <Flex
-      pos="fixed"
-      top={0}
-      h="100%"
-      w={width + "px"}
-      maxW={width + "px"}
+      w={"292px"}
+      p={6}
+      height={"88vh"}
       bg="white"
+      borderRadius={"24px"}
       transition={animate}
-      zIndex={isHovered ? 11 : 10}
     >
       <VStack
         w="100%"
@@ -86,18 +81,6 @@ export default function Sidebar({
         onMouseEnter={onEnterSidebar}
         onMouseLeave={onExitSidebar}
       >
-        <Image
-          maxW="50%"
-          h="50px"
-          alt={"mofin-logo"}
-          src={imageAssets.Logo}
-          objectFit="contain"
-          m="auto"
-          mt={4}
-          mb={7}
-          cursor={"pointer"}
-          onClick={() => navigate("/")}
-        />
         <VStack
           w="100%"
           css={{
@@ -119,21 +102,36 @@ export default function Sidebar({
             }
           }}
         >
-          {navLinks.map(nav => {
+          {allNavlinks.map((group, index) => {
             return (
-              <NavItem
-                {...nav}
-                labelSideData={pendingSidebarLabels(nav.label ?? "") ?? null}
-                key={nav.href}
-                collapsed={isCollapsed && !isHovered}
-                animate={animate}
-                active={{
-                  activeLink,
-                  setActiveLink,
-                  activeCollapse,
-                  setActiveCollapse
-                }}
-              />
+              <HStack alignItems={"flex"} wrap={"wrap"} key={index}>
+                <Text
+                  textStyle={"normalStyle"}
+                  fontSize={"14px"}
+                  fontWeight={600}
+                >
+                  {group.header}
+                </Text>
+                {group?.links.map(nav => {
+                  return (
+                    <NavItem
+                      {...nav}
+                      labelSideData={
+                        pendingSidebarLabels(nav.label ?? "") ?? null
+                      }
+                      key={nav.href}
+                      collapsed={isCollapsed && !isHovered}
+                      animate={animate}
+                      active={{
+                        activeLink,
+                        setActiveLink,
+                        activeCollapse,
+                        setActiveCollapse
+                      }}
+                    />
+                  );
+                })}
+              </HStack>
             );
           })}
         </VStack>

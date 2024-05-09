@@ -1,22 +1,21 @@
-import { Flex, IconButton } from "@chakra-ui/react";
-import { HiMenuAlt1 } from "react-icons/hi";
+import { Flex, Image } from "@chakra-ui/react";
+import { imageAssets } from "@neoWeb/assets/images";
+import { useNavigate } from "react-router-dom";
 
-export const LeftHeader = ({
-  handleDrawerToggle
-}: {
-  handleDrawerToggle: () => void;
-  width: number;
-}) => {
+export const LeftHeader = () => {
+  const navigate = useNavigate();
+
   return (
     <Flex align="center">
-      <IconButton
-        variant="link"
-        aria-label="Minify sidebar"
-        color="black"
-        onClick={handleDrawerToggle}
-      >
-        <HiMenuAlt1 />
-      </IconButton>
+      <Image
+        p={2}
+        alt={"mofin-logo"}
+        src={imageAssets.Logo}
+        objectFit="contain"
+        // ml="340px"
+        cursor={"pointer"}
+        onClick={() => navigate("/")}
+      />
     </Flex>
   );
 };

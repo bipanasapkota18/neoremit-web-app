@@ -7,6 +7,7 @@ import { ButtonConfig } from "./components/Button";
 import Input from "./components/Input";
 import Switch from "./components/Switch";
 import { TableConfig } from "./components/Table";
+import { TextStyles } from "./components/Text";
 export { globalStyles } from "./global";
 
 export const theme = extendTheme(
@@ -15,6 +16,7 @@ export const theme = extendTheme(
       heading: "Mulish",
       body: "Mulish"
     },
+    textStyles: TextStyles,
     shadows: { outline: "0 0 0 3px var(--chakra-colors-purple-100)" },
     components: {
       Button: ButtonConfig,

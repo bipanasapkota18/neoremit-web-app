@@ -8,15 +8,9 @@ import { RightHeader } from "./Header.Right";
 
 export type HeaderAnchor = null | Element | ((element: Element) => Element);
 
-interface HeaderProps {
-  handleDrawerToggle: () => void;
-  width: number;
-  isDrawerOpen: boolean;
-}
-
 const mobileMenuId = "primary-search-account-menu-mobile";
 
-const Header = ({ handleDrawerToggle, width, isDrawerOpen }: HeaderProps) => {
+const Header = () => {
   // const { initData } = useStoreInitData();
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<HeaderAnchor>(null);
@@ -27,8 +21,8 @@ const Header = ({ handleDrawerToggle, width, isDrawerOpen }: HeaderProps) => {
     setMobileMoreAnchorEl(null);
   };
   return (
-    <HStack bg={colorScheme.white} pr={14} py={3} ml={isDrawerOpen ? 0 : 1.25}>
-      <LeftHeader handleDrawerToggle={handleDrawerToggle} width={width} />
+    <HStack bg={colorScheme.white} py={4} px={"340px"}>
+      <LeftHeader />
       <Stack
         direction={"row"}
         sx={{ flexGrow: 1 }}

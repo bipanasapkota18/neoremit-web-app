@@ -14,7 +14,8 @@ import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { Dispatch, Fragment, SetStateAction, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 
-interface NavItemProps {
+export interface NavItemProps {
+  header: string;
   icon?: any;
   href: string;
   code?: string;
@@ -52,7 +53,7 @@ const notActiveLink = {
     visibility: "hidden"
   },
   "&:hover": {
-    background: colorScheme.purple_400,
+    background: colorScheme.primary_400,
     color: colorScheme.white,
     "& p": {
       color: colorScheme.white
@@ -120,22 +121,19 @@ export default function NavItem({
             ? false
             : window.location.href.includes(href))
             ? {
-                background: colorScheme.purple_400,
+                background: colorScheme.primary_500,
                 "& p": {
                   color: colorScheme.white
                 },
                 "svg > *": {
                   filter: "brightness(10)"
-                },
-                "& > div:first-of-type": {
-                  visibility: "visible",
-                  background: colorScheme.purple_500,
-                  width: 2
                 }
               }
             : {
                 "&:hover": {
-                  background: colorScheme.purple_400,
+                  borderRadius: 10,
+
+                  background: colorScheme.primary_500,
                   color: colorScheme.white,
                   "& p": {
                     color: colorScheme.white
@@ -150,26 +148,22 @@ export default function NavItem({
           isLinkActive
             ? notActiveLink
             : {
+                borderRadius: 10,
                 background: isChild
-                  ? colorScheme.purple_400
-                  : colorScheme.purple_500,
+                  ? colorScheme.primary_400
+                  : colorScheme.primary_500,
 
                 "& p": {
                   color: colorScheme.white
                 },
                 "svg > *": {
                   filter: "brightness(10)"
-                },
-                "& > div:first-of-type": {
-                  visibility: "visible",
-                  width: 1,
-                  background: colorScheme.purple_100
                 }
               }
         }
         pos="relative"
-        px={5}
-        py={4}
+        px={4}
+        py={3}
         w="100%"
         _hover={{
           textDecoration: "none"
@@ -197,8 +191,8 @@ export default function NavItem({
             >
               <Text
                 color={colorScheme.gray_500}
-                fontSize="md"
-                fontWeight="medium"
+                textStyle={"normalStyle"}
+                fontSize={"14px"}
                 whiteSpace="nowrap"
                 visibility={collapsed ? "hidden" : "visible"}
                 transition={animate}

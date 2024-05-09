@@ -62,6 +62,21 @@ export const ButtonConfig: ComponentStyleConfig = {
       height: "24px",
       justifyContent: "center",
       alignItems: "center"
+    }),
+    social_login: () => ({
+      bg: colorScheme.white,
+      color: colorScheme.primary_500,
+      border: `1px solid ${colorScheme.primary_500} `,
+      borderRadius: "30px",
+      px: 3,
+      py: 5,
+      fontSize: "16px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      width: "100%",
+      fontWeight: 600,
+      lineHeight: "normal"
     })
   },
 

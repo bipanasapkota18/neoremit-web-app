@@ -1,14 +1,16 @@
+const service = `internal-service`;
+
 export const api = {
   auth: {
-    login: `/api/auth/login`,
-    refreshToken: `/api/auth/refreshToken`,
-    logout: `/api/auth/logout`
+    login: `${service}/api/auth/login`,
+    refreshToken: `${service}/api/auth/refreshToken`,
+    logout: `${service}/api/auth/logout`
   },
-  init: "/api/init"
+  init: `${service}/users/init`
 };
 
 export interface NeoResponse<T = any> {
   data: T;
-  status: 0 | 1;
+  responseStatus: string;
   message: string;
 }

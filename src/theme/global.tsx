@@ -1,6 +1,6 @@
 import { css, Global } from "@emotion/react";
 
-import Mulish from "@neoWeb/assets/fonts/Mulish/Mulish-Regular.ttf";
+import Mulish from "@neoWeb/assets/fonts/Mulish/Mulish-VariableFont_wght.ttf";
 
 const globalStyles = () => {
   return (
@@ -19,7 +19,7 @@ const globalStyles = () => {
           min-height: 100%;
           font-family: "Mulish";
           scroll-behavior: smooth;
-          background: "#FEFEFE";
+          background-color: #f2f6fa;
         }
         body {
           -moz-osx-font-smoothing: grayscale;

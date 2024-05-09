@@ -1,3 +1,6 @@
+import { ReactComponent as AppleIcon } from "@neoWeb/assets/images/svgs/apple.svg";
+import { ReactComponent as Banner } from "@neoWeb/assets/images/svgs/bannerImage.svg";
+import { ReactComponent as GoogleIcon } from "@neoWeb/assets/images/svgs/devicon_google.svg";
 import { ReactComponent as EmailIcon } from "@neoWeb/assets/images/svgs/email.svg";
 import { ReactComponent as EyeSlashIcon } from "@neoWeb/assets/images/svgs/eye-slash.svg";
 import { ReactComponent as EyeIcon } from "@neoWeb/assets/images/svgs/eye.svg";
@@ -11,5 +14,8 @@ export const svgAssets = {
   EmailIcon,
   PasswordIcon,
   EyeIcon,
-  EyeSlashIcon
+  EyeSlashIcon,
+  Banner,
+  GoogleIcon,
+  AppleIcon
 };

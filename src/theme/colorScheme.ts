@@ -1,4 +1,6 @@
 export const colorScheme = {
+  normalTextColor: "#718096",
+
   primary: "#000000",
   text: "#000000",
   scrollBar_100: "#111111",
