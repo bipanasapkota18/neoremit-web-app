@@ -55,7 +55,7 @@ const useLogoutMutation = () => {
 const initLogin = (loginData: LoginDetails) => {
   return NeoHttpClient.post<NeoResponse<NeoToken>>(api.auth.login, {
     ...loginData,
-    loginFrom: "INTERNAL"
+    loginFrom: "CUSTOMER"
   });
 };
 

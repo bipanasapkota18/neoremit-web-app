@@ -1,29 +1,9 @@
-import { ReactComponent as ReactLogo } from "@neoWeb/assets/images/svgs/logo.svg";
-
-import { Button, Container, Flex, HStack, Heading } from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
+import { Box, Heading } from "@chakra-ui/react";
 function Dashboard() {
-  const navigate = useNavigate();
   return (
-    <Flex
-      height="100vh"
-      alignItems="center"
-      justifyContent="center"
-      bg="gray.100"
-    >
-      <Container p={8} bg="white" rounded="md" shadow="md">
-        <Heading mb={4}>Dashboard</Heading>
-        <HStack spacing={4}>
-          <Button colorScheme="blue" onClick={() => navigate("/home")}>
-            Home
-          </Button>
-          <Button colorScheme="blue" onClick={() => navigate("/login")}>
-            Login
-          </Button>
-          <ReactLogo />
-        </HStack>
-      </Container>
-    </Flex>
+    <Box bg="white" borderRadius={"24px"}>
+      <Heading mb={4}>Dashboard</Heading>
+    </Box>
   );
 }
 

@@ -16,7 +16,7 @@ const AppBar = (props: AppBarProps) => {
   const styles = useStyleConfig("AppBar", variants);
 
   return (
-    <Flex __css={styles} {...rest}>
+    <Flex py={4} __css={styles} {...rest}>
       {children}
     </Flex>
   );

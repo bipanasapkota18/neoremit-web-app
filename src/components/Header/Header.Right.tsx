@@ -10,12 +10,12 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Stack,
-  Text
+  Text,
+  Tooltip
 } from "@chakra-ui/react";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { FC, useRef } from "react";
 
-import LanguageSwitch from "@neoWeb/components/Form/Switch/LangaugeSwitch";
 import { BsCheck2Circle, BsChevronDown } from "react-icons/bs";
 import { GoBell } from "react-icons/go";
 import { HeaderAnchor } from "./Header";
@@ -33,7 +33,6 @@ export const RightHeader: FC<IRightHeader> = () => {
 
   return (
     <HStack gap={8}>
-      <LanguageSwitch />
       <Popover initialFocusRef={initialFocusRef.current} placement="bottom">
         <PopoverTrigger>
           <IconButton
@@ -157,10 +156,10 @@ export const RightHeader: FC<IRightHeader> = () => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      {/* <Tooltip label="View Profile">
+      <Tooltip label="View Profile">
         <Avatar
           cursor={"pointer"}
-          onClick={() => navigate("/user-profile")}
+          // onClick={() => navigate("/user-profile")}
           src={""}
           // src={
           //   initData?.profileImage &&
@@ -169,7 +168,7 @@ export const RightHeader: FC<IRightHeader> = () => {
         >
           <AvatarBadge boxSize="1.25em" bg="green.500" />
         </Avatar>
-      </Tooltip> */}
+      </Tooltip>
     </HStack>
   );
 };
