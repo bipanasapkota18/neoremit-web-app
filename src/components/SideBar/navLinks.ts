@@ -24,43 +24,44 @@ export const navLinks = [
   },
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.HOME,
+    href: NAVIGATION_ROUTES.SEND_MONEY,
     label: "Send Money",
     header: "MENUS"
   },
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.HOME,
+    href: NAVIGATION_ROUTES.BENEFICIARY,
     label: "Beneficiary",
     header: "MENUS"
   },
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.HOME,
+    href: NAVIGATION_ROUTES.TRANSACTION_HISTORY,
     label: "Transaction History",
     header: "MENUS"
   },
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.HOME,
+    href: NAVIGATION_ROUTES.SETTINGS,
     label: "Settings",
     header: "MENUS"
   },
+
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.EXAMPLE,
+    href: NAVIGATION_ROUTES.SUPPORT,
     label: "Support",
     header: "NEO"
   },
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.EXAMPLE,
+    href: NAVIGATION_ROUTES.CONTACT,
     label: "Contact",
     header: "NEO"
   },
   {
     icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.EXAMPLE,
+    href: NAVIGATION_ROUTES.NEO_SETTINGS,
     label: "Settings",
     header: "NEO"
   }

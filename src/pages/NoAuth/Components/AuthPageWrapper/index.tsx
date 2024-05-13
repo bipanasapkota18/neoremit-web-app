@@ -26,8 +26,8 @@ const AuthPageWrapper = ({ children, hasSideDiv = true }: IChildrenType) => {
         zIndex={1}
         gap={0}
         direction="row"
-        alignItems={hasSideDiv ? "center" : "flex-start"}
-        justifyContent={hasSideDiv ? "center" : "left"}
+        alignItems={"center"}
+        justifyContent={"center"}
         margin="0 auto"
         padding={"42px, 64px, 42px, 64px"}
         borderRadius={"16px"}

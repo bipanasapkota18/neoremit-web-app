@@ -71,28 +71,28 @@ export default function App() {
     >
       <>
         <Routes>
-          {isAuthenticated ? (
-            <>
-              {appRoutes.map((route, index) => (
-                <Route key={index} path={route.path} element={route.element}>
-                  {route.children &&
-                    route.children.map((childRoute, childIndex) => (
-                      <Route
-                        key={childIndex}
-                        path={childRoute.path}
-                        element={childRoute.element}
-                        {...(childRoute.index && { index: childRoute.index })}
-                      />
-                    ))}
-                </Route>
-              ))}
-            </>
-          ) : (
-            <Route path="/" element={<Outlet />}>
-              <Route index element={<Login />} />
-              <Route path={NAVIGATION_ROUTES.LOGIN} element={<Login />} />
-            </Route>
-          )}
+          {/* {isAuthenticated ? ( */}
+          <>
+            {appRoutes.map((route, index) => (
+              <Route key={index} path={route.path} element={route.element}>
+                {route.children &&
+                  route.children.map((childRoute, childIndex) => (
+                    <Route
+                      key={childIndex}
+                      path={childRoute.path}
+                      element={childRoute.element}
+                      {...(childRoute.index && { index: childRoute.index })}
+                    />
+                  ))}
+              </Route>
+            ))}
+          </>
+          {/* ) : ( */}
+          <Route path="/" element={<Outlet />}>
+            <Route index element={<Login />} />
+            <Route path={NAVIGATION_ROUTES.LOGIN} element={<Login />} />
+          </Route>
+          {/* )} */}
         </Routes>
       </>
     </Suspense>
