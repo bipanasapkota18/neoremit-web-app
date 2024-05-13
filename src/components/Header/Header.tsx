@@ -2,6 +2,7 @@ import { HStack, Stack } from "@chakra-ui/react";
 
 import * as React from "react";
 
+import useWindowSize from "@neoWeb/hooks/useWindowResize";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { LeftHeader } from "./Header.Left";
 import { RightHeader } from "./Header.Right";
@@ -20,8 +21,15 @@ const Header = () => {
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
+  const window = useWindowSize();
+  const noMarginWindow = window.width < 1920 ? "0" : "340px";
   return (
-    <HStack bg={colorScheme.white} py={4} px={"340px"}>
+    <HStack
+      bg={colorScheme.white}
+      py={4}
+      px={noMarginWindow}
+      boxShadow="0px 4px 28px 0px rgba(0, 0, 0, 0.06)"
+    >
       <LeftHeader />
       <Stack
         direction={"row"}

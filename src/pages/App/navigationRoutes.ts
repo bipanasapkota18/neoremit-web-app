@@ -7,5 +7,8 @@ export const NAVIGATION_ROUTES = {
   BENEFICIARY: "/beneficiary",
   TRANSACTION_HISTORY: "/transaction-history",
   SETTINGS: "/settings",
+  SUPPORT: "/support",
+  NEO_SETTINGS: "/neo-settings",
+  CONTACT: "/contact",
   EXAMPLE: "/example"
 };

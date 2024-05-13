@@ -1,3 +1,4 @@
+import BackgroundImage from "@neoWeb/assets/images/Background.png";
 import LoginBanner from "@neoWeb/assets/images/LoginBanner.png";
 import UkFlag from "@neoWeb/assets/images/englishLang.png";
 import Loader from "@neoWeb/assets/images/loader.gif";
@@ -13,5 +14,6 @@ export const imageAssets = {
   NepalFlag,
   BgBackdropImage,
   LoginBanner,
-  CalendarIcon
+  CalendarIcon,
+  BackgroundImage
 };
