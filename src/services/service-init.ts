@@ -1,6 +1,5 @@
 import { useStoreInitData } from "@neoWeb/store/initData";
-import { AxiosError } from "axios";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
 
@@ -22,16 +21,14 @@ const fetchInitData = () => () => {
 const useFetchInitData = (enabled?: boolean) => {
   const { setInitData } = useStoreInitData();
 
-  return useQuery([api.init], fetchInitData(), {
-    enabled: enabled,
-    retry: 1,
-    select: ({ data }) => data?.data || {},
-    onSuccess: (data: IInitData) => {
-      setInitData(data);
+  return useQuery({
+    queryKey: [api.init],
+    queryFn: async () => {
+      const initData = await fetchInitData()();
+      setInitData(initData?.data?.data);
     },
-    onError: (error: AxiosError) => {
-      console.error(error);
-    }
+    enabled: enabled,
+    retry: 1
   });
 };
 

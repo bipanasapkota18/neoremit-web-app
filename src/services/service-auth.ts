@@ -1,7 +1,7 @@
 import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { BroadcastChannel } from "broadcast-channel";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
@@ -36,12 +36,13 @@ const useLogoutMutation = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
-  return useMutation(initLogout, {
+  return useMutation({
+    mutationFn: initLogout,
     onSuccess: success => {
       TokenService.clearToken();
       logoutChannel.postMessage("Logout");
       queryClient.clear();
-      queryClient.setQueryData(authTokenKey, () => false);
+      queryClient.setQueryData([authTokenKey], () => false);
       toastSuccess(success?.data?.message ?? "Logout Successful");
       navigate("/login", { replace: true });
     },
@@ -62,7 +63,8 @@ const initLogin = (loginData: LoginDetails) => {
 const useLoginMutation = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  return useMutation(initLogin, {
+  return useMutation({
+    mutationFn: initLogin,
     onSuccess: response => {
       loginChannel.postMessage("Login");
       const tokens = {
@@ -70,7 +72,7 @@ const useLoginMutation = () => {
         refreshToken: response?.data?.data?.refreshToken
       };
       TokenService.setToken(tokens);
-      queryClient.setQueryData(authTokenKey, () => true);
+      queryClient.setQueryData([authTokenKey], () => true);
       navigate("/", { replace: true });
     },
     onError: error => {
@@ -122,21 +124,25 @@ const checkAuthentication = async () => {
 const useAuthentication = () => {
   const queryClient = useQueryClient();
 
-  return useQuery(authTokenKey, checkAuthentication, {
-    onSuccess: () => {
+  return useQuery({
+    queryKey: [authTokenKey],
+    queryFn: async () => {
+      const authStatus = await checkAuthentication();
       const tokenDetails = TokenService.getTokenDetails();
-
       if (tokenDetails) {
-        queryClient.setQueryData<NeoUserTokenDetails>(authTokenDetails, {
+        queryClient.setQueryData<NeoUserTokenDetails>([authTokenDetails], {
           ...tokenDetails
         });
       }
+      return authStatus;
     }
   });
 };
 
 const useLoginTokenDetailQuery = () => {
-  return useQuery<unknown, unknown, NeoUserTokenDetails>(authTokenDetails);
+  return useQuery<unknown, unknown, NeoUserTokenDetails>({
+    queryKey: [authTokenDetails]
+  });
 };
 
 export const logoutAllTabs = () => {
