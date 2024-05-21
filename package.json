@@ -12,7 +12,8 @@
     "lint:fix": "eslint ./src --ext .jsx,.js,.ts,.tsx --quiet --fix --ignore-path ./.gitignore",
     "lint:format": "prettier  --loglevel warn --write \"./**/*.{js,jsx,ts,tsx,css,md,json}\" ",
     "cm": "cz",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "npx husky install"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
