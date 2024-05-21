@@ -71,6 +71,13 @@
     "vite-plugin-pwa": "^0.16.4",
     "vite-plugin-svgr": "^2.2.1"
   },
+  "husky": {
+    "hooks": {
+      "prepare-commit-msg": "exec < /dev/tty && npx cz --hook || true",
+      "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
+    }
+  },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
       "eslint --fix --max-warnings=0"
