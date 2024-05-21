@@ -34,7 +34,7 @@ const defaultValues = {
 };
 
 const LoginForm = () => {
-  const { mutateAsync: login, isLoading: isLoginLoading } = useLoginMutation();
+  const { mutateAsync: login, isPending: isLoginLoading } = useLoginMutation();
 
   const [flag, setFlag] = useBoolean();
 
