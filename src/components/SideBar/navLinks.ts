@@ -1,6 +1,6 @@
 import { sidebarSvg } from "@neoWeb/assets/images/svgs/Sidebar";
-import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { ComponentProps } from "react";
+import { NAVIGATION_ROUTES } from "./../../pages/App/navigationRoutes";
 import NavItem from "./NavItem";
 
 export const navLinks = [
@@ -23,48 +23,54 @@ export const navLinks = [
     header: "MENUS"
   },
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.UserIcon,
     href: NAVIGATION_ROUTES.SEND_MONEY,
     label: "Send Money",
     header: "MENUS"
   },
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.UserIcon,
     href: NAVIGATION_ROUTES.BENEFICIARY,
     label: "Beneficiary",
     header: "MENUS"
   },
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.Transaction,
     href: NAVIGATION_ROUTES.TRANSACTION_HISTORY,
     label: "Transaction History",
     header: "MENUS"
   },
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.settings,
     href: NAVIGATION_ROUTES.SETTINGS,
     label: "Settings",
     header: "MENUS"
   },
 
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.UserIcon,
     href: NAVIGATION_ROUTES.SUPPORT,
     label: "Support",
     header: "NEO"
   },
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.Transaction,
     href: NAVIGATION_ROUTES.CONTACT,
     label: "Contact",
     header: "NEO"
   },
   {
-    icon: sidebarSvg.User,
+    icon: sidebarSvg.settings,
     href: NAVIGATION_ROUTES.NEO_SETTINGS,
     label: "Settings",
     header: "NEO"
   }
+  // {
+  //   icon:sidebarSvg.User,
+  //   href:NAVIGATION_ROUTES.LOGOUT,
+  //   label:"logout",
+  //   header:"NEO"
+  // }
 
   // {
   //   icon: FaIcons,

@@ -6,6 +6,7 @@ import {
   PinInput
 } from "@chakra-ui/react";
 import { Control, Controller } from "react-hook-form";
+import { BsEyeSlash } from "react-icons/bs";
 import OTPInput from "./OTPInput";
 interface OTPProps {
   name: string;
@@ -23,7 +24,10 @@ const OTPComponent = ({
   helperText,
   isRequired
 }: OTPProps) => {
-  const otpComponent = Array.from({ length: 6 }, (_, i) => (
+  const inputLength = name === "otp" ? 6 : 4;
+  const otpComponent = Array.from({ length: inputLength }, (_, i) => (
+    // const otpComponent = Array.from({ length: 6 }, (_, i) => (\
+
     <OTPInput key={i} />
   ));
 
@@ -50,6 +54,10 @@ const OTPComponent = ({
                 >
                   {otpComponent}
                 </PinInput>
+                {/* {name === "mpin" && <AddIcon />} */}
+                {name == "mpin" && (
+                  <BsEyeSlash width={"12px"} height={"20px"} />
+                )}
               </Flex>
               <FormErrorMessage>{error ? error?.message : ""}</FormErrorMessage>
               {helperText ? <FormHelperText>{helperText}</FormHelperText> : ""}

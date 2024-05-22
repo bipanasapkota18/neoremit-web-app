@@ -1,3 +1,6 @@
+import { Image } from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+
 export interface IFormatSelectOptionParams {
   data: any;
   labelKey: string;
@@ -5,6 +8,10 @@ export interface IFormatSelectOptionParams {
   valueKey: number | string;
   defaultLabel?: string;
   defaultValue?: any;
+  icon?: {
+    iconKey: string;
+    iconPath?: string;
+  };
 }
 
 export interface ISelectOptions<T extends number | string | boolean> {
@@ -17,6 +24,7 @@ export function formatSelectOptionsTyped<T extends number | string | boolean>({
   labelKey,
   labelHelper,
   valueKey,
+  icon,
   defaultLabel,
   defaultValue
 }: IFormatSelectOptionParams): ISelectOptions<T>[] {
@@ -26,7 +34,19 @@ export function formatSelectOptionsTyped<T extends number | string | boolean>({
         label: `${item?.[labelKey]}${
           labelHelper ? ` (${item?.[labelHelper]})` : ""
         }`,
-        value: item?.[valueKey]
+        value: item?.[valueKey],
+        ...(icon?.iconKey
+          ? {
+              icon: (
+                <Image
+                  minW={"30px"}
+                  width={"30px"}
+                  src={`${icon?.iconPath}${item?.[icon.iconKey]}`}
+                  fallback={<svgAssets.SecurityIcon />}
+                />
+              )
+            }
+          : {})
       };
     }) ?? [];
 
