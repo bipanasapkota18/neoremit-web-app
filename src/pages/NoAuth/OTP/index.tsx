@@ -1,13 +1,12 @@
 import { Button, Flex, Stack, Text, VStack } from "@chakra-ui/react";
 import OTPComponent from "@neoWeb/components/Form/OTP";
 import { useTimer } from "@neoWeb/hooks/useTimer";
-import { useVerifyOTP } from "@neoWeb/services/service-forgot-password";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { useForm } from "react-hook-form";
 import AuthPageWrapper from "../Components/AuthPageWrapper";
 
 const OTP = () => {
-  const { mutateAsync: emailVerification } = useVerifyOTP();
+  // const { mutateAsync: emailVerification } = useVerifyOTP();
 
   // const schema = yup.object().shape({
   //   otpCode: yup.string().required("Please Enter OTP").min(6).nullable()

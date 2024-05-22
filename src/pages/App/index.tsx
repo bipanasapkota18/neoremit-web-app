@@ -96,7 +96,6 @@ export default function App() {
             <Route path="/" element={<Outlet />}>
               <Route index element={<Login />} />
               <Route path={NAVIGATION_ROUTES.LOGIN} element={<Login />} />
-              {/* <Route index element={<Register />} /> */}
 
               <Route path={NAVIGATION_ROUTES.REGISTER} element={<Register />} />
               <Route

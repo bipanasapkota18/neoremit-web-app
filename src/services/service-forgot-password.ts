@@ -2,9 +2,9 @@ import { useMutation } from "@tanstack/react-query";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
 
-interface IEmailVerification {
-  email: string;
-}
+// interface IEmailVerification {
+//   email: string;
+// }
 
 interface IOTPVerification {
   email: string;

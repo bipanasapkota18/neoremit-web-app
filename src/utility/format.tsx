@@ -8,32 +8,34 @@ export interface IFormatSelectOptionParams {
   valueKey: number | string;
   defaultLabel?: string;
   defaultValue?: any;
+  withHelper?: boolean;
+  withHelperDisplay?: boolean;
   icon?: {
     iconKey: string;
     iconPath?: string;
   };
 }
 
-export interface ISelectOptions<T extends number | string | boolean> {
+export interface ISelectOptions<T extends number | string | object> {
   label: string;
   value: T;
+  helper?: string;
 }
-
-export function formatSelectOptionsTyped<T extends number | string | boolean>({
+export function formatSelectOptions<T extends string | number | object>({
   data,
   labelKey,
   labelHelper,
   valueKey,
-  icon,
   defaultLabel,
-  defaultValue
-}: IFormatSelectOptionParams): ISelectOptions<T>[] {
+  defaultValue,
+  withHelper,
+  withHelperDisplay,
+  icon
+}: IFormatSelectOptionParams) {
   const formattedData =
     data?.map((item: any) => {
-      return {
-        label: `${item?.[labelKey]}${
-          labelHelper ? ` (${item?.[labelHelper]})` : ""
-        }`,
+      const option: any = {
+        label: item?.[labelKey],
         value: item?.[valueKey],
         ...(icon?.iconKey
           ? {
@@ -48,39 +50,24 @@ export function formatSelectOptionsTyped<T extends number | string | boolean>({
             }
           : {})
       };
-    }) ?? [];
-
-  if (defaultLabel)
-    return [
-      { label: defaultLabel, value: defaultValue ?? null },
-      ...formattedData
-    ];
-  else return formattedData;
-}
-
-export function formatSelectOptions({
-  data,
-  labelKey,
-  labelHelper,
-  valueKey,
-  defaultLabel,
-  defaultValue
-}: IFormatSelectOptionParams) {
-  const formattedData =
-    data?.map((item: any) => {
-      return {
-        label: `${item?.[labelKey]}${
-          labelHelper ? ` (${item?.[labelHelper]})` : ""
-        }`,
-        value: item?.[valueKey]
-      };
+      if (labelHelper) {
+        if (withHelper) {
+          option.helper = item?.[labelHelper];
+        } else {
+          option.label += ` (${item?.[labelHelper]})`;
+          if (withHelperDisplay) {
+            option.helper = item?.[labelHelper];
+          }
+        }
+      }
+      return option;
     }) ?? [];
   if (defaultLabel)
     return [
       { label: defaultLabel, value: defaultValue ?? null },
       ...formattedData
-    ];
-  else return formattedData;
+    ] as ISelectOptions<T>[];
+  else return formattedData as ISelectOptions<T>[];
 }
 
 // Define the tickFormatter function

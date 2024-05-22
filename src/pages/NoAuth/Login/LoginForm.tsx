@@ -160,17 +160,6 @@ const LoginForm = () => {
       <Box display={"flex"} justifyContent={"center"}>
         <Text textStyle={"normalStyle"} fontSize={"14px"}>
           {"Don't have an account ?"}{" "}
-          {/* <Link to="/register">
-            <Text
-              as={"span"}
-              fontWeight={500}
-              lineHeight={4}
-              color={colorScheme.primary_500}
-              cursor={"pointer"}
-            >
-              <u>Register</u>
-            </Text>
-          </Link> */}
           <ChakraLink
             as={Link}
             to={NAVIGATION_ROUTES.REGISTER}

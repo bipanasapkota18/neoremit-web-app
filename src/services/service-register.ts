@@ -1,3 +1,6 @@
+import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
 
@@ -6,7 +9,7 @@ export interface ISignUpRequest {
   email: string;
   sendFrom: number | null;
   receiveIn: number | null;
-  phoneNumber: number | null;
+  phoneNumber: string;
   referralCode: string;
 }
 
@@ -27,18 +30,18 @@ const signUp = (data: ISignUpRequest) => {
     data
   );
 };
-const useSignUpMutation = () => {};
-// const useSignUpMutation = () => {
-//   const QueryClient = useQueryClient();
-//   return useMutation(signUp, {
-//     onSuccess: success => {
-//       QueryClient.invalidateQueries(api.users.signUp);
-//       toastSuccess(success?.data?.message);
-//     },
-//     onError: (error: AxiosError<{ message: string }>) => {
-//       toastFail(error?.response?.data?.message ?? error?.message);
-//     }
-//   });
-// };
+const useSignUpMutation = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: signUp,
+    onSuccess: success => {
+      queryClient.invalidateQueries({ queryKey: [api.users.signUp] });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
 
 export { useSignUpMutation };

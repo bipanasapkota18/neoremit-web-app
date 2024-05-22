@@ -17,43 +17,43 @@ import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useSignUpMutation } from "@neoWeb/services/service-register";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
-import {
-  ISelectOptions,
-  formatSelectOptionsTyped
-} from "@neoWeb/utility/format";
+import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import * as yup from "yup";
+import { number, object, string } from "yup";
 
 const defaultValues = {
   fullName: "",
   email: "",
-  sendFrom: null as ISelectOptions<number> | null,
-  receiveIn: null as ISelectOptions<number> | null,
-  phoneNumber: null as number | null,
+  sendFrom: {} as ISelectOptions<number>,
+  receiveIn: {} as ISelectOptions<number>,
+  phoneNumber: "",
   referralCode: ""
 };
 
 const RegisterForm = () => {
   const navigate = useNavigate();
 
-  const signUpSchema = yup.object().shape({
-    fullName: yup.string().required("Full name is required"),
-    email: yup
-      .string()
+  const signUpSchema = object().shape({
+    fullName: string().required("Full name is required"),
+    email: string()
       .required("Please enter your email address.")
       .email("Invalid email format."),
-    phoneNumber: yup
-      .string()
+    phoneNumber: string()
       .required("Phone number is required.")
       .min(10, "Phone number must be at least 10 digits.")
-      .max(10, "Phone number cannot exceed 10 digits.")
-      .nullable()
-    // referralCode: yup.string().required("Please Enter  ReferralCode"),
-    // sendFrom: yup.string().required("Please enter send from"),
-    // receiveIn: yup.string().required("Please enter  Recieve In")
+      .max(10, "Phone number cannot exceed 10 digits."),
+    referralCode: string().required("Please Enter  ReferralCode"),
+    sendFrom: object().required("Please enter send from").shape({
+      label: string().required(),
+      value: number().required()
+    }),
+    receiveIn: object().required("Please enter  Recieve In").shape({
+      label: string().required(),
+      value: number().required()
+    })
   });
-  const { mutateAsync: signUp, isLoading: isSignUpLoading } =
+  const { mutateAsync: signUp, isPending: isSignUpLoading } =
     useSignUpMutation();
   const { data: countriesList } = useGetCountryList();
   const { control, handleSubmit } = useForm({
@@ -61,7 +61,7 @@ const RegisterForm = () => {
     resolver: yupResolver(signUpSchema)
   });
 
-  const countryOptions = formatSelectOptionsTyped<number>({
+  const countryOptions = formatSelectOptions<number>({
     data: countriesList?.data?.data,
     labelKey: "name",
     valueKey: "id",
@@ -70,7 +70,6 @@ const RegisterForm = () => {
       iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`
     }
   });
-  console.log(countryOptions);
   const handleSignup = async (data: typeof defaultValues) => {
     try {
       await signUp({
