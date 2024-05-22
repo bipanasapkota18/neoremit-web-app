@@ -3,13 +3,16 @@ import { api } from "@neoWeb/services/service-api";
 import { authTokenKey } from "@neoWeb/services/service-auth";
 import TokenService from "@neoWeb/services/service-token";
 import { globalStyles, theme } from "@neoWeb/theme";
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider
+} from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { ErrorBoundary } from "react-error-boundary";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "react-hot-toast";
-import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
 
-import { ReactQueryDevtools } from "react-query/devtools";
 import { BrowserRouter } from "react-router-dom";
 import { toastFail } from "./utility/Toast";
 
@@ -43,7 +46,7 @@ const queryClient = new QueryClient({
         (err.request?.status === 401 || err.request?.status === 500) &&
         err.config?.url?.includes(api.auth.refreshToken)
       ) {
-        queryClient.setQueryData(authTokenKey, () => false);
+        queryClient.setQueryData([authTokenKey], () => false);
         setTimeout(() => {
           TokenService.clearToken();
           queryClient.clear();
@@ -62,8 +65,6 @@ const Provider = ({ children }: IProvider) => {
           <QueryClientProvider client={queryClient}>
             <Toaster position="bottom-right" />
             <HelmetProvider>{children}</HelmetProvider>
-
-            <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
           {globalStyles()}
         </ChakraProvider>

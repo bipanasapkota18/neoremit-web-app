@@ -19,7 +19,7 @@ import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import * as yup from "yup";
+import { boolean, object, string } from "yup";
 import { svgAssets } from "../../../assets/images/svgs/index";
 
 interface LoginPageProps {
@@ -34,19 +34,19 @@ const defaultValues = {
 };
 
 const LoginForm = () => {
-  const { mutateAsync: login, isLoading: isLoginLoading } = useLoginMutation();
+  const { mutateAsync: login, isPending: isLoginLoading } = useLoginMutation();
 
   const [flag, setFlag] = useBoolean();
 
-  const loginSchema = yup.object().shape({
-    password: yup.string().required("Please enter a password"),
-    email: yup
-      .string()
+  const loginSchema = object({
+    password: string().required("Please enter a password"),
+    email: string()
       .email("Please enter a valid email")
       .required("Please enter email")
       .nullable(),
-    remember: yup.boolean()
+    remember: boolean()
   });
+
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
     resolver: yupResolver(loginSchema)
