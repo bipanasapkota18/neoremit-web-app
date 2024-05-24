@@ -9,7 +9,7 @@ import {
   Text,
   VStack
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
@@ -20,13 +20,13 @@ import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { number, object, string } from "yup";
+import { z } from "zod";
 
 const defaultValues = {
   fullName: "",
   email: "",
-  sendFrom: {} as ISelectOptions<number>,
-  receiveIn: {} as ISelectOptions<number>,
+  sendFrom: null as ISelectOptions<number> | null,
+  receiveIn: null as ISelectOptions<number> | null,
   phoneNumber: "",
   referralCode: ""
 };
@@ -34,31 +34,43 @@ const defaultValues = {
 const RegisterForm = () => {
   const navigate = useNavigate();
 
-  const signUpSchema = object().shape({
-    fullName: string().required("Full name is required"),
-    email: string()
-      .required("Please enter your email address.")
-      .email("Invalid email format."),
-    phoneNumber: string()
-      .required("Phone number is required.")
-      .min(10, "Phone number must be at least 10 digits.")
-      .max(10, "Phone number cannot exceed 10 digits."),
-    referralCode: string().required("Please Enter  ReferralCode"),
-    sendFrom: object().required("Please enter send from").shape({
-      label: string().required(),
-      value: number().required()
-    }),
-    receiveIn: object().required("Please enter  Recieve In").shape({
-      label: string().required(),
-      value: number().required()
-    })
+  const signUpSchema = z.object({
+    fullName: z.string().min(1, { message: "Full name is required" }),
+    email: z
+      .string()
+      .email({ message: "Invalid email format" })
+      .min(1, { message: "Please enter your email address" }),
+    phoneNumber: z
+      .string()
+      .min(10, { message: "Phone number must be at least 10 digits" })
+      .max(10, { message: "Phone number cannot exceed 10 digits" })
+      .min(1, { message: "Phone number is required" }),
+    referralCode: z.string().min(1, { message: "Please Enter  ReferralCode" }),
+    sendFrom: z
+      .object({
+        label: z.string().min(1),
+        value: z.number().min(0)
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please enter send from"
+      }),
+    receiveIn: z
+      .object({
+        label: z.string().min(1),
+        value: z.number().min(0)
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please enter  Recieve In"
+      })
   });
   const { mutateAsync: signUp, isPending: isSignUpLoading } =
     useSignUpMutation();
   const { data: countriesList } = useGetCountryList();
   const { control, handleSubmit } = useForm({
     defaultValues,
-    resolver: yupResolver(signUpSchema)
+    resolver: zodResolver(signUpSchema)
   });
 
   const countryOptions = formatSelectOptions<number>({
