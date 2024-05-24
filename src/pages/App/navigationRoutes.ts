@@ -1,5 +1,10 @@
 export const NAVIGATION_ROUTES = {
   LOGIN: "/login",
+  REGISTER: "/register",
+  SET_PASSWORD: "/SetPassword",
+  SETUP_PIN: "/SetupPin",
+  ADDITIONALINFORMATION: "/additionalinformation",
+  OTP: "/otp",
   HOME: "/home",
   ACCOUNT: "/account",
   SERVICES: "/services",

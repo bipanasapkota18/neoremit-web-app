@@ -4,9 +4,12 @@ import {
   Box,
   FormControl,
   FormErrorMessage,
-  FormHelperText
+  FormHelperText,
+  HStack,
+  Text
 } from "@chakra-ui/react";
 
+import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions } from "@neoWeb/utility/format";
 import React, { useState } from "react";
 import { Control, Controller } from "react-hook-form";
@@ -210,6 +213,19 @@ function Select({
                       args.placeholder
                     )
                   }
+                  formatOptionLabel={({ label, icon }) => (
+                    <HStack p={2}>
+                      {icon}
+                      <Text
+                        color={colorScheme.gray_700}
+                        fontSize="14px"
+                        fontStyle="normal"
+                        fontWeight={500}
+                      >
+                        {label}
+                      </Text>
+                    </HStack>
+                  )}
                 />
 
                 <FormErrorMessage>

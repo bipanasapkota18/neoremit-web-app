@@ -4,7 +4,7 @@ import { NAVIGATION_ROUTES } from "./navigationRoutes";
 const Dashboard = lazy(() => import("@neoWeb/pages/Authorized/Dashboard"));
 const Account = lazy(() => import("@neoWeb/pages/Authorized/Account"));
 const Services = lazy(() => import("@neoWeb/pages/Authorized/Services"));
-
+const SendMoney = lazy(() => import("@neoWeb/pages/Authorized/SendMoney"));
 export const appRoutes = [
   {
     path: "/",
@@ -22,6 +22,11 @@ export const appRoutes = [
       {
         path: NAVIGATION_ROUTES.SERVICES,
         element: <Services />
+      },
+      //  SEND_MONEY: "/send-money",
+      {
+        path: NAVIGATION_ROUTES.SEND_MONEY,
+        element: <SendMoney />
       }
     ]
   }
