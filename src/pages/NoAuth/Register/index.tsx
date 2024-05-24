@@ -3,6 +3,7 @@ import AuthPageWrapper from "../Components/AuthPageWrapper";
 import RegisterForm from "./RegisterForm";
 
 const Register = () => {
+  
   return (
     <AuthPageWrapper>
       <VStack alignItems="flex-start" gap={"4px"}>

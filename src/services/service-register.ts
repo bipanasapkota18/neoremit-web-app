@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
-
 export interface ISignUpRequest {
   fullName: string;
   email: string;
@@ -13,17 +12,6 @@ export interface ISignUpRequest {
   referralCode: string;
 }
 
-// const getCountryList = async () => {
-//   return await NeoHttpClient.get<NeoResponse<ICountriesList[]>>(
-//     api.common.getAllCountryList
-//   );
-// };
-// const useGetCountryList = () => {
-//   return useQuery({
-//     queryKey: [api.common.getAllCountryList],
-//     queryFn: getCountryList
-//   });
-// };
 const signUp = (data: ISignUpRequest) => {
   return NeoHttpClient.post<NeoResponse<ISignUpRequest>>(
     api.users.signUp,

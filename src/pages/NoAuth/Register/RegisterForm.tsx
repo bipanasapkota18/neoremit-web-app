@@ -16,6 +16,7 @@ import TextInput from "@neoWeb/components/Form/TextInput";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useSignUpMutation } from "@neoWeb/services/service-register";
+import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useForm } from "react-hook-form";
@@ -33,6 +34,7 @@ const defaultValues = {
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const { setEmail } = useStore();
 
   const signUpSchema = object().shape({
     fullName: string().required("Full name is required"),
@@ -55,6 +57,7 @@ const RegisterForm = () => {
   });
   const { mutateAsync: signUp, isPending: isSignUpLoading } =
     useSignUpMutation();
+
   const { data: countriesList } = useGetCountryList();
   const { control, handleSubmit } = useForm({
     defaultValues,
@@ -77,6 +80,7 @@ const RegisterForm = () => {
         receiveIn: data?.receiveIn?.value ?? null,
         sendFrom: data?.sendFrom?.value ?? null
       });
+      setEmail(data?.email);
       navigate("/OTP");
     } catch (error) {
       console.error(error);
