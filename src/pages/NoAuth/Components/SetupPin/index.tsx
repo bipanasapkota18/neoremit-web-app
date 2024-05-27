@@ -1,28 +1,55 @@
-import { ArrowBackIcon } from "@chakra-ui/icons";
 import { Box, Button, HStack, Text, VStack } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
 import OTPComponent from "@neoWeb/components/Form/OTP";
+import { usesetMPIN } from "@neoWeb/services/service-forgot-password";
+import { useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
-import AuthPageWrapper from "../AuthPageWrapper";
+import { z } from "zod";
+const defaultValues = {
+  mpin: "",
+  confirmMpin: ""
+};
 
 const SetupPin = () => {
-  const { control } = useForm();
+  const { token } = useTokenStore();
+  const schema = z.object({
+    mpin: z.string().min(4, "MPIN must be 4 digit number"),
+    confirmMpin: z.string().min(4, "MPIN must be 4 digit number")
+  });
+  const { mutateAsync: setMPIN } = usesetMPIN();
+  const { control, handleSubmit } = useForm({
+    defaultValues,
+    resolver: zodResolver(schema)
+  });
+
+  const handlesetMpin = async (data: typeof defaultValues) => {
+    // if (data.mpin !== data.confirmMpin) {
+    //   setErrorMessage("MPIN and Confirm MPIN do not match");
+    //   return;
+    // }
+    try {
+      const mpinResponse = await setMPIN({
+        data: {
+          mPin: data.mpin
+        },
+        token: token
+      });
+      if (mpinResponse?.data?.responseStatus == "SUCCESS") {
+        console.log("MPIN set successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <AuthPageWrapper>
+    <>
       <VStack alignItems={"flex-start"} gap={1}>
-        <Text
-          fontFamily={"Mulish"}
-          color={"#2D3748"}
-          fontSize={"29px"}
-          fontWeight={"800"}
-        >
-          Setup MPIn
+        <Text color={"#2D3748"} fontSize={"29px"} fontWeight={"800"}>
+          Setup MPIN
         </Text>
-        <Text
-          fontFamily={"Mulish"}
-          fontWeight={"400"}
-          fontSize={"17px"}
-          color={"#4A5568"}
-        >
+        <Text fontWeight={"400"} fontSize={"17px"} color={"#4A5568"}>
           Establish a Secure Transaction PIN for Remittance Transfers
         </Text>
       </VStack>
@@ -33,72 +60,42 @@ const SetupPin = () => {
         gap={"8px"}
         width={"404px"}
       >
-        <Text
-          fontFamily={"Mulish"}
-          fontWeight={"800"}
-          fontSize={"16px"}
-          color={"#2D3748"}
-        >
+        <Text fontWeight={"800"} fontSize={"16px"} color={"#2D3748"}>
           Your MPIN must:
         </Text>
-        <Text
-          color={"#5A2F8D"}
-          fontFamily={"Mulish"}
-          fontSize={"16px"}
-          fontWeight={"400"}
-        >
-          <ArrowBackIcon />
-          Be 4 Digit Number
-        </Text>
-        <Text
-          color={"#5A2F8D"}
-          fontFamily={"Mulish"}
-          fontSize={"16px"}
-          fontWeight={"400"}
-        >
-          <ArrowBackIcon />
-          Sequential or repetitive
-        </Text>
+        <HStack>
+          <svgAssets.ListItemArrow />
+          <Text color={"#5A2F8D"} fontSize={"16px"} fontWeight={"400"}>
+            Be 4 Digit Number
+          </Text>
+        </HStack>
+        <HStack>
+          <svgAssets.ListItemArrow />
+          <Text color={"#5A2F8D"} fontSize={"16px"} fontWeight={"400"}>
+            Sequential or repetitive
+          </Text>
+        </HStack>
       </Box>
-
-      <VStack alignItems={"flex-start"}>
-        <Text> Enter MPIN</Text>
+      <VStack
+        as={"form"}
+        alignItems={"flex-start"}
+        onSubmit={handleSubmit(handlesetMpin)}
+      >
+        <Text>Enter MPIN</Text>
         <HStack>
           <OTPComponent name="mpin" control={control} />
         </HStack>
-        <Text color={"red"}> Error message</Text>
+
         <Text>Confirm MPIN</Text>
         <HStack>
-          <OTPComponent name="mpin" control={control} />
+          <OTPComponent name="confirmMpin" control={control} />
         </HStack>
+        <Button type="submit" width={"100%"}>
+          Confirm
+        </Button>
       </VStack>
-
-      <Button>Confirm</Button>
-    </AuthPageWrapper>
+    </>
   );
 };
 
 export default SetupPin;
-{
-  /* <AuthPageWrapper isPassword screen={screen}>
-      <Stack gap={"32px"} width="100%">
-        <HStack>
-          <GoBack
-            onClick={() => {
-              if (screen === "otp") {
-                setScreen("registerForm");
-              } else if (screen === "passwordForm") {
-                setScreen("otp");
-              } else if (screen === "registerForm") {
-                navigate(NAVIGATION_ROUTES.LOGIN);
-              }
-            }}
-          />
-        </HStack>
-        <HStack justifyContent={"space-between"} alignItems={"flex-start"}>
-          <Image src={imageAssets.Logo} />
-        </HStack>
-        {SwitchComponent()}
-      </Stack>
-    </AuthPageWrapper> */
-}

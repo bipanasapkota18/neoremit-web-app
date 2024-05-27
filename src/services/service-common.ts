@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
-
 export interface ICountriesList {
   id: number;
   name: string;
@@ -26,8 +25,8 @@ export interface Currency {
   isActive: boolean;
 }
 
-const getCountryList = async () => {
-  return await NeoHttpClient.get<NeoResponse<ICountriesList[]>>(
+const getCountryList = () => {
+  return NeoHttpClient.get<NeoResponse<ICountriesList[]>>(
     api.common.getAllCountryList
   );
 };
@@ -37,4 +36,5 @@ const useGetCountryList = () => {
     queryFn: getCountryList
   });
 };
+
 export { useGetCountryList };

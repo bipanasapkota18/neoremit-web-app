@@ -1,20 +1,54 @@
 import { Button, Flex, Stack, Text, VStack } from "@chakra-ui/react";
+import { yupResolver } from "@hookform/resolvers/yup";
 import OTPComponent from "@neoWeb/components/Form/OTP";
 import { useTimer } from "@neoWeb/hooks/useTimer";
+import { useVerifyOTP } from "@neoWeb/services/service-forgot-password";
+import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { useForm } from "react-hook-form";
-import AuthPageWrapper from "../Components/AuthPageWrapper";
+import { object, string } from "yup";
 
-const OTP = () => {
-  // const { mutateAsync: emailVerification } = useVerifyOTP();
+const defaultValues = {
+  otpCode: ""
+};
 
-  // const schema = yup.object().shape({
-  //   otpCode: yup.string().required("Please Enter OTP").min(6).nullable()
+export interface AuthPageProps {
+  type?: string;
+  setScreen: (value: string) => void;
+}
 
-  const { control } = useForm();
+const OTP = ({ setScreen }: AuthPageProps) => {
+  const { email } = useStore();
   const { minutes, formattedSeconds } = useTimer(0.5);
+
+  const { mutateAsync: emailVerification, isPending: isOTPLoading } =
+    useVerifyOTP();
+  const otpSchema = object().shape({
+    otpCode: string().required("Please Enter OTP").min(6)
+  });
+  const { control, handleSubmit } = useForm({
+    defaultValues,
+
+    resolver: yupResolver(otpSchema)
+  });
+
+  const handleOtpValidation = async (data: typeof defaultValues) => {
+    try {
+      const response = await emailVerification({
+        otpCode: data?.otpCode,
+        email: email,
+        otpFor: "USER_REGISTRATION"
+      });
+      if (response?.data?.responseStatus == "SUCCESS") {
+        setScreen("passwordForm");
+      }
+    } catch (error) {
+      console.error("Verification failed", error);
+    }
+  };
+
   return (
-    <AuthPageWrapper>
+    <>
       <VStack alignItems={"flex-start"} gap={1}>
         <Text
           fontSize="2xl"
@@ -31,11 +65,15 @@ const OTP = () => {
           fontFamily={"Mulish"}
           color={colorScheme.gray_600}
         >
-          Please enter the OTP verification code we sent to Gmail ,
-          ab*******123@gmail.com
+          Please enter the OTP verification code we sent to Gmail
         </Text>
       </VStack>
-      <VStack as={"form"} gap={8} alignItems={"stretch"}>
+      <VStack
+        as={"form"}
+        gap={8}
+        alignItems={"stretch"}
+        onSubmit={handleSubmit(handleOtpValidation)}
+      >
         <Stack gap={5} alignItems={"center"} width={"100%"}>
           <Flex
             display="flex"
@@ -57,11 +95,11 @@ const OTP = () => {
           </Flex>
         </Stack>
 
-        <Button type="submit" width={"100%"}>
+        <Button type="submit" isDisabled={isOTPLoading} width={"100%"}>
           Confirm
         </Button>
       </VStack>
-    </AuthPageWrapper>
+    </>
   );
 };
 

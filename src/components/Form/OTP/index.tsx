@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -24,10 +25,8 @@ const OTPComponent = ({
   helperText,
   isRequired
 }: OTPProps) => {
-  const inputLength = name === "otp" ? 6 : 4;
+  const inputLength = name === "otpCode" ? 6 : 4;
   const otpComponent = Array.from({ length: inputLength }, (_, i) => (
-    // const otpComponent = Array.from({ length: 6 }, (_, i) => (\
-
     <OTPInput key={i} />
   ));
 
@@ -54,9 +53,10 @@ const OTPComponent = ({
                 >
                   {otpComponent}
                 </PinInput>
-                {/* {name === "mpin" && <AddIcon />} */}
                 {name == "mpin" && (
-                  <BsEyeSlash width={"12px"} height={"20px"} />
+                  <Box p={2}>
+                    <BsEyeSlash width={"12px"} height={"20px"} />
+                  </Box>
                 )}
               </Flex>
               <FormErrorMessage>{error ? error?.message : ""}</FormErrorMessage>
