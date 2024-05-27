@@ -14,7 +14,6 @@ const Login = lazy(() => import("@neoWeb/pages/NoAuth/Login"));
 const Register = lazy(() => import("@neoWeb/pages/NoAuth/Register"));
 
 export default function App() {
-  // Check if app is authenticated
   const {
     data: isAuthenticated,
     isLoading: isAuthLoading,
