@@ -17,8 +17,6 @@ export const ButtonConfig: ComponentStyleConfig = {
       lineHeight: 0,
       color: colorScheme.gray_100,
       // borderRadius: "30px",
-      height: "52px",
-      padding: "20px, 0px, 20px, 0px",
 
       _hover: {
         bg: colorScheme.primary_600,
