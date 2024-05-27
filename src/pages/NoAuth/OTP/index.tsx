@@ -2,7 +2,10 @@ import { Button, Flex, Stack, Text, VStack } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import OTPComponent from "@neoWeb/components/Form/OTP";
 import { useTimer } from "@neoWeb/hooks/useTimer";
-import { useVerifyOTP } from "@neoWeb/services/service-forgot-password";
+import {
+  useResendOTp,
+  useVerifyOTP
+} from "@neoWeb/services/service-forgot-password";
 import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { useForm } from "react-hook-form";
@@ -19,10 +22,12 @@ export interface AuthPageProps {
 
 const OTP = ({ setScreen }: AuthPageProps) => {
   const { email } = useStore();
-  const { minutes, formattedSeconds } = useTimer(0.5);
+  const { minutes, formattedSeconds, time } = useTimer(0.5);
 
   const { mutateAsync: emailVerification, isPending: isOTPLoading } =
     useVerifyOTP();
+
+  const { mutateAsync: mutateResendOtp } = useResendOTp();
   const otpSchema = object().shape({
     otpCode: string().required("Please Enter OTP").min(6)
   });
@@ -44,6 +49,17 @@ const OTP = ({ setScreen }: AuthPageProps) => {
       }
     } catch (error) {
       console.error("Verification failed", error);
+    }
+  };
+
+  const resendOtp = async () => {
+    try {
+      await mutateResendOtp({
+        email: email,
+        otpFor: "USER_REGISTRATION"
+      });
+    } catch (error) {
+      console.error("Resend OTP failed", error);
     }
   };
 
@@ -82,7 +98,7 @@ const OTP = ({ setScreen }: AuthPageProps) => {
             alignSelf="stretch"
             gap={"24px"}
           >
-            <OTPComponent control={control} name="otpCode" />
+            <OTPComponent control={control} name="otpCode" page="otpCode" />
           </Flex>
           <Flex gap={"24px"} alignItems={"flex-start"} alignSelf={"stretch"}>
             <Text textAlign={"center"} cursor={"pointer"} fontWeight={700}>
@@ -91,7 +107,15 @@ const OTP = ({ setScreen }: AuthPageProps) => {
                 {minutes}:{formattedSeconds}
               </Text>
             </Text>
-            <Text marginLeft={"auto"}>Resend</Text>
+            {time === 0 && (
+              <Text
+                marginLeft={"auto"}
+                cursor={"pointer"}
+                onClick={() => resendOtp()}
+              >
+                Resend
+              </Text>
+            )}
           </Flex>
         </Stack>
 

@@ -6,15 +6,12 @@ import {
 } from "@neoWeb/services/service-auth";
 import { useFetchInitData } from "@neoWeb/services/service-init";
 import { Suspense, lazy, useEffect } from "react";
-import { Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import AdditionalInfo from "../NoAuth/Components/AdditionalInfo";
-import SetPassword from "../NoAuth/Components/SetPassword";
-import SetupPin from "../NoAuth/Components/SetupPin";
 import { appRoutes } from "./appRoutes";
 import { NAVIGATION_ROUTES } from "./navigationRoutes";
 const Login = lazy(() => import("@neoWeb/pages/NoAuth/Login"));
 const Register = lazy(() => import("@neoWeb/pages/NoAuth/Register"));
-const OTP = lazy(() => import("@neoWeb/pages/NoAuth/OTP"));
 
 export default function App() {
   // Check if app is authenticated
@@ -59,7 +56,9 @@ export default function App() {
       </Flex>
     );
   }
-
+  function MissingRoute() {
+    return <Navigate to={{ pathname: "/" }} />;
+  }
   return (
     <Suspense
       fallback={
@@ -102,15 +101,8 @@ export default function App() {
                 path={NAVIGATION_ROUTES.ADDITIONALINFORMATION}
                 element={<AdditionalInfo />}
               />
-              <Route path={NAVIGATION_ROUTES.OTP} element={<OTP />} />
-              <Route
-                path={NAVIGATION_ROUTES.SET_PASSWORD}
-                element={<SetPassword />}
-              />
-              <Route
-                path={NAVIGATION_ROUTES.SETUP_PIN}
-                element={<SetupPin />}
-              />
+
+              <Route path="*" element={<MissingRoute />} />
             </Route>
           )}
         </Routes>

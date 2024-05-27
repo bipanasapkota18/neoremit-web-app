@@ -1,4 +1,11 @@
-import { Box, Button, HStack, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  HStack,
+  Text,
+  VStack,
+  useDisclosure
+} from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import OTPComponent from "@neoWeb/components/Form/OTP";
@@ -6,12 +13,18 @@ import { usesetMPIN } from "@neoWeb/services/service-forgot-password";
 import { useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import MpinSetSuccessModal from "./MpinSetSuccessModal";
 const defaultValues = {
   mpin: "",
   confirmMpin: ""
 };
 
 const SetupPin = () => {
+  const {
+    onOpen: onOpenMpinSetSuccessfulModal,
+    onClose: onCloseMpinSetSuccessfulModal,
+    isOpen: isMpinSetSuccessfulModalOpen
+  } = useDisclosure();
   const { token } = useTokenStore();
   const schema = z.object({
     mpin: z.string().min(4, "MPIN must be 4 digit number"),
@@ -24,10 +37,6 @@ const SetupPin = () => {
   });
 
   const handlesetMpin = async (data: typeof defaultValues) => {
-    // if (data.mpin !== data.confirmMpin) {
-    //   setErrorMessage("MPIN and Confirm MPIN do not match");
-    //   return;
-    // }
     try {
       const mpinResponse = await setMPIN({
         data: {
@@ -36,7 +45,7 @@ const SetupPin = () => {
         token: token
       });
       if (mpinResponse?.data?.responseStatus == "SUCCESS") {
-        console.log("MPIN set successfully");
+        onOpenMpinSetSuccessfulModal();
       }
     } catch (error) {
       console.error(error);
@@ -79,21 +88,26 @@ const SetupPin = () => {
       <VStack
         as={"form"}
         alignItems={"flex-start"}
+        gap={4}
         onSubmit={handleSubmit(handlesetMpin)}
       >
         <Text>Enter MPIN</Text>
         <HStack>
-          <OTPComponent name="mpin" control={control} />
+          <OTPComponent name="mpin" page="mpin" control={control} />
         </HStack>
 
         <Text>Confirm MPIN</Text>
         <HStack>
-          <OTPComponent name="confirmMpin" control={control} />
+          <OTPComponent name="confirmMpin" control={control} page="mpin" />
         </HStack>
         <Button type="submit" width={"100%"}>
           Confirm
         </Button>
       </VStack>
+      <MpinSetSuccessModal
+        isOpen={isMpinSetSuccessfulModalOpen}
+        onClose={onCloseMpinSetSuccessfulModal}
+      />
     </>
   );
 };

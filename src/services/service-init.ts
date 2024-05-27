@@ -26,6 +26,7 @@ const useFetchInitData = (enabled?: boolean) => {
     queryFn: async () => {
       const initData = await fetchInitData()();
       setInitData(initData?.data?.data);
+      return initData;
     },
     enabled: enabled,
     retry: 1

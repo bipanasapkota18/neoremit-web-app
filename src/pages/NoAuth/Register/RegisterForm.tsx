@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Link as ChakraLink,
   Flex,
   GridItem,
   HStack,
@@ -13,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useSignUpMutation } from "@neoWeb/services/service-register";
@@ -20,6 +22,7 @@ import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useForm } from "react-hook-form";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 const defaultValues = {
@@ -198,9 +201,14 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
       <Box display={"flex"} justifyContent={"center"}>
         <Text textStyle={"normalStyle"} fontSize={"14px"}>
           Already have an account?{" "}
-          <Text as={"span"} fontWeight={500} lineHeight={4} cursor={"pointer"}>
-            <u>Sign in</u>
-          </Text>
+          <ChakraLink
+            as={Link}
+            to={NAVIGATION_ROUTES.LOGIN}
+            fontWeight={500}
+            color={colorScheme.primary_500}
+          >
+            Sign In
+          </ChakraLink>
         </Text>
       </Box>
     </Flex>

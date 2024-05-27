@@ -10,7 +10,7 @@ import {
   VStack,
   useBoolean
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import CheckBox from "@neoWeb/components/Form/Checkbox";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
@@ -19,7 +19,7 @@ import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import { boolean, object, string } from "yup";
+import { z } from "zod";
 import { svgAssets } from "../../../assets/images/svgs/index";
 
 interface LoginPageProps {
@@ -38,22 +38,23 @@ const LoginForm = () => {
 
   const [flag, setFlag] = useBoolean();
 
-  const loginSchema = object({
-    password: string().required("Please enter a password"),
-    email: string()
-      .email("Please enter a valid email")
-      .required("Please enter email")
-      .nullable(),
-    remember: boolean()
+  const loginSchema = z.object({
+    password: z.string().min(1, { message: "Password is required" }),
+    email: z
+      .string()
+      .email({ message: "Invalid email format" })
+      .min(1, { message: "Please enter your email address" }),
+    remember: z.boolean().optional()
   });
 
   const { control, handleSubmit, reset } = useForm({
     defaultValues,
-    resolver: yupResolver(loginSchema)
+    resolver: zodResolver(loginSchema)
   });
   useEffect(() => {
     reset({
-      email: localStorage.getItem("email")
+      email: localStorage.getItem("email"),
+      remember: !!localStorage.getItem("email")
     });
   }, []);
 
@@ -69,6 +70,7 @@ const LoginForm = () => {
         username: data.email,
         password: data.password
       });
+      reset(defaultValues);
     } catch (error) {
       console.error(error);
     }
@@ -164,7 +166,7 @@ const LoginForm = () => {
             as={Link}
             to={NAVIGATION_ROUTES.REGISTER}
             fontWeight={500}
-            color="primary.500"
+            color={colorScheme.primary_500}
           >
             Register
           </ChakraLink>

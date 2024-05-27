@@ -53,6 +53,7 @@ const useVerifyOTP = () => {
     }
   });
 };
+
 const emailVerification = (data: IEmailVerification) => {
   return NeoHttpClient.post<NeoResponse>(api.users.email, data);
 };
