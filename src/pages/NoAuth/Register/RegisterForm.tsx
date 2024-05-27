@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Link as ChakraLink,
   Flex,
   GridItem,
   HStack,
@@ -13,13 +14,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useSignUpMutation } from "@neoWeb/services/service-register";
+import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
 const defaultValues = {
@@ -30,9 +33,13 @@ const defaultValues = {
   phoneNumber: "",
   referralCode: ""
 };
+export interface AuthPageProps {
+  type?: string;
+  setScreen: (value: string) => void;
+}
 
-const RegisterForm = () => {
-  const navigate = useNavigate();
+const RegisterForm = ({ setScreen }: AuthPageProps) => {
+  const { setEmail } = useStore();
 
   const signUpSchema = z.object({
     fullName: z.string().min(1, { message: "Full name is required" }),
@@ -67,6 +74,7 @@ const RegisterForm = () => {
   });
   const { mutateAsync: signUp, isPending: isSignUpLoading } =
     useSignUpMutation();
+
   const { data: countriesList } = useGetCountryList();
   const { control, handleSubmit } = useForm({
     defaultValues,
@@ -84,12 +92,15 @@ const RegisterForm = () => {
   });
   const handleSignup = async (data: typeof defaultValues) => {
     try {
-      await signUp({
+      const signupResponse = await signUp({
         ...data,
         receiveIn: data?.receiveIn?.value ?? null,
         sendFrom: data?.sendFrom?.value ?? null
       });
-      navigate("/OTP");
+      if (signupResponse?.data?.responseStatus === "SUCCESS") {
+        setEmail(data?.email);
+        setScreen("otp");
+      }
     } catch (error) {
       console.error(error);
     }
@@ -190,9 +201,14 @@ const RegisterForm = () => {
       <Box display={"flex"} justifyContent={"center"}>
         <Text textStyle={"normalStyle"} fontSize={"14px"}>
           Already have an account?{" "}
-          <Text as={"span"} fontWeight={500} lineHeight={4} cursor={"pointer"}>
-            <u>Sign in</u>
-          </Text>
+          <ChakraLink
+            as={Link}
+            to={NAVIGATION_ROUTES.LOGIN}
+            fontWeight={500}
+            color={colorScheme.primary_500}
+          >
+            Sign In
+          </ChakraLink>
         </Text>
       </Box>
     </Flex>

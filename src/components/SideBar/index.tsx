@@ -1,4 +1,14 @@
-import { Flex, HStack, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  Text,
+  VStack
+} from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+import { useLogoutMutation } from "@neoWeb/services/service-auth";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { categorizedNavlinks } from "@neoWeb/utility/helper";
 import { useEffect, useState } from "react";
@@ -27,6 +37,7 @@ export default function Sidebar({
 }: SidebarProps) {
   const [activeLink, setActiveLink] = useState("");
   const [activeCollapse, setActiveCollapse] = useState("");
+  const { mutateAsync: logout, isPending } = useLogoutMutation();
 
   // const { initData } = useStoreInitData();
 
@@ -63,6 +74,9 @@ export default function Sidebar({
     }
   };
   const allNavlinks = categorizedNavlinks(navLinks);
+  const handleLogout = () => {
+    logout();
+  };
 
   return (
     <Flex
@@ -80,6 +94,8 @@ export default function Sidebar({
         transition="all 0.25s ease-in-out"
         onMouseEnter={onEnterSidebar}
         onMouseLeave={onExitSidebar}
+        justifyContent={"space-between"}
+        alignItems={"flex-start"}
       >
         <VStack
           w="100%"
@@ -135,6 +151,42 @@ export default function Sidebar({
             );
           })}
         </VStack>
+        <Box>
+          <Button
+            width={isCollapsed && !isHovered ? "" : "240px"}
+            onClick={handleLogout}
+            background={colorScheme.logout_button}
+            _hover={{ background: colorScheme.logout_button }}
+            borderRadius={"8px"}
+            isDisabled={isPending}
+          >
+            <HStack>
+              <HStack>
+                <Icon as={svgAssets.Logout} height={"24px"} width={"24px"} />
+                <HStack>
+                  <Text
+                    color={"#E53E3E"}
+                    fontSize="12px"
+                    fontWeight={400}
+                    whiteSpace="nowrap"
+                    display={isCollapsed && !isHovered ? "none" : "block"}
+                    transition={animate}
+                  >
+                    LOGOUT
+                  </Text>
+                </HStack>
+              </HStack>
+            </HStack>
+          </Button>
+          <Text
+            mt={2}
+            color={colorScheme.sideBar_text}
+            fontWeight={400}
+            textAlign={"center"}
+          >
+            Copyright Neo Money Transfer
+          </Text>
+        </Box>
       </VStack>
     </Flex>
   );

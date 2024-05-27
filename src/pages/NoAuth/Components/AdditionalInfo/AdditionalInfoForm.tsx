@@ -11,20 +11,7 @@ import { svgAssets } from "@neoWeb/assets/images/svgs";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import { useForm } from "react-hook-form";
 
-// const defaultValues = {
-//   sendFrom: null as ISelectOptions<number> | null,
-//   receiveIn: null as ISelectOptions<number> | null,
-//   contactNumber: null as number | null,
-//   referralCode: ""
-// };
 const AdditionalInformation = () => {
-  // const { data: countriesList } = useGetCountryList();
-
-  // const countryOptions = formatSelectOptions<number>({
-  //   data: countriesList?.data?.data,
-  //   labelKey: "name",
-  //   valueKey: "id"
-  // });
   const { control } = useForm();
   return (
     <Flex gap={8} flexDir={"column"}>

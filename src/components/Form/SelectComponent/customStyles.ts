@@ -128,6 +128,7 @@ export const useCustomStyles = (error?: any) => {
       ...provided,
       padding: "0px 4px",
       position: "absolute",
+      color: colorScheme.gray_700,
       zIndex: 2,
       top: "18px",
       transition: "all 0.2s",

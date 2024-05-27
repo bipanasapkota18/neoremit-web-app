@@ -10,7 +10,11 @@ export const api = {
   users: {
     signUp: `${service}/users/register-user`,
     otp: `${service}/users/verify/otp`,
-    resendOtp: `${service}/users/otp/resend`
+    resendOtp: `${service}/users/otp/resend`,
+    email: `${service}/users/forgot-password`,
+    changePassword: `${service}/users/otp/change-password`,
+    setPasword: `${service}/internal/set-password`,
+    setMPIN: `${service}/users/set-mpin`
   },
 
   common: {

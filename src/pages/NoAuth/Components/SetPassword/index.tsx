@@ -9,15 +9,23 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import TextInput from "@neoWeb/components/Form/TextInput";
+import { useResetPassword } from "@neoWeb/services/service-forgot-password";
+import { useStore, useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-import AuthPageWrapper from "../AuthPageWrapper";
+import { AuthPageProps } from "../../Register/RegisterForm";
 import PasswordStrength from "./passwordStrength";
+
 const defaultValues = {
   password: "",
   confirm_password: ""
 };
-const SetPassword = () => {
+
+const SetPassword = ({ setScreen }: AuthPageProps) => {
+  const { mutateAsync, isPending: isPasswordLoading } = useResetPassword();
+  const { email } = useStore();
+  const { setToken } = useTokenStore();
+
   const passwordSchema = yup.object().shape({
     password: yup
       .string()
@@ -28,30 +36,48 @@ const SetPassword = () => {
       .matches(
         /[!@#$%&*()]/,
         "Password must contain at least one symbol !@#$%&*"
-      ),
+      )
+      .required("Password is required"),
     confirm_password: yup
       .string()
-      .required("Please enter a password ")
+      .required("Please enter a password")
       .oneOf([yup.ref("password")], "Passwords don't match")
   });
-  const { control, watch } = useForm({
+  const { control, watch, handleSubmit } = useForm({
     defaultValues,
     resolver: yupResolver(passwordSchema)
   });
+
   const [flag, setFlag] = useBoolean();
   const [confirmFlag, setConfirmFlag] = useBoolean();
 
+  const handlePasswordChange = async (data: any) => {
+    try {
+      const passwordSetResponse = await mutateAsync({
+        email: email,
+        newPassword: data.password,
+        changePasswordFor: "USER_REGISTRATION"
+      });
+      if (passwordSetResponse?.data?.responseStatus == "SUCCESS") {
+        setToken(passwordSetResponse?.data?.data?.accessToken);
+        setScreen("setmpin");
+      }
+    } catch (error) {
+      console.error("Error setting Password:", error);
+    }
+  };
+
   return (
-    <AuthPageWrapper>
+    <>
       <VStack alignItems={"flex-start"} gap={"24px"}>
         <Text fontSize="29px" fontWeight="800" color="gray.700">
           Set login Password
         </Text>
         <Text fontSize={"14px"} fontWeight={"400"} color="#2D3748">
-          Please enter your new password,make sure to save your password
+          Please enter your new password, make sure to save your password
         </Text>
       </VStack>
-      <VStack as="form">
+      <VStack as="form" gap={8} onSubmit={handleSubmit(handlePasswordChange)}>
         <Stack gap={"5"} width={"100%"}>
           <TextInput
             startIcon={<svgAssets.PasswordIcon />}
@@ -105,11 +131,11 @@ const SetPassword = () => {
             }
           />
         </Stack>
+        <Button type="submit" width={"100%"} isLoading={isPasswordLoading}>
+          Confirm
+        </Button>
       </VStack>
-      <Button type="submit" size="lg">
-        Confirm
-      </Button>
-    </AuthPageWrapper>
+    </>
   );
 };
 

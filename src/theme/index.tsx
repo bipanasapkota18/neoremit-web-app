@@ -4,6 +4,7 @@ import { FormComponent } from "./Form/Form";
 import { RadioTheme } from "./Form/Radio";
 import { colorScheme } from "./colorScheme";
 import { ButtonConfig } from "./components/Button";
+import { CheckboxConfig } from "./components/Checkbox";
 import { ContainerConfig } from "./components/Container";
 import Input from "./components/Input";
 import Switch from "./components/Switch";
@@ -26,6 +27,7 @@ export const theme = extendTheme(
       Switch: Switch,
       Radio: RadioTheme,
       Container: ContainerConfig,
+      Checkbox: CheckboxConfig,
       Steps
     },
     breakpoints: {

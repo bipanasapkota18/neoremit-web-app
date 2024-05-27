@@ -12,10 +12,8 @@ import { AxiosError } from "axios";
 import { ErrorBoundary } from "react-error-boundary";
 import { HelmetProvider } from "react-helmet-async";
 import { Toaster } from "react-hot-toast";
-
 import { BrowserRouter } from "react-router-dom";
 import { toastFail } from "./utility/Toast";
-
 const ErrorFallback = () => {
   return (
     <HStack alignItems="center" justifyContent="center" role="alert">
@@ -29,7 +27,6 @@ const ErrorFallback = () => {
     </HStack>
   );
 };
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -41,7 +38,7 @@ const queryClient = new QueryClient({
   },
   queryCache: new QueryCache({
     onError: async error => {
-      const err = error as AxiosError;
+      const err = error as AxiosError<{ message: string }>;
       if (
         (err.request?.status === 401 || err.request?.status === 500) &&
         err.config?.url?.includes(api.auth.refreshToken)
@@ -52,11 +49,12 @@ const queryClient = new QueryClient({
           queryClient.clear();
           toastFail("Session Expired! Please login again!");
         }, 500);
+      } else {
+        toastFail(err?.response?.data?.message || err.message);
       }
     }
   })
 });
-
 const Provider = ({ children }: IProvider) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -72,9 +70,7 @@ const Provider = ({ children }: IProvider) => {
     </ErrorBoundary>
   );
 };
-
 interface IProvider {
   children: React.ReactNode;
 }
-
 export default Provider;
