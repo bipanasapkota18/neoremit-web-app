@@ -1,27 +1,28 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/husky.sh"
-# This hook is called by husky when you commit
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
-echo "<<- - - - - - - - - - - - - - - - - - - - - - - - - - - ->>"
-echo ">>Compiling TYPESCRIPT: :rocket: :bulb: "
+
+echo "${GREEN}- - - - - - - - - - - - - - - - - - - - - - - - - - - -${NC}"
+echo "${GREEN}Compiling TYPESCRIPT: 🚀 💡 ${NC}"
 yarn tsc --noEmit || {
-    echo "${RED} TYPESCRIPT Compile failed: :rotating_light: :clown_face: :rotating_light:  "
+    echo "${RED} TYPESCRIPT Compile failed: 🚨 🤡 🚨  ${NC}"
     exit 1
 }
-echo ">>Compile success: :white_check_mark: :money_with_wings: "
-echo "<<- - - - - - - - - - - - - - - - - - - - - - - - - - - ->>"
+echo "${GREEN}Compile success: ✅ 💸 ${NC}"
+echo "${GREEN}- - - - - - - - - - - - - - - - - - - - - - - - - - - -${NC}"
 # Running this command on windows to stop excessive output
 # https://github.com/okonet/lint-staged/issues/1164
 if [ "$OSTYPE" == "msys" ]; then
     exec >/dev/console 2>&1
 fi
-echo "<<- - - - - - - - - - - - - - - - - - - - - - - - - - - ->>"
-echo ">>Linting files: :truck: :memo: "
+echo "${GREEN}- - - - - - - - - - - - - - - - - - - - - - - - - - - -${NC}"
+echo "${GREEN}Linting files: 🚚 📝 ${NC}"
 yarn lint-staged || {
-    echo "${RED}Linting failed: :fire: :clown_face::hankey: :fire: "
+    echo "${RED}Linting failed: 🔥 🤡💩 🔥 ${NC}"
     exit 1
 }
-echo ">>Linting success: :beers: :tada: "
-echo "<<- - - - - - - - - - - - - - - - - - - - - - - - - - - ->>"
+echo "${GREEN}Linting success: 🍻 🎉 ${NC}"
+echo "${GREEN}- - - - - - - - - - - - - - - - - - - - - - - - - - - -${NC}"

@@ -1,4 +1,4 @@
-import { Box, Container, Flex, Image } from "@chakra-ui/react";
+import { Box, Container, Flex, Image, Stack } from "@chakra-ui/react";
 import AppBar from "@neoWeb/components/Header/AppBar";
 import Header from "@neoWeb/components/Header/Header";
 import { Suspense } from "react";
@@ -37,7 +37,9 @@ const LayoutWrapper: React.FC = () => {
                   </Flex>
                 }
               >
-                <Outlet />
+                <Stack flex={1}>
+                  <Outlet />
+                </Stack>
               </Suspense>
             </Box>
           </Container>

@@ -5,6 +5,7 @@ import { ReactComponent as NoTransaction } from "@neoWeb/assets/images/svgs/No-t
 import { ReactComponent as ProfileIcon } from "@neoWeb/assets/images/svgs/Profile.svg";
 import { ReactComponent as AppleIcon } from "@neoWeb/assets/images/svgs/apple.svg";
 import { ReactComponent as ArrowSwap } from "@neoWeb/assets/images/svgs/arrow-swap.svg";
+import { ReactComponent as ArtifactFlower } from "@neoWeb/assets/images/svgs/background-artifacr-flower.svg";
 import { ReactComponent as Banner } from "@neoWeb/assets/images/svgs/bannerImage.svg";
 import { ReactComponent as CallIcon } from "@neoWeb/assets/images/svgs/call.svg";
 import { ReactComponent as GoogleIcon } from "@neoWeb/assets/images/svgs/devicon_google.svg";
@@ -19,9 +20,11 @@ import { ReactComponent as PasswordIcon } from "@neoWeb/assets/images/svgs/passw
 import { ReactComponent as pinIcon } from "@neoWeb/assets/images/svgs/pinIcon.svg";
 import { ReactComponent as PinSetSuccess } from "@neoWeb/assets/images/svgs/pin_set_success.svg";
 import { ReactComponent as SecurityIcon } from "@neoWeb/assets/images/svgs/security.svg";
+import { ReactComponent as SendIcon } from "@neoWeb/assets/images/svgs/send.svg";
 
 export const svgAssets = {
   ImagePlaceHolderDropzone,
+  ArtifactFlower,
   Line,
   EmailIcon,
   ProfileIcon,
@@ -35,6 +38,7 @@ export const svgAssets = {
   pinIcon,
   EyeSlashIcon,
   Banner,
+  SendIcon,
   GoogleIcon,
   AppleIcon,
   DashboardBackground,

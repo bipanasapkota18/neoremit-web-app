@@ -4,7 +4,7 @@ export const ContainerConfig: ComponentStyleConfig = {
   baseStyle: {
     margin: "auto",
     width: "1300px",
-    maxW: { sm: "95vw", md: "85vw", lg: "80vw" },
+    maxW: { sm: "95vw", md: "90vw", lg: "85vw" },
     w: "100%",
     px: 8
   },
