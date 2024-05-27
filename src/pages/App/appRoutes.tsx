@@ -1,4 +1,5 @@
 import LayoutWrapper from "@neoWeb/components/LayoutWrapper";
+import PageNotFound from "@neoWeb/components/LayoutWrapper/PageNotFound";
 import { lazy } from "react";
 import { NAVIGATION_ROUTES } from "./navigationRoutes";
 const Dashboard = lazy(() => import("@neoWeb/pages/Authorized/Dashboard"));
@@ -23,10 +24,13 @@ export const appRoutes = [
         path: NAVIGATION_ROUTES.SERVICES,
         element: <Services />
       },
-      //  SEND_MONEY: "/send-money",
       {
         path: NAVIGATION_ROUTES.SEND_MONEY,
         element: <SendMoney />
+      },
+      {
+        path: "*",
+        element: <PageNotFound />
       }
     ]
   }

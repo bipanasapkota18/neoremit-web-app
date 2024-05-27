@@ -8,6 +8,7 @@ interface IChildrenType {
   children: React.ReactNode;
   hasSideDiv?: boolean;
   screen?: string;
+  isPassword?: boolean;
 }
 const AuthPageWrapper = ({ children, hasSideDiv = true }: IChildrenType) => {
   const window = useWindowSize();

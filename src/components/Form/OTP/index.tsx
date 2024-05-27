@@ -3,32 +3,33 @@ import {
   FormControl,
   FormErrorMessage,
   FormHelperText,
-  PinInput
+  IconButton,
+  PinInput,
+  useBoolean
 } from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { Control, Controller } from "react-hook-form";
-import { BsEyeSlash } from "react-icons/bs";
 import OTPInput from "./OTPInput";
 interface OTPProps {
   name: string;
   control: Control<any>;
-
+  page: string;
   helperText?: string;
   isRequired?: boolean;
   isDisabled?: boolean;
 }
 const OTPComponent = ({
   name,
-
+  page,
   isDisabled,
   control,
   helperText,
   isRequired
 }: OTPProps) => {
-  const inputLength = name === "otp" ? 6 : 4;
+  const [flag, setFlag] = useBoolean();
+  const inputLength = page === "otpCode" ? 6 : 4;
   const otpComponent = Array.from({ length: inputLength }, (_, i) => (
-    // const otpComponent = Array.from({ length: 6 }, (_, i) => (\
-
-    <OTPInput key={i} />
+    <OTPInput key={i} name={page} type={flag ? "text" : "password"} />
   ));
 
   return (
@@ -44,7 +45,7 @@ const OTPComponent = ({
               id={name}
               maxW={"350px !important"}
             >
-              <Flex gap={{ base: "30px", sm: "35px", md: "35px" }}>
+              <Flex gap={page === "otpCode" ? 7 : 14}>
                 <PinInput
                   placeholder=""
                   otp
@@ -54,9 +55,24 @@ const OTPComponent = ({
                 >
                   {otpComponent}
                 </PinInput>
-                {/* {name === "mpin" && <AddIcon />} */}
-                {name == "mpin" && (
-                  <BsEyeSlash width={"12px"} height={"20px"} />
+                {page == "mpin" && (
+                  <IconButton
+                    colorScheme={"black"}
+                    size="xs"
+                    variant="link"
+                    aria-label="mpin-control"
+                    onClick={setFlag.toggle}
+                    icon={
+                      flag ? (
+                        <svgAssets.EyeIcon height={"38px"} width={"38px"} />
+                      ) : (
+                        <svgAssets.EyeSlashIcon
+                          height={"38px"}
+                          width={"38px"}
+                        />
+                      )
+                    }
+                  />
                 )}
               </Flex>
               <FormErrorMessage>{error ? error?.message : ""}</FormErrorMessage>

@@ -13,8 +13,13 @@ import { ReactComponent as EyeSlashIcon } from "@neoWeb/assets/images/svgs/eye-s
 import { ReactComponent as EyeIcon } from "@neoWeb/assets/images/svgs/eye.svg";
 import { ReactComponent as ImagePlaceHolderDropzone } from "@neoWeb/assets/images/svgs/image_placeholder.svg";
 import { ReactComponent as Line } from "@neoWeb/assets/images/svgs/line.svg";
+import { ReactComponent as ListItemArrow } from "@neoWeb/assets/images/svgs/list-item-arrow.svg";
+import { ReactComponent as Logout } from "@neoWeb/assets/images/svgs/logout.svg";
 import { ReactComponent as PasswordIcon } from "@neoWeb/assets/images/svgs/password.svg";
+import { ReactComponent as pinIcon } from "@neoWeb/assets/images/svgs/pinIcon.svg";
+import { ReactComponent as PinSetSuccess } from "@neoWeb/assets/images/svgs/pin_set_success.svg";
 import { ReactComponent as SecurityIcon } from "@neoWeb/assets/images/svgs/security.svg";
+
 export const svgAssets = {
   ImagePlaceHolderDropzone,
   Line,
@@ -23,14 +28,18 @@ export const svgAssets = {
   CallIcon,
   SecurityIcon,
   BackIcon,
+  ListItemArrow,
   LinearIcon,
   PasswordIcon,
   EyeIcon,
+  pinIcon,
   EyeSlashIcon,
   Banner,
   GoogleIcon,
   AppleIcon,
   DashboardBackground,
   ArrowSwap,
-  NoTransaction
+  NoTransaction,
+  Logout,
+  PinSetSuccess
 };
