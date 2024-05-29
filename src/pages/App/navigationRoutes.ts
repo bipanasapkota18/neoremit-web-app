@@ -2,7 +2,7 @@ export const NAVIGATION_ROUTES = {
   LOGIN: "/login",
   REGISTER: "/register",
   ADDITIONALINFORMATION: "/additionalinformation",
-  HOME: "/home",
+  HOME: "/",
   ACCOUNT: "/account",
   SERVICES: "/services",
   SEND_MONEY: "/send-money",

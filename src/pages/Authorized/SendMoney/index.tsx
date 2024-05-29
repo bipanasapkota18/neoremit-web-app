@@ -1,29 +1,123 @@
-import { Box, Flex, GridItem, SimpleGrid, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Card,
+  CardBody,
+  GridItem,
+  HStack,
+  Icon,
+  SimpleGrid,
+  Text
+} from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+import Select from "@neoWeb/components/Form/SelectComponent";
+import TextInput from "@neoWeb/components/Form/TextInput";
+import { baseURL } from "@neoWeb/services/service-axios";
+import { useGetCountryList } from "@neoWeb/services/service-common";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
+import { formatSelectOptions } from "@neoWeb/utility/format";
+import { useForm } from "react-hook-form";
 
 const SendMoney = () => {
+  const { data: countriesList } = useGetCountryList();
+
+  const countryOptions = formatSelectOptions<number>({
+    data: countriesList?.data?.data,
+    labelKey: "name",
+    valueKey: "id",
+    icon: {
+      iconKey: "flagIcon",
+      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`
+    }
+  });
+  const { control } = useForm();
   return (
-    <SimpleGrid columns={3} gap={6}>
-      <GridItem colSpan={2} rowSpan={1}>
+    <Card>
+      <CardBody display={"flex"} flexDir={"column"} padding={6} gap={4}>
         <Box
-          style={{}}
-          backgroundRepeat={"no-repeat"}
-          backgroundSize={"cover"}
-          maxWidth={"609px"}
-          boxShadow="0px 4px 28px 0px rgba(0, 0, 0, 0.06)"
-          borderRadius={"24px"}
-          py={12}
+          textStyle={"normalStyle"}
+          color={colorScheme.gray_700}
+          fontWeight={700}
         >
-          <Flex flexDir={"column"} gap={2} alignItems={"center"}>
-            <Text textAlign={"center"} fontSize={"17px"} fontWeight={600}>
-              SendingAmount
-            </Text>
-            <Text textAlign={"center"} fontSize={"20px"}>
-              $500
-            </Text>
-          </Flex>
+          Send Money
         </Box>
-      </GridItem>
-    </SimpleGrid>
+        <Box
+          w="full"
+          pos="relative"
+          backgroundColor={colorScheme.gray_100}
+          display={"flex"}
+          flexDir={"column"}
+          alignItems={"center"}
+          overflow={"hidden"}
+          gap={1}
+          borderRadius={"8px"}
+          padding={6}
+        >
+          <Text
+            textStyle={"normalStyle"}
+            color={colorScheme.sideBar_text}
+            fontWeight={600}
+          >
+            Sending Amount
+          </Text>
+          <Text
+            fontSize={"20px"}
+            fontWeight={700}
+            color={colorScheme.primary_500}
+          >
+            $00.00
+          </Text>
+          <Box sx={{ pos: "absolute", top: 7, right: -8 }}>
+            <svgAssets.ArtifactFlower />
+          </Box>
+        </Box>
+        <SimpleGrid columns={2} gap={4}>
+          <GridItem colSpan={2}>
+            <HStack gap={4} w={"full"}>
+              <Select
+                name="sendFrom"
+                options={countryOptions}
+                placeholder="Select Currency"
+                control={control}
+                noFloating
+              />
+              <Icon as={svgAssets.ArrowSwap} height={"24px"} width={"24px"} />
+              <Select
+                name="sendTo"
+                options={countryOptions}
+                placeholder="Select Currency"
+                control={control}
+                noFloating
+              />
+            </HStack>
+          </GridItem>
+          <GridItem colSpan={1}>
+            <TextInput
+              control={control}
+              name="sendAmount"
+              type="number"
+              label="You Send"
+            />
+          </GridItem>
+          <GridItem colSpan={1}>
+            <TextInput
+              control={control}
+              name="receiveAmount"
+              type="number"
+              label="Receiver Receives"
+            />
+          </GridItem>
+          <GridItem mt={2} colSpan={1}>
+            <Select
+              name="method"
+              options={countryOptions}
+              placeholder="Select Payment Method"
+              control={control}
+              noFloating
+            />
+          </GridItem>
+        </SimpleGrid>
+      </CardBody>
+    </Card>
   );
 };
 export default SendMoney;

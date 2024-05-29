@@ -31,14 +31,15 @@ export const useCustomStyles = (error?: any) => {
       width: isSingleTimeDropdown ? "60px" : "100%",
       backgroundColor: "#F7FAFC",
       borderColor: hideContainerBorder ? "white" : `${colorScheme.gray_200}`,
-      height: "100%"
+      height: "100%",
+      borderRadius: "16px"
     }),
     input: (provided, { selectProps: { size } }) => ({
       ...provided,
       color: "inherit",
       lineHeight: "inherit",
       fontSize: fontSizes[size ?? "sm"],
-      height: "49px"
+      padding: "10px"
     }),
     menu: (provided, { selectProps: { isSingleTimeDropdown } }) => ({
       ...provided,
@@ -130,7 +131,7 @@ export const useCustomStyles = (error?: any) => {
       position: "absolute",
       color: colorScheme.gray_700,
       zIndex: 2,
-      top: "18px",
+      top: "11px",
       transition: "all 0.2s",
       borderRadius: 5,
       ...(state.isFocused || state.hasValue || state.selectProps.inputValue
@@ -138,7 +139,8 @@ export const useCustomStyles = (error?: any) => {
             background: "none",
             whiteSpace: "nowrap",
             transform: "translateX(-8%)",
-            top: "-1px"
+            top: "-1px",
+            left: "11px"
           }
         : {})
     }),
@@ -157,8 +159,7 @@ export const useCustomStyles = (error?: any) => {
     }),
     singleValue: styles => {
       return {
-        ...styles,
-        marginTop: 12
+        ...styles
       };
     },
     multiValue: styles => {
