@@ -7,6 +7,7 @@ import { ButtonConfig } from "./components/Button";
 import { CheckboxConfig } from "./components/Checkbox";
 import { ContainerConfig } from "./components/Container";
 import Input from "./components/Input";
+import { modalConfig } from "./components/Modal";
 import Switch from "./components/Switch";
 import { TableConfig } from "./components/Table";
 import { TextStyles } from "./components/Text";
@@ -28,6 +29,7 @@ export const theme = extendTheme(
       Radio: RadioTheme,
       Container: ContainerConfig,
       Checkbox: CheckboxConfig,
+      Modal: modalConfig,
       Steps
     },
     breakpoints: {

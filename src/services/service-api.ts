@@ -29,7 +29,7 @@ export const api = {
     get: `${service}/payout-method/list/app/{id}`
   },
   payout_partner: {
-    update: `${service}/payout_partner/{id}`
+    get: `${service}/payout-partner/list/app/{payoutMethodId}`
   },
   init: `${service}/users/init`
 };

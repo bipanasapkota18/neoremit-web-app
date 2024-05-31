@@ -5,7 +5,7 @@ import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
 
 export interface IBeneficiaryRequest {
-  beneficiaryDetailId: number;
+  beneficiaryDetailId?: number;
   fullName: string;
   mobileNumber: string;
   relationshipId: number;

@@ -1,4 +1,3 @@
-import { AddIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -9,10 +8,11 @@ import {
   Heading,
   SimpleGrid,
   Stack,
-  Text,
   VStack,
   useDisclosure
 } from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+import CardComponent from "@neoWeb/components/Beneficiary/CardComponent";
 import { DropzoneComponentControlled } from "@neoWeb/components/Form/DropzoneComponent";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
@@ -23,8 +23,8 @@ import {
 } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
 import { formatSelectOptions } from "@neoWeb/utility/format";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
 import AddAccount from "./Addaccount";
 // const defaultValues = {
 //   fullName: "",
@@ -46,8 +46,19 @@ import AddAccount from "./Addaccount";
 //   ]
 // };
 
+export interface IArrayValues {
+  addId: number;
+  payoutPartnerName: string;
+  payoutMethodId: number;
+  payoutPartnerId: number | null;
+  accountName: string;
+  accountNumber: string;
+  primary: boolean;
+}
+
 const AddBeneficiary = () => {
-  const [searchParams] = useSearchParams();
+  const [tableData, setTableData] = useState<IArrayValues[]>([]);
+  const [editId, setEditId] = useState<number | null>(null);
   const { control, watch } = useForm({});
 
   const {
@@ -61,23 +72,27 @@ const AddBeneficiary = () => {
   // const { data: Beneficiarydata } = useGetBeneficiaryDetail();
   // const { mutateAsync: mutateAddBeneficiary } = useAddBeneficiary();
   const { data: Payoutmethoddata } = useGetPayoutMethodById(
-    watch("country")?.value
+    watch("countryId")?.value
   );
-
   const countryOptions = formatSelectOptions<number>({
     data: countriesList?.data?.data,
     labelKey: "name",
     valueKey: "id",
     icon: {
       iconKey: "flagIcon",
-      iconPath: `${baseURL}/document-service/master/flag-icon?fieldId=`
+      iconPath: `${baseURL}/document-service/master/flag-icon?fieldId=`,
+      iconCode: "shortName"
     }
   });
-
   const payout_methodoptions = formatSelectOptions<number>({
-    data: Payoutmethoddata,
+    data: Payoutmethoddata?.filter(item => !item?.isCash),
     labelKey: "name",
-    valueKey: "id"
+    valueKey: "id",
+    icon: {
+      iconKey: "icon",
+      iconPath: `${baseURL}/document-service/payout/method/icon/master?fileId=`,
+      iconCode: "icon"
+    }
   });
 
   const RelationshipOptions = formatSelectOptions({
@@ -85,14 +100,6 @@ const AddBeneficiary = () => {
     labelKey: "name",
     valueKey: "id"
   });
-
-  // const addBeneficiaryy = async (data: typeof defaultValues) => {
-  //   try {
-  //     await mutateAddBeneficiary;
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
 
   return (
     <Flex direction={"column"}>
@@ -105,14 +112,14 @@ const AddBeneficiary = () => {
           <Stack gap={"16px"} p={"24px"}>
             <GridItem colSpan={2}>
               <DropzoneComponentControlled
-                name="flagIcon"
+                name="profileImage"
                 control={control}
                 options={{ maxSize: 4 }}
-                imagePreview={
-                  searchParams.get("countryId")
-                    ? `${baseURL}/document-service/master/flag-icon?fileId={flagIcon}`
-                    : ""
-                }
+                // imagePreview={
+                //   searchParams.get("countryId")
+                //     ? `${baseURL}/document-service/customer/profile-image?fileId=${profileImage}`
+                //     : ""
+                // }
               />
             </GridItem>
             <Heading fontSize={"14px "}>Beneficiary Details</Heading>
@@ -137,7 +144,8 @@ const AddBeneficiary = () => {
 
               <GridItem colSpan={1}>
                 <Select
-                  name="country"
+                  // noFloating
+                  name="countryId"
                   placeholder="Country"
                   control={control}
                   options={countryOptions}
@@ -155,7 +163,7 @@ const AddBeneficiary = () => {
 
               <GridItem>
                 <Select
-                  name="relationship"
+                  name="relationshipId"
                   placeholder="Relationship"
                   control={control}
                   options={RelationshipOptions}
@@ -167,7 +175,8 @@ const AddBeneficiary = () => {
             <SimpleGrid>
               <GridItem>
                 <Select
-                  name="bank"
+                  // noFloating
+                  name="bankId"
                   placeholder="Select Payout method"
                   control={control}
                   options={payout_methodoptions}
@@ -175,37 +184,61 @@ const AddBeneficiary = () => {
               </GridItem>
             </SimpleGrid>
             <Button
-              width={"178px"}
-              leftIcon={<AddIcon />}
+              variant="light"
+              isDisabled={!watch("bankId")}
+              leftIcon={<svgAssets.AddCircle />}
               onClick={onOpenAddAccountModal}
+              width={"max-content"}
             >
-              Add Bank Account
+              Add {watch("bankId")?.label ?? ""} Account
             </Button>
-            <Box
+            {/* <Box
               borderRadius={"16px"}
               bg={"#EDF2F7"}
               padding={"16px"}
               gap={"8px"}
               width={"404px"}
             >
-              <HStack>
-                <Text color={"#5A2F8D"} fontSize={"16px"} fontWeight={"400"}>
+              <Stack
+                flexDir={"column"}
+                alignItems={"center"}
+                gap={4}
+                padding={4}
+              >
+                <svgAssets.ClipText />
+                <Text textStyle={"normalStyle"}>
                   Account Details Will be shown here
                 </Text>
+              </Stack>
+            </Box> */}
+            <Box overflowY={"scroll"}>
+              <HStack gap={2}>
+                {tableData.map((item, index) => (
+                  <CardComponent
+                    primary={item.primary}
+                    key={index}
+                    payoutPartnerName={item.payoutPartnerName}
+                    accountName={item.accountName}
+                    accountNumber={item.accountNumber}
+                  />
+                ))}
               </HStack>
             </Box>
           </Stack>
-          <Flex
-            justifyContent={"flex-end"}
-            padding={"16px"}
-            width={"100%"}
-            gap={"8px"}
-          >
-            <Button type="submit">Save</Button>
-          </Flex>
+          <HStack justifyContent={"flex-end"} padding={"16px"}>
+            <Button width={"20%"} type="submit">
+              Save
+            </Button>
+          </HStack>
         </VStack>
       </Card>
       <AddAccount
+        data={tableData}
+        editDetailId={editId}
+        setEditDetailId={setEditId}
+        tableData={tableData}
+        setTableData={setTableData}
+        payoutMethodId={watch("bankId")?.value ? watch("bankId")?.value : null}
         isOpen={isOpenAddAccountModal}
         onClose={onCloseAddAccountModal}
       />

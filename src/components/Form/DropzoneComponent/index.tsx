@@ -279,7 +279,7 @@ export function DropzoneComponentControlled({
                     borderColor={
                       errorMessage ? colorScheme.danger_500 : "#D1D5DB"
                     }
-                    background={colorScheme.gray_50}
+                    // background={colorScheme.gray_50}
                     padding={6}
                     borderRadius={"3px"}
                     height={"100%"}

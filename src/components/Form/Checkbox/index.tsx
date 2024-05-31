@@ -48,7 +48,7 @@ const CheckBox = ({
                 onChange={onChange}
                 {...rest}
               >
-                <Text color={"#2D3748"} pb={1} fontSize={"14px"}>
+                <Text color={"#2D3748"} fontSize={"14px"}>
                   {label}
                 </Text>
               </ChakraCheckBox>
