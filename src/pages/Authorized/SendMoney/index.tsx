@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardBody,
   GridItem,
@@ -76,7 +77,7 @@ const SendMoney = () => {
               <Select
                 name="sendFrom"
                 options={countryOptions}
-                placeholder="Select Currency"
+                placeholder="Sending From"
                 control={control}
                 noFloating
               />
@@ -84,7 +85,7 @@ const SendMoney = () => {
               <Select
                 name="sendTo"
                 options={countryOptions}
-                placeholder="Select Currency"
+                placeholder="Receiving"
                 control={control}
                 noFloating
               />
@@ -116,6 +117,10 @@ const SendMoney = () => {
             />
           </GridItem>
         </SimpleGrid>
+        <HStack justifyContent={"space-between"}>
+          <Button>GoBack</Button>
+          <Button>Send Money</Button>
+        </HStack>
       </CardBody>
     </Card>
   );
