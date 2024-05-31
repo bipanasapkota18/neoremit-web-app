@@ -125,7 +125,7 @@ const LoginForm = () => {
             <CheckBox name="remember" label="Remember me" control={control} />
             <ChakraLink
               as={Link}
-              to={NAVIGATION_ROUTES.HOME}
+              to={NAVIGATION_ROUTES.FORGOT_PASSWORD}
               whiteSpace={"nowrap"}
               fontWeight={"500"}
               color="primary.500"

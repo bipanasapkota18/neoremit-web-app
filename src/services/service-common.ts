@@ -24,6 +24,12 @@ export interface Currency {
   symbol: string;
   isActive: boolean;
 }
+export interface IRelationshipList {
+  id?: number | null;
+  name: string;
+  code: string;
+  isActive: boolean;
+}
 
 const getCountryList = () => {
   return NeoHttpClient.get<NeoResponse<ICountriesList[]>>(
@@ -37,4 +43,16 @@ const useGetCountryList = () => {
   });
 };
 
-export { useGetCountryList };
+const getRelationshipList = () => {
+  return NeoHttpClient.get<NeoResponse<IRelationshipList[]>>(
+    api.common.getAllRelationship
+  );
+};
+const useGetRelationship = () => {
+  return useQuery({
+    queryKey: [api.common.getAllRelationship],
+    queryFn: getRelationshipList
+  });
+};
+
+export { useGetCountryList, useGetRelationship };

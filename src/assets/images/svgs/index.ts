@@ -13,6 +13,7 @@ import { ReactComponent as EmailIcon } from "@neoWeb/assets/images/svgs/email.sv
 import { ReactComponent as EyeSlashIcon } from "@neoWeb/assets/images/svgs/eye-slash.svg";
 import { ReactComponent as EyeIcon } from "@neoWeb/assets/images/svgs/eye.svg";
 import { ReactComponent as ImagePlaceHolderDropzone } from "@neoWeb/assets/images/svgs/image_placeholder.svg";
+import { ReactComponent as ImagePlaceHolderDropZonee } from "@neoWeb/assets/images/svgs/image_placeholderrrr.svg";
 import { ReactComponent as Line } from "@neoWeb/assets/images/svgs/line.svg";
 import { ReactComponent as ListItemArrow } from "@neoWeb/assets/images/svgs/list-item-arrow.svg";
 import { ReactComponent as Logout } from "@neoWeb/assets/images/svgs/logout.svg";
@@ -28,6 +29,7 @@ export const svgAssets = {
   Line,
   EmailIcon,
   ProfileIcon,
+  ImagePlaceHolderDropZonee,
   CallIcon,
   SecurityIcon,
   BackIcon,

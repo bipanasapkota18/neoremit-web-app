@@ -18,7 +18,18 @@ export const api = {
   },
 
   common: {
-    getAllCountryList: `${service}/country/list/app`
+    getAllCountryList: `${service}/country/list/app`,
+    getAllRelationship: `${service}/relationship/list/app`
+  },
+  BeneficiaryDetail: {
+    getAll: `${service}/beneficiary/detail`,
+    create: `${service}/beneficiary/detail`
+  },
+  payout_method: {
+    get: `${service}/payout-method/list/app/{id}`
+  },
+  payout_partner: {
+    update: `${service}/payout_partner/{id}`
   },
   init: `${service}/users/init`
 };
