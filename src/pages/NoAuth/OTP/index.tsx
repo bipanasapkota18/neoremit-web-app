@@ -16,11 +16,11 @@ const defaultValues = {
 };
 
 export interface AuthPageProps {
-  type?: string;
+  type: "FORGOT_PASSWORD" | "USER_REGISTRATION";
   setScreen: (value: string) => void;
 }
 
-const OTP = ({ setScreen }: AuthPageProps) => {
+const OTP = ({ setScreen, type }: AuthPageProps) => {
   const { email } = useStore();
   const { minutes, formattedSeconds, time } = useTimer(0.5);
 
@@ -42,7 +42,7 @@ const OTP = ({ setScreen }: AuthPageProps) => {
       const response = await emailVerification({
         otpCode: data?.otpCode,
         email: email,
-        otpFor: "USER_REGISTRATION"
+        otpFor: type
       });
       if (response?.data?.responseStatus == "SUCCESS") {
         setScreen("passwordForm");
@@ -56,7 +56,7 @@ const OTP = ({ setScreen }: AuthPageProps) => {
     try {
       await mutateResendOtp({
         email: email,
-        otpFor: "USER_REGISTRATION"
+        otpFor: type
       });
     } catch (error) {
       console.error("Resend OTP failed", error);
