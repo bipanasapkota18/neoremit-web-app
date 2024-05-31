@@ -15,7 +15,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { AuthPageProps } from "../../Register/RegisterForm";
 import PasswordStrength from "./passwordStrength";
-
 const defaultValues = {
   password: "",
   confirm_password: ""
@@ -43,6 +42,7 @@ const SetPassword = ({ setScreen }: AuthPageProps) => {
       .required("Please enter a password")
       .oneOf([yup.ref("password")], "Passwords don't match")
   });
+
   const { control, watch, handleSubmit } = useForm({
     defaultValues,
     resolver: yupResolver(passwordSchema)
@@ -51,7 +51,7 @@ const SetPassword = ({ setScreen }: AuthPageProps) => {
   const [flag, setFlag] = useBoolean();
   const [confirmFlag, setConfirmFlag] = useBoolean();
 
-  const handlePasswordChange = async (data: any) => {
+  const handlePasswordChange = async (data: typeof defaultValues) => {
     try {
       const passwordSetResponse = await mutateAsync({
         email: email,
