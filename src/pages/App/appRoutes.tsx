@@ -7,6 +7,9 @@ const Dashboard = lazy(() => import("@neoWeb/pages/Authorized/Dashboard"));
 const Account = lazy(() => import("@neoWeb/pages/Authorized/Account"));
 const Services = lazy(() => import("@neoWeb/pages/Authorized/Services"));
 const SendMoney = lazy(() => import("@neoWeb/pages/Authorized/SendMoney"));
+const Transaction = lazy(
+  () => import("@neoWeb/pages/Authorized/Transaction History")
+);
 export const appRoutes = [
   {
     path: "/",
@@ -32,6 +35,10 @@ export const appRoutes = [
       {
         path: NAVIGATION_ROUTES.BENEFICIARY,
         element: <Beneficiary />
+      },
+      {
+        path: NAVIGATION_ROUTES.TRANSACTION_HISTORY,
+        element: <Transaction />
       },
       {
         path: "*",
