@@ -12,27 +12,30 @@ import CheckBox from "@neoWeb/components/Form/Checkbox";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import { baseURL } from "@neoWeb/services/service-axios";
+import { BeneficiaryCheckoutDetailRequest } from "@neoWeb/services/service-beneficiary";
 import { usegetPayoutPartnerById } from "@neoWeb/services/service-payout-partner";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { IArrayValues } from "./AddBeneficiary";
 
 interface AddAccountProps {
-  tableData: IArrayValues[];
-  setTableData: Dispatch<SetStateAction<IArrayValues[]>>;
+  tableData: BeneficiaryCheckoutDetailRequest[];
+  setTableData: Dispatch<SetStateAction<BeneficiaryCheckoutDetailRequest[]>>;
   editDetailId: number | null;
-  data: any;
   setEditDetailId: Dispatch<SetStateAction<number | null>>;
   isOpen: boolean;
   onClose: () => void;
-  payoutMethodId: number;
+  payoutMethodId: {
+    value?: number;
+    id: number;
+    name: string;
+  };
 }
 
 const defaultValues = {
   id: null as never as number,
   // payoutMethodId: null as never as number,
-  payoutPartnerId: null as ISelectOptions<number> | null,
+  payoutPartner: null as ISelectOptions<number> | null,
   accountName: "",
   accountNumber: "",
   primary: false
@@ -42,15 +45,39 @@ const AddAccount = ({
   onClose,
   payoutMethodId,
   // tableData,
-  setTableData
-  // data,
-  // setEditDetailId,
-  // editDetailId
+  setTableData,
+  tableData,
+  setEditDetailId,
+  editDetailId
 }: AddAccountProps) => {
-  const { control, handleSubmit } = useForm({
+  const selectedAccountDetail = tableData?.find(
+    (item: any) => item.id === editDetailId || item.addId === editDetailId
+  );
+
+  const { control, handleSubmit, reset } = useForm({
     defaultValues
   });
-  const { data: payoutPartnerData } = usegetPayoutPartnerById(payoutMethodId);
+
+  useEffect(() => {
+    if (editDetailId) {
+      reset({
+        payoutPartner: {
+          label:
+            selectedAccountDetail?.payoutPartner?.name ??
+            selectedAccountDetail?.payoutPartner?.label,
+          value: selectedAccountDetail?.payoutPartner?.id
+        },
+        accountName: selectedAccountDetail?.accountName,
+        accountNumber: selectedAccountDetail?.accountNumber,
+        primary: selectedAccountDetail?.isPrimary
+      });
+    }
+  }, [editDetailId, tableData, reset]);
+
+  const { data: payoutPartnerData } = usegetPayoutPartnerById(
+    payoutMethodId?.value ?? null
+  );
+
   const payout_methodoptions = formatSelectOptions<number>({
     data: payoutPartnerData,
     labelKey: "name",
@@ -68,36 +95,46 @@ const AddAccount = ({
         ...data,
         accountNumber: data?.accountNumber.trim(),
         accountName: data?.accountName.trim(),
-        payoutPartnerId: data?.payoutPartnerId?.value,
-        payoutMethodId: payoutMethodId
+        payoutPartner: data?.payoutPartner as any,
+        payoutMethod: payoutMethodId,
+        isPrimary: data?.primary
       };
       setTableData(oldValues => [
         ...oldValues,
         {
-          addId: oldValues.length + 1,
           ...preparedData,
-          payoutPartnerName: data?.payoutPartnerId?.label ?? "",
-          payoutPartnerId: preparedData?.payoutPartnerId ?? null
+          addId: oldValues.length + 1
         }
       ]);
-
-      console.log(preparedData);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-    // onClose();
+    handleModalClose();
   };
 
+  const handleDelete = () => {
+    const filteredData = tableData.filter(
+      item => item.id !== editDetailId || item.addId !== editDetailId
+    );
+    setTableData(filteredData);
+    handleModalClose();
+  };
+
+  const handleModalClose = () => {
+    reset();
+    setEditDetailId(null);
+    onClose();
+  };
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleModalClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Bank Details</ModalHeader>
-        <ModalCloseButton />
+        <ModalCloseButton mt={2} mr={2} />
         <form onSubmit={handleSubmit(onAddAccount)}>
           <ModalBody display={"flex"} gap={6} flexDirection={"column"}>
             <Select
-              name="payoutPartnerId"
+              name="payoutPartner"
               placeholder="Select Payout Partner"
               control={control}
               options={payout_methodoptions}
@@ -121,9 +158,22 @@ const AddAccount = ({
                 label="Make primary account?"
               />
             </HStack>
-            <Button type="submit" mt={4} width={"100%"}>
-              Add Account
-            </Button>
+            <HStack justifyContent={"space-between"}>
+              {editDetailId && (
+                <Button
+                  variant={"light"}
+                  type="button"
+                  onClick={handleDelete}
+                  mt={4}
+                  width={"100%"}
+                >
+                  Delete
+                </Button>
+              )}
+              <Button type="submit" mt={4} width={"100%"}>
+                Add Account
+              </Button>
+            </HStack>
           </ModalBody>
         </form>
       </ModalContent>
