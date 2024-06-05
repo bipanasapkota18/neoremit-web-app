@@ -1,6 +1,7 @@
 export const NAVIGATION_ROUTES = {
   LOGIN: "/login",
   REGISTER: "/register",
+  FORGOT_PASSWORD: "/forgot-password",
   ADDITIONALINFORMATION: "/additionalinformation",
   HOME: "/home",
   ACCOUNT: "/account",

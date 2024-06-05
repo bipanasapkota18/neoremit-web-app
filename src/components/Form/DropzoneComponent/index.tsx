@@ -123,7 +123,8 @@ export function DropzoneComponentControlled({
     // Default COntainer and information for image upload (No items uploaded)
     return (
       <>
-        <svgAssets.ImagePlaceHolderDropzone />
+        {/* <svgAssets.ImagePlaceHolderDropzone /> */}
+        <svgAssets.ImagePlaceHolderDropZonee />
         <Heading
           display="flex"
           flexDirection={"column"}
@@ -131,8 +132,8 @@ export function DropzoneComponentControlled({
           gap={"8px"}
           alignItems={"center"}
         >
-          <Text fontSize={"20px"}> Select Image</Text>
-          <Text
+          {/* <Text fontSize={"20px"}> Select Image</Text> */}
+          {/* <Text
             fontSize={"14px"}
             color={colorScheme.search_icon}
             display={"inline-block"}
@@ -143,7 +144,7 @@ export function DropzoneComponentControlled({
               browse{" "}
             </Text>
             through your machine
-          </Text>
+          </Text> */}
         </Heading>
         <VStack spacing={1}>
           {accept && (
@@ -278,7 +279,7 @@ export function DropzoneComponentControlled({
                     borderColor={
                       errorMessage ? colorScheme.danger_500 : "#D1D5DB"
                     }
-                    background={colorScheme.gray_50}
+                    // background={colorScheme.gray_50}
                     padding={6}
                     borderRadius={"3px"}
                     height={"100%"}

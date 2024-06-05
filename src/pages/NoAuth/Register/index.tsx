@@ -12,7 +12,7 @@ const Register = () => {
   const SwitchComponent = () => {
     switch (screen) {
       case "otp":
-        return <OTP setScreen={setScreen} />;
+        return <OTP setScreen={setScreen} type="USER_REGISTRATION" />;
       case "passwordForm":
         return <SetPassword setScreen={setScreen} />;
       case "setmpin":

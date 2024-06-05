@@ -13,6 +13,7 @@ export interface IFormatSelectOptionParams {
   icon?: {
     iconKey: string;
     iconPath?: string;
+    iconCode: string;
   };
 }
 
@@ -44,7 +45,16 @@ export function formatSelectOptions<T extends string | number | object>({
                   minW={"30px"}
                   width={"30px"}
                   src={`${icon?.iconPath}${item?.[icon.iconKey]}`}
-                  fallback={<svgAssets.SecurityIcon />}
+                  fallback={
+                    icon.iconKey === "flagIcon" ? (
+                      <Image
+                        src={`http://purecatamphetamine.github.io/country-flag-icons/3x2/${item?.[icon.iconCode]?.toUpperCase()}.svg`}
+                        height={"20px"}
+                      />
+                    ) : (
+                      <svgAssets.BankIcon />
+                    )
+                  }
                 />
               )
             }

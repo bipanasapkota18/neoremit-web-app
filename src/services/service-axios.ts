@@ -19,7 +19,6 @@ const NeoHttpClient = axios.create({
  */
 NeoHttpClient.interceptors.request.use(async config => {
   const token = TokenService.getToken()?.accessToken;
-
   if (config && config.headers) {
     if (config.headers["customAuth"] && config.headers["customAuth"] !== "") {
       config.headers["Authorization"] = config.headers["customAuth"];
