@@ -221,7 +221,14 @@ const useGetBeneficiaryDetails = (id: number | null) => {
   });
 };
 
-const saveBeneficiaryDetails = ({ id, data }: { id: number; data: any }) => {
+const saveBeneficiaryDetails = ({
+  id,
+  data
+}: {
+  id: number | null;
+  data: any;
+}) => {
+  console.log(data);
   return NeoHttpClient.post<NeoResponse>(
     api.beneficiary_detail.createBeneficiaryDetail.replace(
       "{beneficiaryDetailId}",
@@ -247,7 +254,13 @@ const useSaveBeneficiaryDetails = () => {
   });
 };
 
-const updateBeneficiaryDetails = ({ id, data }: { id: number; data: any }) => {
+const updateBeneficiaryDetails = ({
+  id,
+  data
+}: {
+  id: number | null;
+  data: any;
+}) => {
   return NeoHttpClient.post<NeoResponse>(
     api.beneficiary_detail.updateBeneficiaryDetail.replace(
       "{beneficiaryDetailId}",
@@ -263,7 +276,7 @@ const useUpdateBeneficiaryDetails = () => {
 
     onSuccess: success => {
       queryClient.invalidateQueries({
-        queryKey: [api.beneficiary_detail.getBeneficiaryDetail]
+        queryKey: [api.beneficiary.getBeneficiaryById]
       });
       toastSuccess(success?.data?.message);
     },
@@ -288,7 +301,7 @@ const useDeleteBeneficiaryDetails = () => {
 
     onSuccess: success => {
       queryClient.invalidateQueries({
-        queryKey: [api.beneficiary_detail.getBeneficiaryDetail]
+        queryKey: [api.beneficiary.getBeneficiaryById]
       });
       toastSuccess(success?.data?.message);
     },

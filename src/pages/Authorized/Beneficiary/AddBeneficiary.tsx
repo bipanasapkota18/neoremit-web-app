@@ -79,7 +79,6 @@ const AddBeneficiary = ({
 
   useEffect(() => {
     if (editBeneficiaryId) {
-      setTableData(beneficiaryData?.beneficiaryCheckoutDetail ?? []);
       reset({
         fullName: beneficiaryData?.fullName,
         mobileNumber: beneficiaryData?.mobileNumber,
@@ -164,13 +163,16 @@ const AddBeneficiary = ({
       countryId: data.countryId?.value,
       relationshipId: data.relationshipId?.value,
       profileImage: data?.profileImage ? data.profileImage[0] : null,
-      beneficiaryCheckoutDetail: finalTableData
+      beneficiaryCheckoutDetail:
+        finalTableData.length > 0
+          ? finalTableData
+          : beneficiaryData?.beneficiaryCheckoutDetail
     };
     try {
       if (editBeneficiaryId) {
         await mutateUpdateBeneficiary({
           id: editBeneficiaryId,
-          data: { ...preparedData }
+          data: { ...preparedData, beneficiaryDetailId: editBeneficiaryId }
         });
       } else {
         await mutateAddBeneficiary(preparedData);
@@ -297,20 +299,20 @@ const AddBeneficiary = ({
                     <Text>Account Details Will be shown here</Text>
                   </Stack>
                 )}
-              {tableData?.length && (
+              {tableData?.length > 0 && (
                 <CardComponent
                   setEditDetailId={setEditId}
                   data={tableData}
                   onOpen={onOpenAddAccountModal}
                 />
               )}
-              {/* {beneficiaryData?.beneficiaryCheckoutDetail?.length !== 0 && (
+              {beneficiaryData?.beneficiaryCheckoutDetail.length !== 0 && (
                 <CardComponent
+                  setEditDetailId={setEditId}
                   data={beneficiaryData?.beneficiaryCheckoutDetail ?? []}
-                  isOpen={isOpenAddAccountModal}
-                  onClose={onCloseAddAccountModal}
+                  onOpen={onOpenAddAccountModal}
                 />
-              )} */}
+              )}
             </HStack>
           </Stack>
           <HStack justifyContent={"space-between"} padding={"16px"}>
@@ -326,9 +328,14 @@ const AddBeneficiary = ({
         </VStack>
       </Card>
       <AddAccount
+        beneficiaryId={editBeneficiaryId}
         editDetailId={editId}
         setEditDetailId={setEditId}
-        tableData={tableData}
+        data={
+          tableData?.length > 0
+            ? tableData
+            : beneficiaryData?.beneficiaryCheckoutDetail ?? []
+        }
         setTableData={setTableData}
         payoutMethodId={watch("bankId")?.value ? watch("bankId") : null}
         isOpen={isOpenAddAccountModal}

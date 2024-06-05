@@ -17,13 +17,10 @@ const CardComponent = ({
   // payoutPartnerName,
   // accountName,
   // accountNumber,
-  // setEditDetailId,
+  setEditDetailId,
   onOpen,
   data
 }: BeneficiaryCardProps) => {
-  // const [, setEditId] = useState<number | null>(null);
-  // const { data: beneficiaryDetails } = useGetBeneficiaryDetailsById(editId);
-
   return (
     <HStack gap={4} wrap={"wrap"}>
       {data?.map(item => {
@@ -48,7 +45,7 @@ const CardComponent = ({
                 )}
                 <Icon
                   onClick={() => {
-                    // setEditDetailId(item?.id ?? item?.addId);
+                    setEditDetailId(item?.id ?? item?.addId ?? null!);
                     onOpen();
                   }}
                   as={svgAssets.MoreInfo}

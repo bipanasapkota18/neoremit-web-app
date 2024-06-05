@@ -1,5 +1,6 @@
 import { ReactComponent as DashboardBackground } from "@neoWeb/assets/images/svgs/Abstract.svg";
 import { ReactComponent as BackIcon } from "@neoWeb/assets/images/svgs/BackIcon.svg";
+import { ReactComponent as Frame } from "@neoWeb/assets/images/svgs/Frame.svg";
 import { ReactComponent as LinearIcon } from "@neoWeb/assets/images/svgs/LinearIcon.svg";
 import { ReactComponent as NoTransaction } from "@neoWeb/assets/images/svgs/No-transactions.svg";
 import { ReactComponent as NoBeneficiary } from "@neoWeb/assets/images/svgs/NoBeneficiary.svg";
@@ -70,5 +71,6 @@ export const svgAssets = {
   UserEdit,
   NoBeneficiary,
   Phone,
-  Location
+  Location,
+  Frame
 };

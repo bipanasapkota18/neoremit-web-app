@@ -12,14 +12,19 @@ import CheckBox from "@neoWeb/components/Form/Checkbox";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import { baseURL } from "@neoWeb/services/service-axios";
-import { BeneficiaryCheckoutDetailRequest } from "@neoWeb/services/service-beneficiary";
+import {
+  BeneficiaryCheckoutDetailRequest,
+  useDeleteBeneficiaryDetails,
+  useSaveBeneficiaryDetails,
+  useUpdateBeneficiaryDetails
+} from "@neoWeb/services/service-beneficiary";
 import { usegetPayoutPartnerById } from "@neoWeb/services/service-payout-partner";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 interface AddAccountProps {
-  tableData: BeneficiaryCheckoutDetailRequest[];
+  data: BeneficiaryCheckoutDetailRequest[];
   setTableData: Dispatch<SetStateAction<BeneficiaryCheckoutDetailRequest[]>>;
   editDetailId: number | null;
   setEditDetailId: Dispatch<SetStateAction<number | null>>;
@@ -30,6 +35,7 @@ interface AddAccountProps {
     id: number;
     name: string;
   };
+  beneficiaryId: number | null;
 }
 
 const defaultValues = {
@@ -38,7 +44,7 @@ const defaultValues = {
   payoutPartner: null as ISelectOptions<number> | null,
   accountName: "",
   accountNumber: "",
-  primary: false
+  isPrimary: false
 };
 const AddAccount = ({
   isOpen,
@@ -46,18 +52,21 @@ const AddAccount = ({
   payoutMethodId,
   // tableData,
   setTableData,
-  tableData,
+  data: editData,
   setEditDetailId,
-  editDetailId
+  editDetailId,
+  beneficiaryId
 }: AddAccountProps) => {
-  const selectedAccountDetail = tableData?.find(
+  const selectedAccountDetail = editData?.find(
     (item: any) => item.id === editDetailId || item.addId === editDetailId
   );
-
+  const { mutateAsync: addBeneficiaryDetails } = useSaveBeneficiaryDetails();
+  const { mutateAsync: updateBeneficiaryDetails } =
+    useUpdateBeneficiaryDetails();
   const { control, handleSubmit, reset } = useForm({
     defaultValues
   });
-
+  const { mutateAsync } = useDeleteBeneficiaryDetails();
   useEffect(() => {
     if (editDetailId) {
       reset({
@@ -69,10 +78,10 @@ const AddAccount = ({
         },
         accountName: selectedAccountDetail?.accountName,
         accountNumber: selectedAccountDetail?.accountNumber,
-        primary: selectedAccountDetail?.isPrimary
+        isPrimary: selectedAccountDetail?.isPrimary
       });
     }
-  }, [editDetailId, tableData, reset]);
+  }, [editDetailId, editData, reset]);
 
   const { data: payoutPartnerData } = usegetPayoutPartnerById(
     payoutMethodId?.value ?? null
@@ -97,31 +106,79 @@ const AddAccount = ({
         accountName: data?.accountName.trim(),
         payoutPartner: data?.payoutPartner as any,
         payoutMethod: payoutMethodId,
-        isPrimary: data?.primary
+        isPrimary: data?.isPrimary
       };
-      setTableData(oldValues => [
-        ...oldValues,
-        {
-          ...preparedData,
-          addId: oldValues.length + 1
+      if (editDetailId) {
+        if (selectedAccountDetail?.addId) {
+          setTableData(oldValues =>
+            oldValues.map(item =>
+              item.addId === editDetailId
+                ? {
+                    ...item,
+                    accountNumber: data?.accountNumber.trim(),
+                    accountName: data?.accountName.trim(),
+                    payoutPartner: data?.payoutPartner as any,
+                    payoutMethod: payoutMethodId,
+                    isPrimary: data?.isPrimary
+                  }
+                : item
+            )
+          );
+        } else {
+          await updateBeneficiaryDetails({
+            id: beneficiaryId,
+            data: {
+              accountNumber: data?.accountNumber.trim(),
+              accountName: data?.accountName.trim(),
+              isPrimary: data?.isPrimary,
+              payoutMethodId: payoutMethodId?.value,
+              payoutPartnerId: data?.payoutPartner?.value,
+              id: editDetailId
+            }
+          });
         }
-      ]);
+      } else {
+        if (editData) {
+          await addBeneficiaryDetails({
+            id: beneficiaryId,
+            data: {
+              accountNumber: data?.accountNumber.trim(),
+              accountName: data?.accountName.trim(),
+              isPrimary: data?.isPrimary,
+              payoutMethodId: payoutMethodId?.value,
+              payoutPartnerId: data?.payoutPartner?.value
+            }
+          });
+        } else {
+          setTableData(oldValues => [
+            ...oldValues,
+            {
+              ...preparedData,
+              addId: oldValues.length + 1
+            }
+          ]);
+        }
+      }
     } catch (error) {
       console.error(error);
     }
     handleModalClose();
   };
 
-  const handleDelete = () => {
-    const filteredData = tableData.filter(
-      item => item.id !== editDetailId || item.addId !== editDetailId
-    );
-    setTableData(filteredData);
+  const handleDelete = async () => {
+    if (editDetailId) {
+      await mutateAsync(editDetailId);
+    } else {
+      const filteredData = editData.filter(
+        item => item.id !== editDetailId || item.addId !== editDetailId
+      );
+      setTableData(filteredData);
+    }
     handleModalClose();
   };
 
   const handleModalClose = () => {
-    reset();
+    reset(defaultValues);
     setEditDetailId(null);
     onClose();
   };
@@ -153,7 +210,7 @@ const AddAccount = ({
             />
             <HStack flexDirection={"row"} alignItems={"flex-start"}>
               <CheckBox
-                name="primary"
+                name="isPrimary"
                 control={control}
                 label="Make primary account?"
               />
@@ -171,7 +228,7 @@ const AddAccount = ({
                 </Button>
               )}
               <Button type="submit" mt={4} width={"100%"}>
-                Add Account
+                {editDetailId ? "Edit" : "Add"} Account
               </Button>
             </HStack>
           </ModalBody>

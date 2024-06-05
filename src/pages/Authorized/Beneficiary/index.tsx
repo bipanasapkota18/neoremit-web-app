@@ -59,7 +59,11 @@ const Beneficiary = () => {
             ) : (
               <VStack alignItems={"flex-start"} width={"100%"} gap={4}>
                 <Heading fontSize={"24px"}>Beneficiary</Heading>
-                <SimpleGrid w={"100%"} columns={{ base: 1, sm: 2 }} gap={4}>
+                <SimpleGrid
+                  w={"100%"}
+                  columns={{ base: 1, sm: 1, md: 1, lg: 2 }}
+                  gap={4}
+                >
                   {benefeciaryData?.map((item, index) => (
                     <BeneficiaryCard
                       setBeneficiaryEditId={setEditId}
@@ -77,7 +81,7 @@ const Beneficiary = () => {
             )}
             <Button
               onClick={setFlag.on}
-              width={benefeciaryData?.length === 0 ? "45%" : "25%"}
+              minW={benefeciaryData?.length === 0 ? "45%" : "max-content"}
               py={"25px"}
             >
               Add Beneficiary

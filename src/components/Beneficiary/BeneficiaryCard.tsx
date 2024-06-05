@@ -4,13 +4,16 @@ import {
   Icon,
   IconButton,
   Stack,
-  Text
+  Text,
+  useDisclosure
 } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { baseURL } from "@neoWeb/services/service-axios";
+import { useDeleteBeneficiary } from "@neoWeb/services/service-beneficiary";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { SetStateAction } from "jotai";
-import { Dispatch } from "react";
+import { Dispatch, useState } from "react";
+import ConfirmationModal from "../ConfirmationModal";
 
 interface IBeneficiaryProps {
   id: number;
@@ -34,6 +37,20 @@ const BeneficiaryCard = ({
   mobileNumber,
   profileImage
 }: IBeneficiaryProps) => {
+  const [changeId, setChangeId] = useState<number | null>(null);
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal
+  } = useDisclosure();
+  const { mutateAsync: deleteBeneficiary, isPending: isDeleteLoading } =
+    useDeleteBeneficiary();
+
+  const handleDelete = async () => {
+    await deleteBeneficiary(changeId!);
+    setChangeId(null);
+    onCloseDeleteModal();
+  };
   return (
     <HStack
       justifyContent={"space-between"}
@@ -91,6 +108,10 @@ const BeneficiaryCard = ({
           icon={<svgAssets.UserEdit />}
         />
         <IconButton
+          onClick={() => {
+            setChangeId(id);
+            onOpenDeleteModal();
+          }}
           variant={"light"}
           border={"none"}
           aria-label="Delete"
@@ -99,6 +120,16 @@ const BeneficiaryCard = ({
           icon={<svgAssets.Delete />}
         />
       </HStack>
+      <ConfirmationModal
+        variant={"delete"}
+        buttonText={"Delete"}
+        title={"Are You Sure?"}
+        isLoading={isDeleteLoading}
+        onApprove={handleDelete}
+        message="Deleting will permanently remove this data from the system. This cannot be Undone."
+        isOpen={isOpenDeleteModal}
+        onClose={onCloseDeleteModal}
+      />
     </HStack>
   );
 };
