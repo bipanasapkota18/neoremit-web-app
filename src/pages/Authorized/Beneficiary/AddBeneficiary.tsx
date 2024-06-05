@@ -34,7 +34,7 @@ import { formatSelectOptions } from "@neoWeb/utility/format";
 import { SetStateAction } from "jotai";
 import { Dispatch, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import AddAccount from "./Addaccount";
+import AddAccount from "./AddAccount";
 // const defaultValues = {
 //   fullName: "",
 //   mobileNumber: "",
