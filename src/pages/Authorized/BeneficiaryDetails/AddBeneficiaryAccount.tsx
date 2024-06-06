@@ -14,20 +14,21 @@ import TextInput from "@neoWeb/components/Form/TextInput";
 import { baseURL } from "@neoWeb/services/service-axios";
 import {
   BeneficiaryCheckoutDetailRequest,
-  useDeleteBeneficiaryDetails,
-  useSaveBeneficiaryDetails,
-  useUpdateBeneficiaryDetails
+  useDeleteBeneficiaryDetails
 } from "@neoWeb/services/service-beneficiary";
 import { usegetPayoutPartnerById } from "@neoWeb/services/service-payout-partner";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { IBeneficiaryAccountEditId } from "./AddBeneficiary";
 
-interface AddAccountProps {
-  data: BeneficiaryCheckoutDetailRequest[];
+interface AddBeneficiaryAccountProps {
+  tableData: BeneficiaryCheckoutDetailRequest[];
+  accountData: BeneficiaryCheckoutDetailRequest[];
   setTableData: Dispatch<SetStateAction<BeneficiaryCheckoutDetailRequest[]>>;
-  editDetailId: number | null;
-  setEditDetailId: Dispatch<SetStateAction<number | null>>;
+  setAccountData: Dispatch<SetStateAction<BeneficiaryCheckoutDetailRequest[]>>;
+  editDetailId: IBeneficiaryAccountEditId;
+  setEditDetailId: Dispatch<SetStateAction<IBeneficiaryAccountEditId>>;
   isOpen: boolean;
   onClose: () => void;
   payoutMethodId: {
@@ -35,40 +36,37 @@ interface AddAccountProps {
     id: number;
     name: string;
   };
-  beneficiaryId: number | null;
 }
 
 const defaultValues = {
   id: null as never as number,
-  // payoutMethodId: null as never as number,
   payoutPartner: null as ISelectOptions<number> | null,
   accountName: "",
   accountNumber: "",
   isPrimary: false
 };
-const AddAccount = ({
+const AddBeneficiaryAccount = ({
+  accountData,
   isOpen,
   onClose,
   payoutMethodId,
-  // tableData,
   setTableData,
-  data: editData,
+  tableData,
   setEditDetailId,
   editDetailId,
-  beneficiaryId
-}: AddAccountProps) => {
-  const selectedAccountDetail = editData?.find(
-    (item: any) => item.id === editDetailId || item.addId === editDetailId
+  setAccountData
+}: AddBeneficiaryAccountProps) => {
+  const selectedAccountDetail = tableData?.find(
+    (item: any) =>
+      item.id === editDetailId?.id || item.addId === editDetailId?.id
   );
-  const { mutateAsync: addBeneficiaryDetails } = useSaveBeneficiaryDetails();
-  const { mutateAsync: updateBeneficiaryDetails } =
-    useUpdateBeneficiaryDetails();
+  const { mutateAsync: deleteBeneficiaryDetails } =
+    useDeleteBeneficiaryDetails();
   const { control, handleSubmit, reset } = useForm({
     defaultValues
   });
-  const { mutateAsync } = useDeleteBeneficiaryDetails();
   useEffect(() => {
-    if (editDetailId) {
+    if (editDetailId?.id) {
       reset({
         payoutPartner: {
           label:
@@ -81,7 +79,7 @@ const AddAccount = ({
         isPrimary: selectedAccountDetail?.isPrimary
       });
     }
-  }, [editDetailId, editData, reset]);
+  }, [editDetailId?.id, tableData, reset]);
 
   const { data: payoutPartnerData } = usegetPayoutPartnerById(
     payoutMethodId?.value ?? null
@@ -102,84 +100,95 @@ const AddAccount = ({
     try {
       const preparedData = {
         ...data,
+        id: editDetailId?.type == "backend" ? editDetailId?.id : null,
         accountNumber: data?.accountNumber.trim(),
         accountName: data?.accountName.trim(),
         payoutPartner: data?.payoutPartner as any,
         payoutMethod: payoutMethodId,
         isPrimary: data?.isPrimary
       };
-      if (editDetailId) {
-        if (selectedAccountDetail?.addId) {
-          setTableData(oldValues =>
-            oldValues.map(item =>
-              item.addId === editDetailId
-                ? {
-                    ...item,
-                    accountNumber: data?.accountNumber.trim(),
-                    accountName: data?.accountName.trim(),
-                    payoutPartner: data?.payoutPartner as any,
-                    payoutMethod: payoutMethodId,
-                    isPrimary: data?.isPrimary
+      if (editDetailId?.id) {
+        if (editDetailId?.type == "local") {
+          // For initial data adding in local state where we check if the item is already added using the local addId
+          setAccountData((oldValues: BeneficiaryCheckoutDetailRequest[]) => {
+            return oldValues?.find(item => item?.addId == editDetailId?.id)
+              ? oldValues?.map(item => {
+                  if (item?.addId == editDetailId?.id) {
+                    return { ...item, ...preparedData };
+                  } else {
+                    return item;
                   }
-                : item
-            )
-          );
-        } else {
-          await updateBeneficiaryDetails({
-            id: beneficiaryId,
-            data: {
-              accountNumber: data?.accountNumber.trim(),
-              accountName: data?.accountName.trim(),
-              isPrimary: data?.isPrimary,
-              payoutMethodId: payoutMethodId?.value,
-              payoutPartnerId: data?.payoutPartner?.value,
-              id: editDetailId
-            }
+                })
+              : [...oldValues, preparedData];
+          });
+          setTableData((oldValues: BeneficiaryCheckoutDetailRequest[]) => {
+            return oldValues?.find(item => item?.addId == editDetailId?.id)
+              ? oldValues?.map(item => {
+                  if (item?.addId == editDetailId?.id) {
+                    return { ...item, ...preparedData };
+                  } else {
+                    return item;
+                  }
+                })
+              : [...oldValues, preparedData];
+          });
+        } else if (editDetailId?.type == "backend") {
+          // For editing the existing data from backend
+          setAccountData(oldValues => {
+            return oldValues?.find(item => item?.id == editDetailId?.id)
+              ? oldValues?.map(item => {
+                  if (item?.id == editDetailId?.id) {
+                    return { ...item, ...preparedData };
+                  } else {
+                    return item;
+                  }
+                })
+              : [...oldValues, preparedData];
+          });
+          setTableData(oldValues => {
+            return oldValues?.find(item => item?.id == editDetailId?.id)
+              ? oldValues?.map(item => {
+                  if (item?.id == editDetailId?.id) {
+                    return { ...item, ...preparedData };
+                  } else {
+                    return item;
+                  }
+                })
+              : [...oldValues, preparedData];
           });
         }
       } else {
-        if (editData) {
-          await addBeneficiaryDetails({
-            id: beneficiaryId,
-            data: {
-              accountNumber: data?.accountNumber.trim(),
-              accountName: data?.accountName.trim(),
-              isPrimary: data?.isPrimary,
-              payoutMethodId: payoutMethodId?.value,
-              payoutPartnerId: data?.payoutPartner?.value
-            }
-          });
-        } else {
-          setTableData(oldValues => [
-            ...oldValues,
-            {
-              ...preparedData,
-              addId: oldValues.length + 1
-            }
-          ]);
-        }
+        setAccountData(oldValues => [
+          ...oldValues,
+          { addId: tableData?.length + 1, ...preparedData }
+        ]);
+        setTableData(oldValues => [
+          ...oldValues,
+          { addId: tableData?.length + 1, ...preparedData }
+        ]);
       }
     } catch (error) {
       console.error(error);
     }
     handleModalClose();
   };
-
   const handleDelete = async () => {
-    if (editDetailId) {
-      await mutateAsync(editDetailId);
-    } else {
-      const filteredData = editData.filter(
-        item => item.id !== editDetailId || item.addId !== editDetailId
+    if (editDetailId?.type == "local") {
+      setAccountData(
+        accountData.filter(item => item.addId !== editDetailId?.id)
       );
-      setTableData(filteredData);
+      setTableData(tableData.filter(item => item.addId !== editDetailId?.id));
+    } else if (editDetailId?.type == "backend") {
+      await deleteBeneficiaryDetails(editDetailId?.id);
     }
+
     handleModalClose();
   };
 
   const handleModalClose = () => {
     reset(defaultValues);
-    setEditDetailId(null);
+    setEditDetailId({ id: null, type: "local" });
+
     onClose();
   };
   return (
@@ -238,4 +247,4 @@ const AddAccount = ({
   );
 };
 
-export default AddAccount;
+export default AddBeneficiaryAccount;

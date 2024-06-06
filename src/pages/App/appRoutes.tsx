@@ -1,7 +1,7 @@
 import LayoutWrapper from "@neoWeb/components/LayoutWrapper";
 import PageNotFound from "@neoWeb/components/LayoutWrapper/PageNotFound";
 import { lazy } from "react";
-import Beneficiary from "../Authorized/Beneficiary";
+import BeneficiaryDetails from "../Authorized/BeneficiaryDetails";
 import { NAVIGATION_ROUTES } from "./navigationRoutes";
 const Dashboard = lazy(() => import("@neoWeb/pages/Authorized/Dashboard"));
 const Account = lazy(() => import("@neoWeb/pages/Authorized/Account"));
@@ -31,7 +31,7 @@ export const appRoutes = [
       },
       {
         path: NAVIGATION_ROUTES.BENEFICIARY,
-        element: <Beneficiary />
+        element: <BeneficiaryDetails />
       },
       {
         path: "*",

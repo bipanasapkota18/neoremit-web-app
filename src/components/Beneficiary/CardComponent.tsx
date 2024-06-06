@@ -1,5 +1,6 @@
 import { HStack, Icon, Stack, Text } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import { IBeneficiaryAccountEditId } from "@neoWeb/pages/Authorized/BeneficiaryDetails/AddBeneficiary";
 import { BeneficiaryCheckoutDetailRequest } from "@neoWeb/services/service-beneficiary";
 import { Dispatch, SetStateAction } from "react";
 
@@ -8,7 +9,7 @@ interface BeneficiaryCardProps {
   // payoutPartnerName: string;
   // accountName: string;
   // accountNumber: string;
-  setEditDetailId: Dispatch<SetStateAction<number | null>>;
+  setEditDetailId: Dispatch<SetStateAction<IBeneficiaryAccountEditId>>;
   onOpen: () => void;
   data: BeneficiaryCheckoutDetailRequest[];
 }
@@ -45,7 +46,10 @@ const CardComponent = ({
                 )}
                 <Icon
                   onClick={() => {
-                    setEditDetailId(item?.id ?? item?.addId ?? null!);
+                    setEditDetailId({
+                      id: item?.id ?? item?.addId ?? null,
+                      type: item?.id ? "backend" : "local"
+                    });
                     onOpen();
                   }}
                   as={svgAssets.MoreInfo}

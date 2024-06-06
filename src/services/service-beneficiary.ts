@@ -39,8 +39,8 @@ export interface IBeneficiaryResponse {
 }
 
 export interface BeneficiaryCheckoutDetailRequest {
-  addId?: number | null;
-  id?: number;
+  addId?: number;
+  id?: number | null;
   beneficiaryDetail?: BeneficiaryPayoutDetail;
   payoutMethod: PayoutMethod;
   payoutPartner: PayoutPartner;
@@ -134,7 +134,7 @@ const useAddBeneficiary = () => {
 
     onSuccess: success => {
       queryClient.invalidateQueries({
-        queryKey: [api.beneficiary.getAll]
+        queryKey: [api.beneficiary.getAll, api.beneficiary.getBeneficiaryById]
       });
       toastSuccess(success?.data?.message);
     },
@@ -158,29 +158,6 @@ const useGetBeneficiaryById = (id: number | null) => {
   });
 };
 
-const updateBeneficiary = ({ id, data }: { id: number | null; data: any }) => {
-  return NeoHttpClient.post<NeoResponse>(
-    api.beneficiary.updatae.replace("{id}", id + ""),
-    toFormData(data)
-  );
-};
-const useUpdateBeneficiary = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateBeneficiary,
-
-    onSuccess: success => {
-      queryClient.invalidateQueries({
-        queryKey: [api.beneficiary.getAll]
-      });
-      toastSuccess(success?.data?.message);
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toastFail(error?.response?.data?.message ?? error?.message);
-    }
-  });
-};
-
 const deleteBeneficiary = (id: number | null) => {
   return NeoHttpClient.delete<NeoResponse>(
     api.beneficiary.delete.replace("{id}", id + "")
@@ -194,89 +171,6 @@ const useDeleteBeneficiary = () => {
     onSuccess: success => {
       queryClient.invalidateQueries({
         queryKey: [api.beneficiary.getAll]
-      });
-      toastSuccess(success?.data?.message);
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toastFail(error?.response?.data?.message ?? error?.message);
-    }
-  });
-};
-
-//Beneficiary Detail
-const getBeneficiaryDetails = (id: number | null) => () => {
-  return NeoHttpClient.get<NeoResponse<BeneficiaryPayoutDetail>>(
-    api.beneficiary_detail.getBeneficiaryDetail.replace(
-      "{beneficiaryDetailId}",
-      id + ""
-    )
-  );
-};
-const useGetBeneficiaryDetails = (id: number | null) => {
-  return useQuery({
-    select: data => data?.data?.data,
-    enabled: !!id,
-    queryKey: [api.beneficiary_detail.getBeneficiaryDetail, id],
-    queryFn: getBeneficiaryDetails(id)
-  });
-};
-
-const saveBeneficiaryDetails = ({
-  id,
-  data
-}: {
-  id: number | null;
-  data: any;
-}) => {
-  console.log(data);
-  return NeoHttpClient.post<NeoResponse>(
-    api.beneficiary_detail.createBeneficiaryDetail.replace(
-      "{beneficiaryDetailId}",
-      id + ""
-    ),
-    data
-  );
-};
-const useSaveBeneficiaryDetails = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: saveBeneficiaryDetails,
-
-    onSuccess: success => {
-      queryClient.invalidateQueries({
-        queryKey: [api.beneficiary_detail.getBeneficiaryDetail]
-      });
-      toastSuccess(success?.data?.message);
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toastFail(error?.response?.data?.message ?? error?.message);
-    }
-  });
-};
-
-const updateBeneficiaryDetails = ({
-  id,
-  data
-}: {
-  id: number | null;
-  data: any;
-}) => {
-  return NeoHttpClient.post<NeoResponse>(
-    api.beneficiary_detail.updateBeneficiaryDetail.replace(
-      "{beneficiaryDetailId}",
-      id + ""
-    ),
-    data
-  );
-};
-const useUpdateBeneficiaryDetails = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: updateBeneficiaryDetails,
-
-    onSuccess: success => {
-      queryClient.invalidateQueries({
-        queryKey: [api.beneficiary.getBeneficiaryById]
       });
       toastSuccess(success?.data?.message);
     },
@@ -311,31 +205,10 @@ const useDeleteBeneficiaryDetails = () => {
   });
 };
 
-const getBeneficiaryDetailById = (id: number | null) => () => {
-  return NeoHttpClient.get<NeoResponse<BeneficiaryPayoutDetail>>(
-    api.beneficiary_detail.getBeneficiaryDetailById.replace(
-      "{beneficiaryCheckoutId}",
-      id + ""
-    )
-  );
-};
-const useGetBeneficiaryDetailsById = (id: number | null) => {
-  return useQuery({
-    select: data => data?.data?.data,
-    enabled: !!id,
-    queryKey: [api.beneficiary_detail.getBeneficiaryDetailById, id],
-    queryFn: getBeneficiaryDetailById(id)
-  });
-};
 export {
   useAddBeneficiary,
   useDeleteBeneficiary,
   useDeleteBeneficiaryDetails,
   useGetBeneficiary,
-  useGetBeneficiaryById,
-  useGetBeneficiaryDetails,
-  useGetBeneficiaryDetailsById,
-  useSaveBeneficiaryDetails,
-  useUpdateBeneficiary,
-  useUpdateBeneficiaryDetails
+  useGetBeneficiaryById
 };

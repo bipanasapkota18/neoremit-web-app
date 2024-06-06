@@ -22,8 +22,7 @@ import { baseURL } from "@neoWeb/services/service-axios";
 import {
   BeneficiaryCheckoutDetailRequest,
   useAddBeneficiary,
-  useGetBeneficiaryById,
-  useUpdateBeneficiary
+  useGetBeneficiaryById
 } from "@neoWeb/services/service-beneficiary";
 import {
   useGetCountryList,
@@ -34,7 +33,8 @@ import { formatSelectOptions } from "@neoWeb/utility/format";
 import { SetStateAction } from "jotai";
 import { Dispatch, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import AddAccount from "./AddAccount";
+import AddBeneficiaryAccount from "./AddBeneficiaryAccount";
+// import AddAccount from "./AddAccount";
 // const defaultValues = {
 //   fullName: "",
 //   mobileNumber: "",
@@ -54,7 +54,10 @@ import AddAccount from "./AddAccount";
 //     }
 //   ]
 // };
-
+export type IBeneficiaryAccountEditId = {
+  id: null | number;
+  type: "backend" | "local";
+};
 interface IAddBeneficiary {
   editBeneficiaryId: number | null;
   setBeneficiaryEditId: Dispatch<SetStateAction<number | null>>;
@@ -74,11 +77,34 @@ const AddBeneficiary = ({
   const [tableData, setTableData] = useState<
     BeneficiaryCheckoutDetailRequest[]
   >([]);
-  const [editId, setEditId] = useState<number | null>(null);
+  const [editedAccountData, setEditedAccountData] = useState<
+    BeneficiaryCheckoutDetailRequest[]
+  >([] as BeneficiaryCheckoutDetailRequest[]);
+  const [editId, setEditId] = useState<IBeneficiaryAccountEditId>({
+    id: null,
+    type: "local"
+  });
+
+  const {
+    isOpen: isOpenAddAccountModal,
+    onOpen: onOpenAddAccountModal,
+    onClose: onCloseAddAccountModal
+  } = useDisclosure();
+
   const { control, watch, handleSubmit, reset } = useForm({});
+  const { data: countriesList } = useGetCountryList();
+  const { data: RelationshipList } = useGetRelationship();
+  const {
+    mutateAsync: mutateAddBeneficiary,
+    isPending: isAddBeneficiaryLoading
+  } = useAddBeneficiary();
+  const { data: Payoutmethoddata } = useGetPayoutMethodById(
+    watch("countryId")?.value
+  );
 
   useEffect(() => {
     if (editBeneficiaryId) {
+      setTableData(beneficiaryData?.beneficiaryCheckoutDetail ?? []);
       reset({
         fullName: beneficiaryData?.fullName,
         mobileNumber: beneficiaryData?.mobileNumber,
@@ -99,26 +125,6 @@ const AddBeneficiary = ({
       });
     }
   }, [beneficiaryData]);
-  const {
-    isOpen: isOpenAddAccountModal,
-    onOpen: onOpenAddAccountModal,
-    onClose: onCloseAddAccountModal
-  } = useDisclosure();
-
-  const { data: countriesList } = useGetCountryList();
-  const { data: RelationshipList } = useGetRelationship();
-  // const { data: Beneficiarydata } = useGetBeneficiaryDetail();
-  const {
-    mutateAsync: mutateAddBeneficiary,
-    isPending: isAddBeneficiaryLoading
-  } = useAddBeneficiary();
-  const {
-    mutateAsync: mutateUpdateBeneficiary,
-    isPending: isUpdateBeneficiaryLoading
-  } = useUpdateBeneficiary();
-  const { data: Payoutmethoddata } = useGetPayoutMethodById(
-    watch("countryId")?.value
-  );
 
   const countryOptions = formatSelectOptions<number>({
     data: countriesList?.data?.data,
@@ -148,8 +154,9 @@ const AddBeneficiary = ({
   });
 
   const addBeneficiaryy = async (data: any) => {
-    const finalTableData = tableData.map(item => {
+    const finalTableData = editedAccountData.map(item => {
       return {
+        id: item.id ?? null,
         payoutMethodId: item.payoutMethod?.id ?? item.payoutMethod?.value,
         payoutPartnerId: item.payoutPartner?.id ?? item.payoutPartner?.value,
         accountName: item.accountName,
@@ -163,20 +170,14 @@ const AddBeneficiary = ({
       countryId: data.countryId?.value,
       relationshipId: data.relationshipId?.value,
       profileImage: data?.profileImage ? data.profileImage[0] : null,
-      beneficiaryCheckoutDetail:
-        finalTableData.length > 0
-          ? finalTableData
-          : beneficiaryData?.beneficiaryCheckoutDetail
+      beneficiaryCheckoutDetail: finalTableData
     };
     try {
-      if (editBeneficiaryId) {
-        await mutateUpdateBeneficiary({
-          id: editBeneficiaryId,
-          data: { ...preparedData, beneficiaryDetailId: editBeneficiaryId }
-        });
-      } else {
-        await mutateAddBeneficiary(preparedData);
-      }
+      await mutateAddBeneficiary({
+        ...preparedData,
+        beneficiaryDetailId: editBeneficiaryId
+      });
+
       handleClose();
     } catch (error) {
       console.error(error);
@@ -184,7 +185,7 @@ const AddBeneficiary = ({
   };
 
   const handleClose = () => {
-    setEditId(null);
+    setEditId({ id: null, type: "local" });
     setBeneficiaryEditId(null);
     setFlag.off();
     reset();
@@ -230,7 +231,7 @@ const AddBeneficiary = ({
                 />
               </GridItem>
 
-              <GridItem colSpan={1}>
+              <GridItem mt={1} colSpan={1}>
                 <Select
                   // noFloating
                   name="countryId"
@@ -240,7 +241,7 @@ const AddBeneficiary = ({
                 />
               </GridItem>
 
-              <GridItem>
+              <GridItem mt={1}>
                 <TextInput
                   type="text"
                   name="address"
@@ -299,20 +300,11 @@ const AddBeneficiary = ({
                     <Text>Account Details Will be shown here</Text>
                   </Stack>
                 )}
-              {tableData?.length > 0 && (
-                <CardComponent
-                  setEditDetailId={setEditId}
-                  data={tableData}
-                  onOpen={onOpenAddAccountModal}
-                />
-              )}
-              {beneficiaryData?.beneficiaryCheckoutDetail.length !== 0 && (
-                <CardComponent
-                  setEditDetailId={setEditId}
-                  data={beneficiaryData?.beneficiaryCheckoutDetail ?? []}
-                  onOpen={onOpenAddAccountModal}
-                />
-              )}
+              <CardComponent
+                setEditDetailId={setEditId}
+                data={tableData}
+                onOpen={onOpenAddAccountModal}
+              />
             </HStack>
           </Stack>
           <HStack justifyContent={"space-between"} padding={"16px"}>
@@ -320,26 +312,23 @@ const AddBeneficiary = ({
             <Button
               width={"20%"}
               type="submit"
-              isLoading={isAddBeneficiaryLoading || isUpdateBeneficiaryLoading}
+              isLoading={isAddBeneficiaryLoading}
             >
               Save
             </Button>
           </HStack>
         </VStack>
       </Card>
-      <AddAccount
-        beneficiaryId={editBeneficiaryId}
+      <AddBeneficiaryAccount
+        accountData={editedAccountData}
         editDetailId={editId}
         setEditDetailId={setEditId}
-        data={
-          tableData?.length > 0
-            ? tableData
-            : beneficiaryData?.beneficiaryCheckoutDetail ?? []
-        }
+        tableData={tableData}
         setTableData={setTableData}
         payoutMethodId={watch("bankId")?.value ? watch("bankId") : null}
         isOpen={isOpenAddAccountModal}
         onClose={onCloseAddAccountModal}
+        setAccountData={setEditedAccountData}
       />
     </Flex>
   );
