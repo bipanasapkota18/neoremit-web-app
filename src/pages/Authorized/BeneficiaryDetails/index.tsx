@@ -16,7 +16,7 @@ import BeneficiaryCard from "@neoWeb/components/Beneficiary/BeneficiaryCard";
 import { useGetBeneficiary } from "@neoWeb/services/service-beneficiary";
 import { useState } from "react";
 import AddBeneficiary from "./AddBeneficiary";
-const Beneficiary = () => {
+const BeneficiaryDetails = () => {
   const { data: benefeciaryData } = useGetBeneficiary();
   const [flag, setFlag] = useBoolean();
   const [editId, setEditId] = useState<number | null>(null);
@@ -99,4 +99,4 @@ const Beneficiary = () => {
   );
 };
 
-export default Beneficiary;
+export default BeneficiaryDetails;
