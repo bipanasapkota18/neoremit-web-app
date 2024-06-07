@@ -6,8 +6,11 @@ import {
   ModalCloseButton,
   ModalContent,
   ModalHeader,
-  ModalOverlay
+  ModalOverlay,
+  useDisclosure
 } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ConfirmationModal from "@neoWeb/components/ConfirmationModal";
 import CheckBox from "@neoWeb/components/Form/Checkbox";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
@@ -20,6 +23,7 @@ import { usegetPayoutPartnerById } from "@neoWeb/services/service-payout-partner
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { IBeneficiaryAccountEditId } from "./AddBeneficiary";
 
 interface AddBeneficiaryAccountProps {
@@ -31,11 +35,7 @@ interface AddBeneficiaryAccountProps {
   setEditDetailId: Dispatch<SetStateAction<IBeneficiaryAccountEditId>>;
   isOpen: boolean;
   onClose: () => void;
-  payoutMethodId: {
-    value?: number;
-    id: number;
-    name: string;
-  };
+  payoutMethodId: ISelectOptions<number> | null;
 }
 
 const defaultValues = {
@@ -56,14 +56,35 @@ const AddBeneficiaryAccount = ({
   editDetailId,
   setAccountData
 }: AddBeneficiaryAccountProps) => {
+  const {
+    isOpen: isOpenDeleteModal,
+    onOpen: onOpenDeleteModal,
+    onClose: onCloseDeleteModal
+  } = useDisclosure();
+
+  const schema = z.object({
+    payoutPartner: z
+      .object({
+        label: z.string(),
+        value: z.number()
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please select a payout partner"
+      }),
+    accountName: z.string().nonempty("Account Name is required"),
+    accountNumber: z.string().nonempty("Account Number is required"),
+    isPrimary: z.boolean()
+  });
   const selectedAccountDetail = tableData?.find(
     (item: any) =>
       item.id === editDetailId?.id || item.addId === editDetailId?.id
   );
-  const { mutateAsync: deleteBeneficiaryDetails } =
+  const { mutateAsync: deleteBeneficiaryDetails, isPending: isDeleteLoading } =
     useDeleteBeneficiaryDetails();
   const { control, handleSubmit, reset } = useForm({
-    defaultValues
+    defaultValues: defaultValues,
+    resolver: zodResolver(schema)
   });
   useEffect(() => {
     if (editDetailId?.id) {
@@ -110,7 +131,7 @@ const AddBeneficiaryAccount = ({
       if (editDetailId?.id) {
         if (editDetailId?.type == "local") {
           // For initial data adding in local state where we check if the item is already added using the local addId
-          setAccountData((oldValues: BeneficiaryCheckoutDetailRequest[]) => {
+          setAccountData(oldValues => {
             return oldValues?.find(item => item?.addId == editDetailId?.id)
               ? oldValues?.map(item => {
                   if (item?.addId == editDetailId?.id) {
@@ -121,7 +142,7 @@ const AddBeneficiaryAccount = ({
                 })
               : [...oldValues, preparedData];
           });
-          setTableData((oldValues: BeneficiaryCheckoutDetailRequest[]) => {
+          setTableData(oldValues => {
             return oldValues?.find(item => item?.addId == editDetailId?.id)
               ? oldValues?.map(item => {
                   if (item?.addId == editDetailId?.id) {
@@ -186,64 +207,77 @@ const AddBeneficiaryAccount = ({
   };
 
   const handleModalClose = () => {
+    onCloseDeleteModal();
     reset(defaultValues);
     setEditDetailId({ id: null, type: "local" });
 
     onClose();
   };
   return (
-    <Modal isOpen={isOpen} onClose={handleModalClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Bank Details</ModalHeader>
-        <ModalCloseButton mt={2} mr={2} />
-        <form onSubmit={handleSubmit(onAddAccount)}>
-          <ModalBody display={"flex"} gap={6} flexDirection={"column"}>
-            <Select
-              name="payoutPartner"
-              placeholder="Select Payout Partner"
-              control={control}
-              options={payout_methodoptions}
-            />
-            <TextInput
-              type="text"
-              name="accountName"
-              label="Account Name"
-              control={control}
-            />
-            <TextInput
-              type="text"
-              name="accountNumber"
-              label="Account Number"
-              control={control}
-            />
-            <HStack flexDirection={"row"} alignItems={"flex-start"}>
-              <CheckBox
-                name="isPrimary"
+    <>
+      <Modal isOpen={isOpen} onClose={handleModalClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Bank Details</ModalHeader>
+          <ModalCloseButton mt={2} mr={2} />
+          <form onSubmit={handleSubmit(onAddAccount)}>
+            <ModalBody display={"flex"} gap={6} flexDirection={"column"}>
+              <Select
+                name="payoutPartner"
+                placeholder="Select Payout Partner"
                 control={control}
-                label="Make primary account?"
+                options={payout_methodoptions}
               />
-            </HStack>
-            <HStack justifyContent={"space-between"}>
-              {editDetailId && (
-                <Button
-                  variant={"light"}
-                  type="button"
-                  onClick={handleDelete}
-                  mt={4}
-                  width={"100%"}
-                >
-                  Delete
+              <TextInput
+                type="text"
+                name="accountName"
+                label="Account Name"
+                control={control}
+              />
+              <TextInput
+                type="text"
+                name="accountNumber"
+                label="Account Number"
+                control={control}
+              />
+              <HStack flexDirection={"row"} alignItems={"flex-start"}>
+                <CheckBox
+                  name="isPrimary"
+                  control={control}
+                  label="Make primary account?"
+                />
+              </HStack>
+              <HStack justifyContent={"space-between"}>
+                {editDetailId?.id && (
+                  <Button
+                    variant={"light"}
+                    type="button"
+                    onClick={() => onOpenDeleteModal()}
+                    mt={4}
+                    width={"100%"}
+                  >
+                    Delete
+                  </Button>
+                )}
+                <Button type="submit" mt={4} width={"100%"}>
+                  {editDetailId?.id ? "Edit" : "Add"} Account
                 </Button>
-              )}
-              <Button type="submit" mt={4} width={"100%"}>
-                {editDetailId ? "Edit" : "Add"} Account
-              </Button>
-            </HStack>
-          </ModalBody>
-        </form>
-      </ModalContent>
-    </Modal>
+              </HStack>
+            </ModalBody>
+          </form>
+        </ModalContent>
+      </Modal>
+      <ConfirmationModal
+        variant={"delete"}
+        buttonText={"Delete"}
+        title={"Are You Sure?"}
+        isLoading={isDeleteLoading}
+        onApprove={handleDelete}
+        message="Deleting will permanently remove this data from the system. This cannot be Undone."
+        isOpen={isOpenDeleteModal}
+        onClose={onCloseDeleteModal}
+      />
+    </>
   );
 };
 

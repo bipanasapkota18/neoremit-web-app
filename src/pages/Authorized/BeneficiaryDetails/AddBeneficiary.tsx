@@ -12,6 +12,7 @@ import {
   VStack,
   useDisclosure
 } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import CardComponent from "@neoWeb/components/Beneficiary/CardComponent";
 import GoBack from "@neoWeb/components/Button";
@@ -21,6 +22,7 @@ import TextInput from "@neoWeb/components/Form/TextInput";
 import { baseURL } from "@neoWeb/services/service-axios";
 import {
   BeneficiaryCheckoutDetailRequest,
+  PayoutMethod,
   useAddBeneficiary,
   useGetBeneficiaryById
 } from "@neoWeb/services/service-beneficiary";
@@ -29,31 +31,22 @@ import {
   useGetRelationship
 } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
-import { formatSelectOptions } from "@neoWeb/utility/format";
+import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { SetStateAction } from "jotai";
 import { Dispatch, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import AddBeneficiaryAccount from "./AddBeneficiaryAccount";
-// import AddAccount from "./AddAccount";
-// const defaultValues = {
-//   fullName: "",
-//   mobileNumber: "",
-//   relationshipId: null as number | null,
-//   countryId: null as number | null,
-//   profileImage: "",
-//   bankId: null as number | null,
-//   address: "",
-//   BeneficiaryCheckoutDetail: [
-//     {
-//       id: null as number | null,
-//       payoutMethodId: null as number | null,
-//       payoutPartnerId: "",
-//       accountName: "",
-//       accountNumber: "",
-//       primary: ""
-//     }
-//   ]
-// };
+
+const defaultValues = {
+  fullName: "",
+  mobileNumber: "",
+  relationshipId: null as ISelectOptions<number> | null,
+  countryId: null as ISelectOptions<number> | null,
+  profileImage: "",
+  bankId: null as ISelectOptions<number> | null,
+  address: ""
+};
 export type IBeneficiaryAccountEditId = {
   id: null | number;
   type: "backend" | "local";
@@ -73,6 +66,43 @@ const AddBeneficiary = ({
   setBeneficiaryEditId,
   setFlag
 }: IAddBeneficiary) => {
+  const schema = z.object({
+    fullName: z.string().min(1, { message: "Full name is required" }),
+    mobileNumber: z.string().min(1, { message: "Mobile number is required" }),
+    profileImage: editBeneficiaryId
+      ? z.any()
+      : z.any().refine(data => !!data, {
+          message: "Please upload a profile image"
+        }),
+    countryId: z
+      .object({
+        label: z.string(),
+        value: z.number()
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please select a country"
+      }),
+    address: z.string().min(1, { message: "Address is required" }),
+    relationshipId: z
+      .object({
+        label: z.string(),
+        value: z.number()
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please select a relationship"
+      }),
+    bankId: z
+      .object({
+        label: z.string(),
+        value: z.number()
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please select payout method"
+      })
+  });
   const { data: beneficiaryData } = useGetBeneficiaryById(editBeneficiaryId);
   const [tableData, setTableData] = useState<
     BeneficiaryCheckoutDetailRequest[]
@@ -91,7 +121,10 @@ const AddBeneficiary = ({
     onClose: onCloseAddAccountModal
   } = useDisclosure();
 
-  const { control, watch, handleSubmit, reset } = useForm({});
+  const { control, watch, handleSubmit, reset } = useForm({
+    defaultValues: defaultValues,
+    resolver: zodResolver(schema)
+  });
   const { data: countriesList } = useGetCountryList();
   const { data: RelationshipList } = useGetRelationship();
   const {
@@ -99,7 +132,7 @@ const AddBeneficiary = ({
     isPending: isAddBeneficiaryLoading
   } = useAddBeneficiary();
   const { data: Payoutmethoddata } = useGetPayoutMethodById(
-    watch("countryId")?.value
+    watch("countryId")?.value ?? null
   );
 
   useEffect(() => {
@@ -118,9 +151,14 @@ const AddBeneficiary = ({
           value: beneficiaryData?.relationship?.id
         },
         bankId: {
-          label:
-            beneficiaryData?.beneficiaryCheckoutDetail[0]?.payoutMethod?.name,
-          value: beneficiaryData?.beneficiaryCheckoutDetail[0]?.payoutMethod?.id
+          label: (
+            beneficiaryData?.beneficiaryCheckoutDetail[0]
+              ?.payoutMethod as PayoutMethod
+          )?.name,
+          value: (
+            beneficiaryData?.beneficiaryCheckoutDetail[0]
+              ?.payoutMethod as PayoutMethod
+          )?.id
         }
       });
     }
@@ -157,7 +195,8 @@ const AddBeneficiary = ({
     const finalTableData = editedAccountData.map(item => {
       return {
         id: item.id ?? null,
-        payoutMethodId: item.payoutMethod?.id ?? item.payoutMethod?.value,
+        payoutMethodId:
+          (item.payoutMethod as PayoutMethod)?.id ?? item.payoutMethod?.value,
         payoutPartnerId: item.payoutPartner?.id ?? item.payoutPartner?.value,
         accountName: item.accountName,
         accountNumber: item.accountNumber,
@@ -325,7 +364,7 @@ const AddBeneficiary = ({
         setEditDetailId={setEditId}
         tableData={tableData}
         setTableData={setTableData}
-        payoutMethodId={watch("bankId")?.value ? watch("bankId") : null}
+        payoutMethodId={watch("bankId")}
         isOpen={isOpenAddAccountModal}
         onClose={onCloseAddAccountModal}
         setAccountData={setEditedAccountData}

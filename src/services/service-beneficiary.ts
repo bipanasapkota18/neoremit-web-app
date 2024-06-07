@@ -1,4 +1,5 @@
 import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
+import { ISelectOptions } from "@neoWeb/utility/format";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { BeneficiaryPayoutDetail } from "./CommonInterface";
@@ -42,7 +43,7 @@ export interface BeneficiaryCheckoutDetailRequest {
   addId?: number;
   id?: number | null;
   beneficiaryDetail?: BeneficiaryPayoutDetail;
-  payoutMethod: PayoutMethod;
+  payoutMethod: PayoutMethod | ISelectOptions<number> | null;
   payoutPartner: PayoutPartner;
   accountName: string;
   accountNumber: string;
@@ -134,7 +135,10 @@ const useAddBeneficiary = () => {
 
     onSuccess: success => {
       queryClient.invalidateQueries({
-        queryKey: [api.beneficiary.getAll, api.beneficiary.getBeneficiaryById]
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      queryClient.refetchQueries({
+        queryKey: [api.beneficiary.getAll]
       });
       toastSuccess(success?.data?.message);
     },
