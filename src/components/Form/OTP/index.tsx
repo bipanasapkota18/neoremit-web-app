@@ -29,7 +29,7 @@ const OTPComponent = ({
   const [flag, setFlag] = useBoolean();
   const inputLength = page === "otpCode" ? 6 : 4;
   const otpComponent = Array.from({ length: inputLength }, (_, i) => (
-    <OTPInput key={i} name={page} type={flag ? "text" : "password"} />
+    <OTPInput key={i} name={page} type="text" />
   ));
 
   return (
@@ -55,6 +55,7 @@ const OTPComponent = ({
                 >
                   {otpComponent}
                 </PinInput>
+
                 {page == "mpin" && (
                   <IconButton
                     colorScheme={"black"}

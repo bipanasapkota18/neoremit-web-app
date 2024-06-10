@@ -4,7 +4,9 @@ export const NAVIGATION_ROUTES = {
   FORGOT_PASSWORD: "/forgot-password",
   ADDITIONALINFORMATION: "/additionalinformation",
   HOME: "/home",
-  ACCOUNT: "/account",
+  ACCOUNT: {
+    KYC_INFORMATION: "/kycinformation"
+  },
   SERVICES: "/services",
   SEND_MONEY: "/send-money",
   BENEFICIARY: "/beneficiary",

@@ -19,7 +19,11 @@ export const api = {
 
   common: {
     getAllCountryList: `${service}/country/list/app`,
-    getAllRelationship: `${service}/relationship/list/app`
+    getAllRelationship: `${service}/relationship/list/app`,
+    getAllMaritalStatus: `${service}/marital-status/list/app`,
+    getAllOccupation: `${service}/occupation/list/app`,
+    // get: `${service}/state/list/app/{countryId}`
+    get: `${service}/state/list/app/36`
   },
   BeneficiaryDetail: {
     getAll: `${service}/beneficiary/detail`,
@@ -30,6 +34,12 @@ export const api = {
   },
   payout_partner: {
     update: `${service}/payout_partner/{id}`
+  },
+  Kyc: {
+    getAll: `${service}/customer/kyc`,
+
+    update: `${service}/customer/kyc/update/personal`,
+    getCountryKycFields: `${service}/country/kyc-form/{countryId}`
   },
   init: `${service}/users/init`
 };
