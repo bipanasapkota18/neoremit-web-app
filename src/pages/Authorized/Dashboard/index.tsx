@@ -31,7 +31,8 @@ function Dashboard() {
     valueKey: "id",
     icon: {
       iconKey: "flagIcon",
-      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`
+      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`,
+      iconCode: "flagIcon"
     }
   });
 

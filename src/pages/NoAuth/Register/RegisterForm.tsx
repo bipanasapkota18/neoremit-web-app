@@ -87,7 +87,8 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
     valueKey: "id",
     icon: {
       iconKey: "flagIcon",
-      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`
+      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`,
+      iconCode: "shortName"
     }
   });
   const handleSignup = async (data: typeof defaultValues) => {

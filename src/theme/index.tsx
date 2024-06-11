@@ -8,6 +8,7 @@ import { CardConfig } from "./components/Card";
 import { CheckboxConfig } from "./components/Checkbox";
 import { ContainerConfig } from "./components/Container";
 import Input from "./components/Input";
+import { modalConfig } from "./components/Modal";
 import Switch from "./components/Switch";
 import { TableConfig } from "./components/Table";
 import { TextStyles } from "./components/Text";
@@ -30,6 +31,7 @@ export const theme = extendTheme(
       Container: ContainerConfig,
       Checkbox: CheckboxConfig,
       Card: CardConfig,
+      Modal: modalConfig,
       Steps
     },
     breakpoints: {
