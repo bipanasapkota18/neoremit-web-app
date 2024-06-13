@@ -17,6 +17,7 @@ interface OTPProps {
   helperText?: string;
   isRequired?: boolean;
   isDisabled?: boolean;
+  inputLength: number;
 }
 const OTPComponent = ({
   name,
@@ -24,12 +25,16 @@ const OTPComponent = ({
   isDisabled,
   control,
   helperText,
-  isRequired
+  isRequired,
+  inputLength
 }: OTPProps) => {
   const [flag, setFlag] = useBoolean();
-  const inputLength = page === "otpCode" ? 6 : 4;
   const otpComponent = Array.from({ length: inputLength }, (_, i) => (
-    <OTPInput key={i} name={page} type={flag ? "text" : "password"} />
+    <OTPInput
+      key={i}
+      length={length}
+      type={flag || page === "otpCode" ? "text" : "password"}
+    />
   ));
 
   return (
@@ -45,7 +50,7 @@ const OTPComponent = ({
               id={name}
               maxW={"350px !important"}
             >
-              <Flex gap={page === "otpCode" ? 7 : 14}>
+              <Flex gap={inputLength === 6 ? 7 : 14}>
                 <PinInput
                   placeholder=""
                   otp

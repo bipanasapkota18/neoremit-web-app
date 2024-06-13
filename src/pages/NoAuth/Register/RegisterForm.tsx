@@ -52,7 +52,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
       .min(10, { message: "Phone number must be at least 10 digits" })
       .max(10, { message: "Phone number cannot exceed 10 digits" })
       .min(1, { message: "Phone number is required" }),
-    referralCode: z.string().min(1, { message: "Please Enter  ReferralCode" }),
+    referralCode: z.string(),
     sendFrom: z
       .object({
         label: z.string().min(1),
@@ -109,6 +109,21 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
 
   return (
     <Flex gap={8} flexDir={"column"}>
+      <VStack alignItems="flex-start" gap={"4px"}>
+        <HStack gap={"12px"}>
+          <Text
+            textStyle={"registerPageHeader"}
+            fontSize={"29px"}
+            fontFamily={"Mulish"}
+            fontWeight={"800"}
+          >
+            Sign Up
+          </Text>
+        </HStack>
+        <Text textStyle={"normalStyle"}>
+          A 6 code verification OTP code will be sent to your Email account.
+        </Text>
+      </VStack>
       <VStack
         as="form"
         alignItems={"stretch"}
@@ -139,6 +154,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
           <SimpleGrid columns={2} gap={"20px"}>
             <GridItem colSpan={1}>
               <Select
+                noFloating
                 name="sendFrom"
                 placeholder="Send From"
                 control={control}
@@ -148,6 +164,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
 
             <GridItem colSpan={1}>
               <Select
+                noFloating
                 name="receiveIn"
                 placeholder="Receive In"
                 control={control}

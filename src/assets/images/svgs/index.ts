@@ -8,6 +8,7 @@ import { ReactComponent as ProfileIcon } from "@neoWeb/assets/images/svgs/Profil
 import { ReactComponent as AddCircle } from "@neoWeb/assets/images/svgs/add-circle.svg";
 import { ReactComponent as AppleIcon } from "@neoWeb/assets/images/svgs/apple.svg";
 import { ReactComponent as ArrowSwap } from "@neoWeb/assets/images/svgs/arrow-swap.svg";
+import { ReactComponent as ArrowLeftIcon } from "@neoWeb/assets/images/svgs/arrow_back.svg";
 import { ReactComponent as ArtifactFlower } from "@neoWeb/assets/images/svgs/background-artifacr-flower.svg";
 import { ReactComponent as BankIcon } from "@neoWeb/assets/images/svgs/bank-icon.svg";
 import { ReactComponent as Banner } from "@neoWeb/assets/images/svgs/bannerImage.svg";
@@ -61,6 +62,7 @@ export const svgAssets = {
   NoTransaction,
   Logout,
   PinSetSuccess,
+  ArrowLeftIcon,
   BankIcon,
   AddCircle,
   ClipText,

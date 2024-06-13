@@ -6,13 +6,13 @@ import {
   VStack,
   useBoolean
 } from "@chakra-ui/react";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 import { useStore, useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
-import * as yup from "yup";
+import { z } from "zod";
 import { AuthPageProps } from "../../Register/RegisterForm";
 import PasswordStrength from "./passwordStrength";
 const defaultValues = {
@@ -25,27 +25,18 @@ const SetPassword = ({ setScreen }: AuthPageProps) => {
   const { email } = useStore();
   const { setToken } = useTokenStore();
 
-  const passwordSchema = yup.object().shape({
-    password: yup
-      .string()
-      .min(8, "Password must be 8 characters long")
-      .matches(/[a-z]/, "Password must contain at least one lowercase letter")
-      .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .matches(/[0-9]/, "Password must contain at least one number")
-      .matches(
-        /[!@#$%&*()]/,
-        "Password must contain at least one symbol !@#$%&*"
-      )
-      .required("Password is required"),
-    confirm_password: yup
-      .string()
-      .required("Please enter a password")
-      .oneOf([yup.ref("password")], "Passwords don't match")
-  });
-
+  const passwordSchema = z
+    .object({
+      password: z.string().min(1, { message: "Name is required" }),
+      confirm_password: z.string().min(1, { message: "Name is required" })
+    })
+    .refine(data => data.password === data.confirm_password, {
+      message: "Passwords don't match",
+      path: ["confirm_password"]
+    });
   const { control, watch, handleSubmit } = useForm({
     defaultValues,
-    resolver: yupResolver(passwordSchema)
+    resolver: zodResolver(passwordSchema)
   });
 
   const [flag, setFlag] = useBoolean();
