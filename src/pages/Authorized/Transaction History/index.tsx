@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import FilterButton from "@neoWeb/components/Button/filterButton";
 import SearchInput from "@neoWeb/components/Form/SearchInput";
-import { useState } from "react";
 import AddFilterModal from "./AddFilterModal";
 
 const Transaction = () => {
@@ -18,16 +17,16 @@ const Transaction = () => {
     onOpen: onOpenAddFilterButtonModal,
     onClose: onCloseAddFilterButtonModal
   } = useDisclosure();
-  const [searchText, setSearchText] = useState<string>("");
+  // const [searchText, setSearchText] = useState<string>("");
   const [isDesktop] = useMediaQuery("(min-width:1000px)");
   // for static data in transactions  historyyyy
-  const staticTransactions = [
-    {
-      id: "1",
-      name: "Alina Shrestha ",
-      data: "july 2 , 2024"
-    }
-  ];
+  // const staticTransactions = [
+  //   {
+  //     id: "1",
+  //     name: "Alina Shrestha ",
+  //     data: "july 2 , 2024"
+  //   }
+  // ];
 
   return (
     <Flex direction={"column"}>
@@ -50,7 +49,7 @@ const Transaction = () => {
                 width={"824px"}
                 label="Search"
                 name="search"
-                onSearch={setSearchText}
+                // onSearch={setSearchText}
                 type="text"
               />
             ) : null}

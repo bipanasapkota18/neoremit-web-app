@@ -1,11 +1,13 @@
 import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
+import { ISelectOptions } from "@neoWeb/utility/format";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import { BeneficiaryPayoutDetail } from "./CommonInterface";
 import { NeoResponse, api } from "./service-api";
-import { NeoHttpClient } from "./service-axios";
+import { NeoHttpClient, toFormData } from "./service-axios";
 
 export interface IBeneficiaryRequest {
-  beneficiaryDetailId: number;
+  beneficiaryDetailId?: number;
   fullName: string;
   mobileNumber: string;
   relationshipId: number;
@@ -24,28 +26,119 @@ export interface BeneficiaryCheckoutDetail {
   accountNumber: string;
   primary: boolean;
 }
-const BeneficiaryDetail = () => {
-  return NeoHttpClient.get<NeoResponse>(api.BeneficiaryDetail.getAll);
+
+export interface IBeneficiaryResponse {
+  id: number;
+  userId: number;
+  fullName: string;
+  mobileNumber: string;
+  relationship: Relationship;
+  country: Country;
+  address: string;
+  profileImage: string;
+  beneficiaryCheckoutDetail: BeneficiaryCheckoutDetailRequest[];
+}
+
+export interface BeneficiaryCheckoutDetailRequest {
+  addId?: number;
+  id?: number | null;
+  beneficiaryDetail?: BeneficiaryPayoutDetail;
+  payoutMethod: PayoutMethod | ISelectOptions<number> | null;
+  payoutPartner: PayoutPartner;
+  accountName: string;
+  accountNumber: string;
+  isPrimary: boolean;
+}
+
+export interface PayoutPartner {
+  label?: string;
+  value?: number;
+  id: number;
+  payoutMethod: PayoutMethod;
+  country: Country2;
+  name: string;
+  code: string;
+  image: string;
+  isActive: boolean;
+}
+
+export interface Country2 {
+  id: number;
+  name: string;
+}
+
+export interface PayoutMethod {
+  value?: number;
+  id: number;
+  code?: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  isCash?: boolean;
+  isActive?: boolean;
+}
+
+export interface Country {
+  id: number;
+  code: string;
+  name: string;
+  shortName: string;
+  phoneCode: string;
+  isoNumber: string;
+  currency: Currency;
+  canReceive: boolean;
+  canSend: boolean;
+  isActive: boolean;
+  flagIcon?: any;
+  hasState: boolean;
+}
+
+export interface Currency {
+  id: number;
+  code: string;
+  name: string;
+  shortName: string;
+  symbol: string;
+  isActive: boolean;
+}
+
+export interface Relationship {
+  id: number;
+  name: string;
+  code: string;
+  isActive: boolean;
+}
+const getBeneficiary = () => {
+  return NeoHttpClient.get<NeoResponse<IBeneficiaryResponse[]>>(
+    api.beneficiary.getAll
+  );
 };
 
-const useGetBeneficiaryDetail = () => {
+const useGetBeneficiary = () => {
   return useQuery({
-    queryKey: [api.BeneficiaryDetail.getAll],
-    queryFn: BeneficiaryDetail
+    select: data => data?.data?.data,
+    queryKey: [api.beneficiary.getAll],
+    queryFn: getBeneficiary
   });
 };
 
-const AddBeneficiary = () => {
-  return NeoHttpClient.post<NeoResponse>(api.BeneficiaryDetail.create);
+const addBeneficiary = (data: any) => {
+  return NeoHttpClient.post<NeoResponse>(
+    api.beneficiary.create,
+    toFormData(data)
+  );
 };
 const useAddBeneficiary = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: AddBeneficiary,
+    mutationFn: addBeneficiary,
 
     onSuccess: success => {
       queryClient.invalidateQueries({
-        queryKey: [api.BeneficiaryDetail.create]
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      queryClient.refetchQueries({
+        queryKey: [api.beneficiary.getAll]
       });
       toastSuccess(success?.data?.message);
     },
@@ -55,4 +148,71 @@ const useAddBeneficiary = () => {
   });
 };
 
-export { useAddBeneficiary, useGetBeneficiaryDetail };
+const getBeneficiaryDetail = (id: number | null) => () => {
+  return NeoHttpClient.get<NeoResponse<IBeneficiaryResponse>>(
+    api.beneficiary.getBeneficiaryById.replace("{id}", id + "")
+  );
+};
+const useGetBeneficiaryById = (id: number | null) => {
+  return useQuery({
+    select: data => data?.data?.data,
+    enabled: !!id,
+    queryKey: [api.beneficiary.getBeneficiaryById, id],
+    queryFn: getBeneficiaryDetail(id)
+  });
+};
+
+const deleteBeneficiary = (id: number | null) => {
+  return NeoHttpClient.delete<NeoResponse>(
+    api.beneficiary.delete.replace("{id}", id + "")
+  );
+};
+const useDeleteBeneficiary = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteBeneficiary,
+
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.beneficiary.getAll]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+
+const deleteBeneficiaryDetails = (id: number | null) => {
+  return NeoHttpClient.delete<NeoResponse>(
+    api.beneficiary_detail.deleteBeneficiaryDetail.replace(
+      "{beneficiaryCheckoutId}",
+      id + ""
+    )
+  );
+};
+const useDeleteBeneficiaryDetails = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteBeneficiaryDetails,
+
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+
+export {
+  useAddBeneficiary,
+  useDeleteBeneficiary,
+  useDeleteBeneficiaryDetails,
+  useGetBeneficiary,
+  useGetBeneficiaryById
+};

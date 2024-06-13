@@ -86,7 +86,8 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
     valueKey: "id",
     icon: {
       iconKey: "flagIcon",
-      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`
+      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`,
+      iconCode: "shortName"
     }
   });
   const handleSignup = async (data: typeof defaultValues) => {
@@ -107,6 +108,21 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
 
   return (
     <Flex gap={8} flexDir={"column"}>
+      <VStack alignItems="flex-start" gap={"4px"}>
+        <HStack gap={"12px"}>
+          <Text
+            textStyle={"registerPageHeader"}
+            fontSize={"29px"}
+            fontFamily={"Mulish"}
+            fontWeight={"800"}
+          >
+            Sign Up
+          </Text>
+        </HStack>
+        <Text textStyle={"normalStyle"}>
+          A 6 code verification OTP code will be sent to your Email account.
+        </Text>
+      </VStack>
       <VStack
         as="form"
         alignItems={"stretch"}
@@ -137,6 +153,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
           <SimpleGrid columns={2} gap={"20px"}>
             <GridItem colSpan={1}>
               <Select
+                noFloating
                 name="sendFrom"
                 placeholder="Send From"
                 control={control}
@@ -146,6 +163,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
 
             <GridItem colSpan={1}>
               <Select
+                noFloating
                 name="receiveIn"
                 placeholder="Receive In"
                 control={control}

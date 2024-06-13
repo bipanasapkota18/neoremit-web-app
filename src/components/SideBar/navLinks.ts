@@ -42,6 +42,7 @@ export const navLinks = [
     label: "Beneficiary",
     header: "MENUS"
   },
+
   {
     icon: sidebarSvg.Transaction,
     href: NAVIGATION_ROUTES.TRANSACTION_HISTORY,

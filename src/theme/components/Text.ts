@@ -20,7 +20,18 @@ export const TextStyles = {
     fontStyle: "normal",
     fontWeight: 700,
     lineHeight: "normal"
+  },
+  beneficiaryCardHeader: {
+    fontSize: "14px",
+    fontWeight: 600,
+    color: colorScheme.gray_700
+  },
+  beneficiaryCardSubHeader: {
+    fontSize: "14px",
+    fontWeight: 400,
+    color: colorScheme.normalTextColor
   }
+
   //   h2: {
   //     fontSize: ["36px", "48px"],
   //     fontWeight: "semibold",

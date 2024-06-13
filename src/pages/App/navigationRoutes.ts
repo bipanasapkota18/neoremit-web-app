@@ -3,10 +3,10 @@ export const NAVIGATION_ROUTES = {
   REGISTER: "/register",
   FORGOT_PASSWORD: "/forgot-password",
   ADDITIONALINFORMATION: "/additionalinformation",
-  HOME: "/home",
   ACCOUNT: {
     KYC_INFORMATION: "/kycinformation"
   },
+  HOME: "/",
   SERVICES: "/services",
   SEND_MONEY: "/send-money",
   BENEFICIARY: "/beneficiary",

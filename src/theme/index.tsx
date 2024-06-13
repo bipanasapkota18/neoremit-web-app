@@ -4,9 +4,11 @@ import { FormComponent } from "./Form/Form";
 import { RadioTheme } from "./Form/Radio";
 import { colorScheme } from "./colorScheme";
 import { ButtonConfig } from "./components/Button";
+import { CardConfig } from "./components/Card";
 import { CheckboxConfig } from "./components/Checkbox";
 import { ContainerConfig } from "./components/Container";
 import Input from "./components/Input";
+import { modalConfig } from "./components/Modal";
 import Switch from "./components/Switch";
 import { TableConfig } from "./components/Table";
 import { TextStyles } from "./components/Text";
@@ -28,6 +30,8 @@ export const theme = extendTheme(
       Radio: RadioTheme,
       Container: ContainerConfig,
       Checkbox: CheckboxConfig,
+      Card: CardConfig,
+      Modal: modalConfig,
       Steps
     },
     breakpoints: {

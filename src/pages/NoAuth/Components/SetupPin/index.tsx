@@ -26,10 +26,15 @@ const SetupPin = () => {
     isOpen: isMpinSetSuccessfulModalOpen
   } = useDisclosure();
   const { token } = useTokenStore();
-  const schema = z.object({
-    mpin: z.string().min(4, "MPIN must be 4 digit number"),
-    confirmMpin: z.string().min(4, "MPIN must be 4 digit number")
-  });
+  const schema = z
+    .object({
+      mpin: z.string().min(4, "MPIN must be 4 digit number"),
+      confirmMpin: z.string().min(4, "MPIN must be 4 digit number")
+    })
+    .refine(data => data.mpin === data.confirmMpin, {
+      message: "MPIN don't match",
+      path: ["confirmMpin"]
+    });
   const { mutateAsync: setMPIN } = usesetMPIN();
   const { control, handleSubmit } = useForm({
     defaultValues,
@@ -54,7 +59,7 @@ const SetupPin = () => {
 
   return (
     <>
-      <VStack alignItems={"flex-start"} gap={1}>
+      <VStack alignItems={"flex-start"} gap={8}>
         <Text color={"#2D3748"} fontSize={"29px"} fontWeight={"800"}>
           Setup MPIN
         </Text>
@@ -93,12 +98,22 @@ const SetupPin = () => {
       >
         <Text>Enter MPIN</Text>
         <HStack>
-          <OTPComponent name="mpin" page="mpin" control={control} />
+          <OTPComponent
+            name="mpin"
+            page="mpin"
+            control={control}
+            inputLength={4}
+          />
         </HStack>
 
         <Text>Confirm MPIN</Text>
         <HStack>
-          <OTPComponent name="confirmMpin" control={control} page="mpin" />
+          <OTPComponent
+            name="confirmMpin"
+            control={control}
+            page="mpin"
+            inputLength={4}
+          />
         </HStack>
         <Button type="submit" width={"100%"}>
           Confirm

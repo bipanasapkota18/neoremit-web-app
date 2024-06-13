@@ -13,13 +13,14 @@ export interface IPayoutPartnerResponse {
 
 const getPayoutPartnerById = (id: number | null) => {
   return NeoHttpClient.get<NeoResponse<IPayoutPartnerResponse>>(
-    api.payout_partner.update.replace("{id}", id + "")
+    api.payout_partner.get.replace("{payoutMethodId}", id + "")
   );
 };
 
 const usegetPayoutPartnerById = (id: number | null) => {
   return useQuery({
-    queryKey: [api.payout_partner.update, id],
+    select: data => data?.data?.data,
+    queryKey: [api.payout_partner.get, id],
     queryFn: () => getPayoutPartnerById(id),
     enabled: !!id
   });

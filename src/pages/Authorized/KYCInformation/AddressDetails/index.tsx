@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   VStack
 } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import {
@@ -13,15 +14,23 @@ import {
   useGetStateById
 } from "@neoWeb/services/service-common";
 import { formatSelectOptions } from "@neoWeb/utility/format";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Fragment } from "react/jsx-runtime";
-import { IStepProps, createKycFieldMappingData } from "..";
+import { z } from "zod";
+import {
+  IDataFormFields,
+  IStepProps,
+  convertToCamelCase,
+  createKycFieldMappingData
+} from "..";
 
 const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
-  const [editId, setEditId] = useState();
+  const [editId] = useState();
 
-  const { control } = useForm();
+  const [schema, setSchema] = useState(z.object({}));
+
+  const { control, handleSubmit } = useForm({ resolver: zodResolver(schema) });
   const { data: countryList } = useGetCountryList();
   const { data: stateList } = useGetStateById(36);
   const countryOptions = formatSelectOptions<number>({
@@ -36,7 +45,20 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
   });
 
   const AddressDataFormFields = {
-    street_address: {
+    nationality: {
+      validation: z.string().min(1, { message: "Street address is required" }),
+      reactElement: (editDisabled: boolean) => (
+        <TextInput
+          type="text"
+          name="nationality"
+          label="Nationality"
+          control={control}
+          disabled={editId && editDisabled}
+        />
+      )
+    },
+    streetAddress: {
+      validation: z.string().min(1, { message: "Street address is required" }),
       reactElement: (editDisabled: boolean) => (
         <TextInput
           type="text"
@@ -47,30 +69,15 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
         />
       )
     },
-    city: {
-      reactElement: (editDisabled: boolean) => (
-        <TextInput
-          type="text"
-          name="city"
-          label="-City-"
-          control={control}
-          disabled={editId && editDisabled}
-        />
-      )
-    },
-    zip_code: {
-      
-      reactElement: (editDisabled: boolean) => (
-        <TextInput
-          type="text"
-          name="zipCode"
-          label="-Zip Code"
-          control={control}
-          disabled={editId && editDisabled}
-        />
-      )
-    },
     country: {
+      validation: z
+        .object({
+          label: z.string().min(1),
+          value: z.number().min(0)
+        })
+        .refine(data => !!data?.label && !!data?.value, {
+          message: "Country is required"
+        }),
       reactElement: (editDisabled: boolean) => (
         <Select
           name="country"
@@ -81,7 +88,53 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
         />
       )
     },
+    city: {
+      validation: z.string().min(1, { message: "City is required" }),
+      reactElement: (editDisabled: boolean) => (
+        <TextInput
+          type="text"
+          name="city"
+          label="-City-"
+          control={control}
+          disabled={editId && editDisabled}
+        />
+      )
+    },
+    residentialStatus: {
+      validation: z.string().min(1, { message: "City is required" }),
+      reactElement: (editDisabled: boolean) => (
+        <TextInput
+          type="text"
+          name="residentialStatus"
+          label="Residential Status"
+          control={control}
+          disabled={editId && editDisabled}
+        />
+      )
+    },
+    zipCode: {
+      validation: z.string().min(1, { message: "Zip Code is required" }),
+
+      reactElement: (editDisabled: boolean) => (
+        <TextInput
+          type="text"
+          name="zipCode"
+          label="-Zip Code"
+          control={control}
+          disabled={editId && editDisabled}
+        />
+      )
+    },
+
     state: {
+      validation: z
+        .object({
+          label: z.string().min(1),
+          value: z.number().min(0)
+        })
+        .refine(data => !!data?.label && !!data?.value, {
+          message: "State is required"
+        }),
       reactElement: (editDisabled: boolean) => (
         <Select
           name="state"
@@ -91,65 +144,64 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
           isDisabled={editId && editDisabled}
         />
       )
+    },
+    postalCode: {
+      validation: z.string().min(1, { message: "Zip Code is required" }),
+
+      reactElement: (editDisabled: boolean) => (
+        <TextInput
+          type="text"
+          name="postalCode"
+          label="-Postal Code"
+          control={control}
+          disabled={editId && editDisabled}
+        />
+      )
     }
+  } as IDataFormFields;
+  const AddressDataFormFieldList = useMemo(() => {
+    return createKycFieldMappingData(
+      formFieldData,
+      AddressDataFormFields
+    )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
+  }, [formFieldData]);
+  useEffect(() => {
+    const requiredFieldValidations = AddressDataFormFieldList?.filter(
+      item => item?.isRequired
+    )?.reduce((acc: any, item) => {
+      if (
+        item?.name &&
+        AddressDataFormFields[convertToCamelCase(item?.name)]?.validation
+      ) {
+        acc[convertToCamelCase(item?.name)] =
+          AddressDataFormFields[convertToCamelCase(item?.name)]?.validation;
+      }
+      return acc;
+    }, {});
+    setSchema(z.object(requiredFieldValidations));
+  }, [AddressDataFormFieldList]);
+
+  const onSubmitAddressDetails = (data: any) => {
+    console.log(data);
+    // stepProps.nextStep();
   };
-  const AddressDataFormFieldList = createKycFieldMappingData(
-    formFieldData,
-    AddressDataFormFields
-  )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
 
   return (
     <Flex direction={"column"}>
       <Card borderRadius={"16px"} p={5}>
-        <Heading size={"lg"}>Account Details</Heading>
-        <VStack spacing={10}>
-          <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w={"100%"} pt={5}>
+        <Heading size={"lg"}>Adress Details</Heading>
+        <VStack
+          as={"form"}
+          onSubmit={handleSubmit(onSubmitAddressDetails)}
+          spacing={10}
+        >
+          <SimpleGrid columns={{ base: 1, md: 2 }} gap={7} w={"100%"} pt={5}>
             {AddressDataFormFieldList?.map(item => (
-              <Fragment key={item?.id}>{item?.element}</Fragment>
+              <Fragment key={item?.id}>
+                {item?.display && item?.element}
+              </Fragment>
             ))}
           </SimpleGrid>
-          {/* <SimpleGrid columns={{ base: 1, md: 2 }} gap={4} w={"100%"} pt={5}>
-            <GridItem>
-              <Select
-                name="country"
-                placeholder="Country"
-                control={control}
-                options={countryOptions}
-              />
-            </GridItem>
-            <GridItem>
-              <Select
-                name="state"
-                placeholder="-State-"
-                control={control}
-                options={StateOptions}
-              />
-            </GridItem>
-            <GridItem>
-              <TextInput
-                type="text"
-                name="city"
-                label="-City-"
-                control={control}
-              />
-            </GridItem>
-            <GridItem>
-              <TextInput
-                type="text"
-                name="streetAddress"
-                label="-Street Address-"
-                control={control}
-              />
-            </GridItem>
-            <GridItem>
-              <TextInput
-                type="text"
-                name="zipCode"
-                label="-Zip Code"
-                control={control}
-              />
-            </GridItem>
-          </SimpleGrid> */}
 
           <Flex justifyContent={"space-between"} w={"100%"} mt={4}>
             <Button
@@ -160,7 +212,9 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
               Go Back
             </Button>
 
-            <Button colorScheme="teal">Save and Continue</Button>
+            <Button colorScheme="teal" type="submit">
+              Save and Continue
+            </Button>
           </Flex>
         </VStack>
       </Card>

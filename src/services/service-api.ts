@@ -25,15 +25,25 @@ export const api = {
     // get: `${service}/state/list/app/{countryId}`
     get: `${service}/state/list/app/36`
   },
-  BeneficiaryDetail: {
+  beneficiary: {
     getAll: `${service}/beneficiary/detail`,
-    create: `${service}/beneficiary/detail`
+    create: `${service}/beneficiary/detail`,
+    getBeneficiaryById: `${service}/beneficiary/detail/{id}`,
+    delete: `${service}/beneficiary/detail/{id}`,
+    updatae: `${service}/beneficiary/detail/{id}`
+  },
+  beneficiary_detail: {
+    getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
+    createBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
+    updateBeneficiaryDetail: `${service}/beneficiary/checkout/detail/update/{beneficiaryDetailId}`,
+    getBeneficiaryDetailById: `${service}/beneficiary/checkout/detail/{beneficiaryCheckoutId}`,
+    deleteBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryCheckoutId}`
   },
   payout_method: {
     get: `${service}/payout-method/list/app/{id}`
   },
   payout_partner: {
-    update: `${service}/payout_partner/{id}`
+    get: `${service}/payout-partner/list/app/{payoutMethodId}`
   },
   Kyc: {
     getAll: `${service}/customer/kyc`,

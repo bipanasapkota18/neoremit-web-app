@@ -9,12 +9,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import TextInput from "@neoWeb/components/Form/TextInput";
-import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 import { useStore, useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AuthPageProps } from "../../Register/RegisterForm";
 import PasswordStrength from "./passwordStrength";
+import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 const defaultValues = {
   password: "",
   confirm_password: ""
@@ -27,28 +27,11 @@ const SetPassword = ({ setScreen }: AuthPageProps) => {
 
   const passwordSchema = z
     .object({
-      password: z
-        .string()
-        .min(8, { message: "Password must be 8 characters  long" })
-        .regex(/[a-z]/, {
-          message: "Password must contain at least on lowercase letter"
-        })
-        .regex(/[A-Z]/, {
-          message: "Password must contain atleast one uppercase letter"
-        })
-        .regex(/[0-9]/, {
-          message: "Password  must contain atleast one number "
-        })
-        .regex(/[!@#$%&*]/, {
-          message: "Passsword must contain atleast one symbol !@#$%&*"
-        })
-        .nonempty({ message: "Password is required" }),
-      confirm_password: z
-        .string()
-        .nonempty({ message: "confirm password is required" })
+      password: z.string().min(1, { message: "Name is required" }),
+      confirm_password: z.string().min(1, { message: "Name is required" })
     })
     .refine(data => data.password === data.confirm_password, {
-      message: "Password  must match",
+      message: "Passwords don't match",
       path: ["confirm_password"]
     });
   const { control, watch, handleSubmit } = useForm({

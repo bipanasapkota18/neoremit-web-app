@@ -24,7 +24,7 @@ const LayoutWrapper: React.FC = () => {
           alignItems={"center"}
         >
           <Container>
-            <Box display={"flex"} gap={6} w="full">
+            <Box display={"flex"} gap={6} w="full" maxW={"100%"}>
               <Sidebar animate={sidebarAnimate} />
               <Suspense
                 fallback={

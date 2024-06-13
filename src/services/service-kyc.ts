@@ -1,10 +1,12 @@
+import { useKycStoreData } from "@neoWeb/store/kycData";
 import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
+import { ISelectOptions } from "@neoWeb/utility/format";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
 export interface IKYCFieldList {
-  kycId: number;
+  kycId: number | null;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -12,11 +14,11 @@ export interface IKYCFieldList {
   dateOfBirth: string;
   phoneNumber: string;
   email: string;
-  maritalStatusId: number;
-  occupationId: number;
+  maritalStatusId: number | undefined;
+  occupationId: number | undefined;
   ssnNumber: string;
-  countryId: number;
-  stateId: number;
+  countryId: ISelectOptions<number> | null;
+  stateId: ISelectOptions<number> | null;
   zipCode: string;
   nationality: string;
   identificationNumber: string;
@@ -63,6 +65,45 @@ export interface Document {
   isActive: boolean;
 }
 
+export interface KYCInfo {
+  personalInfo: PersonalInfo;
+  addressInfo: AddressInfo;
+  kycStatus: string;
+  kycVerificationLink?: any;
+}
+
+export interface AddressInfo {
+  country?: any;
+  state?: any;
+  zipCode?: any;
+  postalCode?: any;
+  nationality?: any;
+  residentialStatus?: any;
+  city?: any;
+  streetAddress?: any;
+}
+
+export interface PersonalInfo {
+  kycId: number;
+  firstName: string;
+  middleName?: any;
+  lastName: string;
+  gender: string;
+  dateOfBirth: string;
+  phoneNumber: string;
+  email: string;
+  maritalStatus: MaritalStatus;
+  occupation: MaritalStatus;
+  ssnNumber?: any;
+}
+
+export interface MaritalStatus {
+  id: number;
+  name: string;
+  code: string;
+  isActive: boolean;
+}
+
 const countryFields = (countryId: number | null) => {
   return NeoHttpClient.get<NeoResponse<IKycFormFields>>(
     api.Kyc.getCountryKycFields?.replace("{countryId}", countryId + "")
@@ -76,13 +117,20 @@ const useGetCountryFields = (countryId: number | null) => {
   });
 };
 const getKycInformation = () => {
-  return NeoHttpClient.get<NeoResponse>(api.Kyc.getAll);
+  return NeoHttpClient.get<NeoResponse<KYCInfo>>(api.Kyc.getAll);
 };
 
-const useGetKycInformation = () => {
+const useGetKycInformation = (enabled?: boolean) => {
+  const { setKycData } = useKycStoreData();
   return useQuery({
     queryKey: [api.Kyc.getAll],
-    queryFn: getKycInformation
+    queryFn: async () => {
+      const kycData = await getKycInformation();
+      setKycData(kycData?.data?.data);
+      return kycData;
+    },
+    enabled: enabled,
+    retry: 1
   });
 };
 

@@ -7,7 +7,6 @@ import {
 import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import AddressDetails from "./AddressDetails";
 import DocumentDetail from "./DocumentDetails";
 import PersonalDetails from "./PersonalDetails";
@@ -38,9 +37,9 @@ export default function KYCInformation() {
   const { nextStep, prevStep, activeStep, setStep } = useSteps({
     initialStep: 0
   });
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
+  // const [searchParams] = useSearchParams();
 
   const { data: countryKycFieldValues } = useGetCountryFields(
     initData?.sendingCountry?.id ?? null
@@ -49,8 +48,6 @@ export default function KYCInformation() {
   const categorizedFields = categorizeKycFields(
     countryKycFieldValues?.data?.data?.kycFormField ?? []
   );
-
-  console.log(categorizedFields);
 
   const steps = [
     {
@@ -85,14 +82,14 @@ export default function KYCInformation() {
     }
   ];
 
-  const hasCompletedAllSteps = activeStep === steps.length;
+  // const hasCompletedAllSteps = activeStep === steps.length;
 
   // if (hasCompletedAllSteps) {
   //   navigate(NAVIGATION_ROUTES.KYC);
   // }
   const bg = "white";
 
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
   // const activePath = breadcrumbTitle(pathname);
 
   return (
@@ -179,6 +176,12 @@ function categorizeKycFields(fields: KycFormField[]): CategorizedKycFields {
   return { personalDetails, addressDetails, documentDetails };
 }
 
+export function convertToCamelCase(str: string) {
+  return str.replace(/_([a-z])/g, function (match, letter) {
+    return letter.toUpperCase();
+  });
+}
+
 export function createKycFieldMappingData(
   data: KycFormField[],
   personalDataFormFields: IDataFormFields
@@ -193,9 +196,9 @@ export function createKycFieldMappingData(
       name: item?.keyField?.name,
       displayOrder: item?.keyField?.displayOrder,
       keyFieldId: item?.keyField?.id,
-      element: personalDataFormFields[item?.keyField?.name]?.reactElement(
-        item?.allowUpdate
-      )
+      element: personalDataFormFields[
+        convertToCamelCase(item?.keyField?.name)
+      ]?.reactElement(item?.allowUpdate)
     };
   });
 }

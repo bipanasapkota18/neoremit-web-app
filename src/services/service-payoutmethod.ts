@@ -14,7 +14,7 @@ export interface IPayoutMethodResponse {
 }
 
 const getPayoutMethodById = (id: number | null) => {
-  return NeoHttpClient.get<NeoResponse<IPayoutMethodResponse>>(
+  return NeoHttpClient.get<NeoResponse<IPayoutMethodResponse[]>>(
     api.payout_method.get.replace("{id}", id + "")
   );
 };
@@ -22,7 +22,8 @@ const useGetPayoutMethodById = (id: number | null) => {
   return useQuery({
     queryKey: [api.payout_method.get, id],
     queryFn: () => getPayoutMethodById(id),
-    enabled: !!id
+    enabled: !!id,
+    select: data => data?.data?.data
   });
 };
 

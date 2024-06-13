@@ -5,6 +5,7 @@ import {
   useLogoutMutation
 } from "@neoWeb/services/service-auth";
 import { useFetchInitData } from "@neoWeb/services/service-init";
+import { useGetKycInformation } from "@neoWeb/services/service-kyc";
 import { Suspense, lazy, useEffect } from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import AdditionalInfo from "../NoAuth/Components/AdditionalInfo";
@@ -26,7 +27,8 @@ export default function App() {
   //  Fetching Initial data in app
   const { isLoading: isInitDataLoading, isError: isInitDataError } =
     useFetchInitData(!!isAuthenticated);
-
+  const { isLoading: isKycDataLoading } =
+    useGetKycInformation(!!isAuthenticated);
   useEffect(() => {
     if (typeof isAuthenticated === "boolean" && !isAuthenticated) {
       localStorage.getItem("token") ? logoutUser() : null;
@@ -49,7 +51,10 @@ export default function App() {
     logoutAllTabs();
   }, []);
 
-  if ((isInitDataLoading || isAuthLoading) && !isInitDataError) {
+  if (
+    (isInitDataLoading || isAuthLoading || isKycDataLoading) &&
+    !isInitDataError
+  ) {
     return (
       <Flex justifyContent={"center"} alignItems="center" height={"100vh"}>
         <Spinner />

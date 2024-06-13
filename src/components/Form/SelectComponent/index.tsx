@@ -67,6 +67,7 @@ declare module "react-select/dist/declarations/src/Select" {
 type SelectProps = Props & {
   size?: "sm" | "md" | "lg";
   name: string;
+  noFloating?: boolean;
   control?: Control<any>;
   nonControlled?: boolean;
   customOnChange?: () => void;
@@ -82,6 +83,7 @@ export const selectAllOption = { label: "Select all", value: "*" };
 function Select({
   size = "sm",
   control,
+  noFloating,
   name,
   isMulti,
   helperText,
@@ -185,9 +187,13 @@ function Select({
             <>
               <FormControl variant="floating" id={name} isInvalid={!!error}>
                 <ReactSelect
-                  components={{
-                    ValueContainer: CustomValueContainer
-                  }}
+                  components={
+                    noFloating
+                      ? {}
+                      : {
+                          ValueContainer: CustomValueContainer
+                        }
+                  }
                   closeMenuOnSelect={!isMulti}
                   {...field}
                   styles={{

@@ -6,6 +6,7 @@ import {
   useResendOTp,
   useVerifyOTP
 } from "@neoWeb/services/service-forgot-password";
+
 import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { useForm } from "react-hook-form";
@@ -65,14 +66,14 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
 
   return (
     <>
-      <VStack alignItems={"flex-start"} gap={1}>
+      <VStack alignItems={"flex-start"} gap={8} w={"1000px"}>
         <Text
           fontSize="2xl"
           color={colorScheme.gray_700}
           fontWeight={"800"}
           lineHeight={"36.4px"}
         >
-          Otp verification
+          OTP Verification
         </Text>
         <Text
           fontWeight={"600"}
@@ -92,13 +93,19 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
       >
         <Stack gap={5} alignItems={"center"} width={"100%"}>
           <Flex
+            flex={1}
             display="flex"
             justifyContent="space-between"
             alignItems="center"
             alignSelf="stretch"
             gap={"24px"}
           >
-            <OTPComponent control={control} name="otpCode" page="otpCode" />
+            <OTPComponent
+              control={control}
+              name="otpCode"
+              page="otpCode"
+              inputLength={6}
+            />
           </Flex>
           <Flex gap={"24px"} alignItems={"flex-start"} alignSelf={"stretch"}>
             <Text textAlign={"center"} cursor={"pointer"} fontWeight={700}>
