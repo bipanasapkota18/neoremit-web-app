@@ -84,15 +84,15 @@ const useGetOccupation = () => {
     queryFn: getOccupation
   });
 };
-const getStateById = (id: number | null) => {
+const getStateById = (id: number | null) => () => {
   return NeoHttpClient.get<NeoResponse>(
     api.common.get.replace("{id}", id + "")
   );
 };
 const useGetStateById = (id: number | null) => {
   return useQuery({
-    queryKey: [api.common.get, id],
-    queryFn: () => getStateById(id),
+    queryKey: [id],
+    queryFn: getStateById(id),
     enabled: !!id
   });
 };

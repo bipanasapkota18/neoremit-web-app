@@ -22,8 +22,7 @@ export const api = {
     getAllRelationship: `${service}/relationship/list/app`,
     getAllMaritalStatus: `${service}/marital-status/list/app`,
     getAllOccupation: `${service}/occupation/list/app`,
-    // get: `${service}/state/list/app/{countryId}`
-    get: `${service}/state/list/app/36`
+    get: `${service}/state/list/app/{id}`
   },
   beneficiary: {
     getAll: `${service}/beneficiary/detail`,
@@ -49,6 +48,7 @@ export const api = {
     getAll: `${service}/customer/kyc`,
 
     update: `${service}/customer/kyc/update/personal`,
+    addressData: `${service}/customer/kyc/update/address`,
     getCountryKycFields: `${service}/country/kyc-form/{countryId}`
   },
   init: `${service}/users/init`

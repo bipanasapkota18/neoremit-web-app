@@ -28,7 +28,7 @@ interface LoginPageProps {
   remember?: boolean | undefined;
 }
 const defaultValues = {
-  email: "" as null | string,
+  email: "",
   password: "",
   remember: false
 };
@@ -53,7 +53,7 @@ const LoginForm = () => {
   });
   useEffect(() => {
     reset({
-      email: localStorage.getItem("email"),
+      email: localStorage.getItem("email") ?? "",
       remember: !!localStorage.getItem("email")
     });
   }, []);

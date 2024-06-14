@@ -152,4 +152,28 @@ const usecreateKYC = () => {
   });
 };
 
-export { useGetCountryFields, useGetKycInformation, usecreateKYC };
+const createAddressData = (data: IKYCFieldList) => {
+  return NeoHttpClient.post<NeoResponse>(api.Kyc.addressData, data);
+};
+const useCreateAddressData = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createAddressData,
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.Kyc.addressData]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+
+export {
+  useCreateAddressData,
+  useGetCountryFields,
+  useGetKycInformation,
+  usecreateKYC
+};

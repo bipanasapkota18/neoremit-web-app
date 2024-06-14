@@ -52,6 +52,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
       .min(10, { message: "Phone number must be at least 10 digits" })
       .max(10, { message: "Phone number cannot exceed 10 digits" })
       .min(1, { message: "Phone number is required" }),
+    referralCode: z.string(),
     sendFrom: z
       .object({
         label: z.string().min(1),

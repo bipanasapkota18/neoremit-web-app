@@ -7,13 +7,16 @@ import {
   VStack
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import GoBack from "@neoWeb/components/Button";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import {
   useGetCountryList,
   useGetStateById
 } from "@neoWeb/services/service-common";
-import { formatSelectOptions } from "@neoWeb/utility/format";
+import { useCreateAddressData } from "@neoWeb/services/service-kyc";
+import { useKycStoreData } from "@neoWeb/store/kycData";
+import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Fragment } from "react/jsx-runtime";
@@ -25,14 +28,47 @@ import {
   createKycFieldMappingData
 } from "..";
 
+const defaultValues = {
+  kycId: null as never as number | null,
+  firstName: "",
+  middleName: "",
+  lastName: "",
+  gender: "",
+  dateOfBirth: "",
+  phoneNumber: "",
+  emailAddress: "",
+  maritalStatus: null as ISelectOptions<number> | null,
+  occupation: null as ISelectOptions<number> | null,
+  ssnNumber: "",
+  country: null as ISelectOptions<number> | null,
+  state: null as ISelectOptions<number> | null,
+  zipCode: "",
+  nationality: "",
+  identificationNumber: "",
+  streetAddress: "",
+  city: "",
+  residentialStatus: "",
+  postalCode: ""
+};
 const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
-  const [editId] = useState();
+  const { data: countryList } = useGetCountryList();
+  const { mutateAsync: mutateAddressData, isPending: isAddressSavePending } =
+    useCreateAddressData();
+
+  const { kycData } = useKycStoreData();
+
+  const addressInfo = useMemo(() => {
+    return kycData?.addressInfo;
+  }, [kycData]);
 
   const [schema, setSchema] = useState(z.object({}));
+  const { control, handleSubmit, watch, reset } = useForm({
+    defaultValues: defaultValues,
+    resolver: zodResolver(schema)
+  });
+  const { data: stateList } = useGetStateById(watch("country")?.value ?? null);
+  const [editId] = useState();
 
-  const { control, handleSubmit } = useForm({ resolver: zodResolver(schema) });
-  const { data: countryList } = useGetCountryList();
-  const { data: stateList } = useGetStateById(36);
   const countryOptions = formatSelectOptions<number>({
     data: countryList?.data?.data,
     labelKey: "name",
@@ -44,9 +80,57 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
     valueKey: "id"
   });
 
+  useEffect(() => {
+    if (kycData) {
+      reset({
+        country: countryOptions?.find(
+          item => item?.value === addressInfo?.country?.id
+        ),
+        state: StateOptions?.find(
+          item => item?.value === addressInfo?.state?.id
+        ),
+        nationality: addressInfo?.nationality ?? "",
+        streetAddress: addressInfo?.streetAddress ?? "",
+        city: addressInfo?.city ?? "",
+        residentialStatus: addressInfo?.residentialStatus ?? "",
+        zipCode: addressInfo?.zipCode ?? "",
+        postalCode: addressInfo?.postalCode ?? ""
+      });
+    }
+  }, [kycData]);
+
   const AddressDataFormFields = {
+    country: {
+      validation: {
+        required: z
+          .object({
+            label: z.string(),
+            value: z.number()
+          })
+          .nullable()
+          .refine(data => !!data?.label && !!data?.value, {
+            message: "Country is required"
+          }),
+        notRequired: z.object({
+          label: z.string(),
+          value: z.number()
+        })
+      },
+      reactElement: (editDisabled: boolean) => (
+        <Select
+          name="country"
+          placeholder="Country"
+          control={control}
+          options={countryOptions}
+          isDisabled={editId && editDisabled}
+        />
+      )
+    },
     nationality: {
-      validation: z.string().min(1, { message: "Street address is required" }),
+      validation: {
+        required: z.string().min(1, { message: "Street address is required" }),
+        notRequired: z.string()
+      },
       reactElement: (editDisabled: boolean) => (
         <TextInput
           type="text"
@@ -58,7 +142,10 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       )
     },
     streetAddress: {
-      validation: z.string().min(1, { message: "Street address is required" }),
+      validation: {
+        required: z.string().min(1, { message: "Street address is required" }),
+        notRequired: z.string()
+      },
       reactElement: (editDisabled: boolean) => (
         <TextInput
           type="text"
@@ -69,27 +156,12 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
         />
       )
     },
-    country: {
-      validation: z
-        .object({
-          label: z.string().min(1),
-          value: z.number().min(0)
-        })
-        .refine(data => !!data?.label && !!data?.value, {
-          message: "Country is required"
-        }),
-      reactElement: (editDisabled: boolean) => (
-        <Select
-          name="country"
-          placeholder="Country"
-          control={control}
-          options={countryOptions}
-          isDisabled={editId && editDisabled}
-        />
-      )
-    },
+
     city: {
-      validation: z.string().min(1, { message: "City is required" }),
+      validation: {
+        required: z.string().min(1, { message: "City is required" }),
+        notRequired: z.string()
+      },
       reactElement: (editDisabled: boolean) => (
         <TextInput
           type="text"
@@ -101,7 +173,10 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       )
     },
     residentialStatus: {
-      validation: z.string().min(1, { message: "City is required" }),
+      validation: {
+        required: z.string().min(1, { message: "City is required" }),
+        notRequired: z.string()
+      },
       reactElement: (editDisabled: boolean) => (
         <TextInput
           type="text"
@@ -113,7 +188,10 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       )
     },
     zipCode: {
-      validation: z.string().min(1, { message: "Zip Code is required" }),
+      validation: {
+        required: z.string().min(1, { message: "Zip Code is required" }),
+        notRequired: z.string()
+      },
 
       reactElement: (editDisabled: boolean) => (
         <TextInput
@@ -127,14 +205,21 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
     },
 
     state: {
-      validation: z
-        .object({
-          label: z.string().min(1),
-          value: z.number().min(0)
+      validation: {
+        required: z
+          .object({
+            label: z.string().min(1),
+            value: z.number().min(0)
+          })
+          .nullable()
+          .refine(data => !!data?.label && !!data?.value, {
+            message: "State is required"
+          }),
+        notRequired: z.object({
+          label: z.string(),
+          value: z.number()
         })
-        .refine(data => !!data?.label && !!data?.value, {
-          message: "State is required"
-        }),
+      },
       reactElement: (editDisabled: boolean) => (
         <Select
           name="state"
@@ -146,7 +231,10 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       )
     },
     postalCode: {
-      validation: z.string().min(1, { message: "Zip Code is required" }),
+      validation: {
+        required: z.string().min(1, { message: "Zip Code is required" }),
+        notRequired: z.string()
+      },
 
       reactElement: (editDisabled: boolean) => (
         <TextInput
@@ -164,26 +252,42 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       formFieldData,
       AddressDataFormFields
     )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
-  }, [formFieldData]);
+  }, [formFieldData, countryList, stateList]);
   useEffect(() => {
-    const requiredFieldValidations = AddressDataFormFieldList?.filter(
-      item => item?.isRequired
-    )?.reduce((acc: any, item) => {
-      if (
-        item?.name &&
-        AddressDataFormFields[convertToCamelCase(item?.name)]?.validation
-      ) {
-        acc[convertToCamelCase(item?.name)] =
-          AddressDataFormFields[convertToCamelCase(item?.name)]?.validation;
-      }
-      return acc;
-    }, {});
+    const requiredFieldValidations = AddressDataFormFieldList?.reduce(
+      (acc: any, item) => {
+        if (item?.isRequired && item?.display) {
+          acc[convertToCamelCase(item?.name)] =
+            AddressDataFormFields[
+              convertToCamelCase(item?.name)
+            ]?.validation?.required;
+        } else {
+          acc[convertToCamelCase(item?.name)] =
+            AddressDataFormFields[
+              convertToCamelCase(item?.name)
+            ]?.validation?.notRequired;
+        }
+        return acc;
+      },
+      {}
+    );
     setSchema(z.object(requiredFieldValidations));
   }, [AddressDataFormFieldList]);
 
-  const onSubmitAddressDetails = (data: any) => {
-    console.log(data);
-    // stepProps.nextStep();
+  const onSubmitAddressDetails = async (data: any) => {
+    const preparedData = {
+      ...data,
+      kycId: kycData?.personalInfo?.kycId ?? null,
+      countryId: data?.country?.value,
+      stateId: data?.state?.value
+    };
+    console.log(preparedData);
+    try {
+      await mutateAddressData(preparedData);
+      stepProps.nextStep();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -204,15 +308,13 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
           </SimpleGrid>
 
           <Flex justifyContent={"space-between"} w={"100%"} mt={4}>
-            <Button
-              variant="filter"
-              mr={1}
-              onClick={() => stepProps.prevStep()}
-            >
-              Go Back
-            </Button>
+            <GoBack onClick={() => stepProps.prevStep()} />
 
-            <Button colorScheme="teal" type="submit">
+            <Button
+              isLoading={isAddressSavePending}
+              colorScheme="teal"
+              type="submit"
+            >
               Save and Continue
             </Button>
           </Flex>

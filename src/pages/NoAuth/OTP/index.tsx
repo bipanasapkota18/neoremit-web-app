@@ -1,7 +1,6 @@
 import { Button, Flex, Stack, Text, VStack } from "@chakra-ui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import OTPComponent from "@neoWeb/components/Form/OTP";
-import { useTimer } from "@neoWeb/hooks/useTimer";
 import {
   useResendOTp,
   useVerifyOTP
@@ -9,7 +8,9 @@ import {
 
 import { useStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import moment from "moment";
 import { useForm } from "react-hook-form";
+import { useTimer } from "react-timer-hook";
 import { object, string } from "yup";
 
 const defaultValues = {
@@ -22,13 +23,16 @@ export interface AuthPageProps {
 }
 
 const OTP = ({ setScreen, type }: AuthPageProps) => {
+  const { seconds, minutes, isRunning, restart } = useTimer({
+    expiryTimestamp: moment().add(30, "seconds").toDate()
+  });
   const { email } = useStore();
-  const { minutes, formattedSeconds, time } = useTimer(0.5);
 
   const { mutateAsync: emailVerification, isPending: isOTPLoading } =
     useVerifyOTP();
 
-  const { mutateAsync: mutateResendOtp } = useResendOTp();
+  const { mutateAsync: mutateResendOtp, isPending: isResendLoading } =
+    useResendOTp();
   const otpSchema = object().shape({
     otpCode: string().required("Please Enter OTP").min(6)
   });
@@ -59,6 +63,7 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
         email: email,
         otpFor: type
       });
+      restart(moment().add(30, "seconds").toDate());
     } catch (error) {
       console.error("Resend OTP failed", error);
     }
@@ -111,18 +116,22 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
             <Text textAlign={"center"} cursor={"pointer"} fontWeight={700}>
               Resend OTP code in :
               <Text as="span" pl={1} color={colorScheme.primary_400}>
-                {minutes}:{formattedSeconds}
+                {moment(minutes, "minutes").format("mm")}:
+                {moment(seconds, "seconds").format("ss")}
               </Text>
             </Text>
-            {time === 0 && (
-              <Text
-                marginLeft={"auto"}
-                cursor={"pointer"}
-                onClick={() => resendOtp()}
-              >
-                Resend
-              </Text>
-            )}
+            {!isRunning &&
+              (isResendLoading ? (
+                <Text marginLeft={"auto"}>Resending...</Text>
+              ) : (
+                <Text
+                  marginLeft={"auto"}
+                  cursor={"pointer"}
+                  onClick={() => resendOtp()}
+                >
+                  Resend
+                </Text>
+              ))}
           </Flex>
         </Stack>
 
