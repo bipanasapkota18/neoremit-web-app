@@ -18,7 +18,7 @@ export const navLinks = [
     isNotLink: true,
     childNav: [
       {
-        icon: sidebarSvg.User,
+        icon: sidebarSvg.Ellipse,
         href: NAVIGATION_ROUTES.ACCOUNT.KYC_INFORMATION,
         label: "Kyc Information"
       }

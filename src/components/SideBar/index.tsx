@@ -103,14 +103,14 @@ export default function Sidebar({
             scrollbarGutter: "stable",
             overflowY: "auto",
             "&::-webkit-scrollbar": {
-              width: "0.6rem",
+              width: "0.5rem",
               position: "absolute",
               transitionDuration: "all 2s"
             },
             "&::-webkit-scrollbar-track": {
               position: "absolute",
               background: colorScheme.white,
-              opacity: 0.1
+              opacity: 0.2
             },
             "&::-webkit-scrollbar-thumb": {
               background: colorScheme.purple_100,
