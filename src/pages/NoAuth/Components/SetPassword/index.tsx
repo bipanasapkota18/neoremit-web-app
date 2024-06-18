@@ -9,12 +9,12 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import TextInput from "@neoWeb/components/Form/TextInput";
-import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 import { useStore, useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { AuthPageProps } from "../../Register/RegisterForm";
 import PasswordStrength from "./passwordStrength";
+import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 const defaultValues = {
   password: "",
   confirm_password: ""

@@ -14,7 +14,15 @@ export const navLinks = [
     icon: sidebarSvg.User,
     href: NAVIGATION_ROUTES.ACCOUNT,
     label: "Account",
-    header: "MENUS"
+    header: "MENUS",
+    isNotLink: true,
+    childNav: [
+      {
+        icon: sidebarSvg.Ellipse,
+        href: NAVIGATION_ROUTES.ACCOUNT.KYC_INFORMATION,
+        label: "Kyc Information"
+      }
+    ]
   },
   {
     icon: sidebarSvg.User,
@@ -66,6 +74,7 @@ export const navLinks = [
     label: "Settings",
     header: "NEO"
   }
+
   // {
   //   icon:sidebarSvg.User,
   //   href:NAVIGATION_ROUTES.LOGOUT,

@@ -30,7 +30,18 @@ export interface IRelationshipList {
   code: string;
   isActive: boolean;
 }
-
+export interface IMaritalStatusList {
+  id?: number | null;
+  name: string;
+  code: string;
+  isActive: boolean;
+}
+export interface IOccupationList {
+  id?: number | null;
+  name: string;
+  code: string;
+  isActive: boolean;
+}
 const getCountryList = () => {
   return NeoHttpClient.get<NeoResponse<ICountriesList[]>>(
     api.common.getAllCountryList
@@ -55,4 +66,40 @@ const useGetRelationship = () => {
   });
 };
 
-export { useGetCountryList, useGetRelationship };
+const getMaritalStatus = () => {
+  return NeoHttpClient.get<NeoResponse>(api.common.getAllMaritalStatus);
+};
+const useGetMaritalStatus = () => {
+  return useQuery({
+    queryKey: [api.common.getAllMaritalStatus],
+    queryFn: getMaritalStatus
+  });
+};
+const getOccupation = () => {
+  return NeoHttpClient.get<NeoResponse>(api.common.getAllOccupation);
+};
+const useGetOccupation = () => {
+  return useQuery({
+    queryKey: [api.common.getAllOccupation],
+    queryFn: getOccupation
+  });
+};
+const getStateById = (id: number | null) => () => {
+  return NeoHttpClient.get<NeoResponse>(
+    api.common.get.replace("{id}", id + "")
+  );
+};
+const useGetStateById = (id: number | null) => {
+  return useQuery({
+    queryKey: [id],
+    queryFn: getStateById(id),
+    enabled: !!id
+  });
+};
+export {
+  useGetCountryList,
+  useGetMaritalStatus,
+  useGetOccupation,
+  useGetRelationship,
+  useGetStateById
+};

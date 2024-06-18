@@ -9,9 +9,52 @@ export interface Module {
   scopes: string;
 }
 export interface IInitData {
+  fullName: string;
+  username: string;
+  profilePicture?: any;
+  sendingCountry: ISendingCountry;
+  receivingCountry: ISendingCountry;
+  baseRate: IBaseRate;
+  logInFrom: string;
+}
+
+export interface IBaseRate {
+  id: number;
+  baseRate: number;
+  marginRate: number;
+  marginType: string;
+  senderCountry: ISendingCountry;
+  rateProvider: IRateProvider[];
+}
+
+export interface IRateProvider {
+  id: number;
+  rateProvider: string;
+  costRate: number;
+}
+
+export interface ISendingCountry {
+  id: number;
+  code: string;
   name: string;
-  role: string;
-  moduleList: any[];
+  shortName: string;
+  phoneCode: string;
+  isoNumber: string;
+  currency: Currency;
+  canReceive: boolean;
+  canSend: boolean;
+  isActive: boolean;
+  flagIcon: string;
+  hasState: boolean;
+}
+
+export interface Currency {
+  id: number;
+  code: string;
+  name: string;
+  shortName: string;
+  symbol: string;
+  isActive: boolean;
 }
 
 const fetchInitData = () => () => {

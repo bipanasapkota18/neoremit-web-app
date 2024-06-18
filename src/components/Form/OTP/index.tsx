@@ -60,6 +60,7 @@ const OTPComponent = ({
                 >
                   {otpComponent}
                 </PinInput>
+
                 {page == "mpin" && (
                   <IconButton
                     colorScheme={"black"}

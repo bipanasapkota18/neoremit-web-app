@@ -32,10 +32,9 @@ export const ButtonConfig: ComponentStyleConfig = {
       }
     }),
     light: () => ({
-      background: colorScheme.white,
+      background: colorScheme.primary_50,
       color: colorScheme.primary_500,
-      border: `1px solid ${colorScheme.primary_500}`,
-      fontSize: "14px",
+      fontSize: "16px",
       fontWeight: 700,
       lineHeight: "17.57px"
     }),
@@ -76,6 +75,12 @@ export const ButtonConfig: ComponentStyleConfig = {
       width: "100%",
       fontWeight: 600,
       lineHeight: "normal"
+    }),
+    gender_button: () => ({
+      bg: colorScheme.white,
+      border: `1px solid ${colorScheme.input_border}`,
+      color: colorScheme.primary_500,
+      fontWeight: 700
     })
   },
 

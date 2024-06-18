@@ -1,5 +1,4 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { ArrowRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   chakra,
@@ -10,6 +9,7 @@ import {
   useDisclosure,
   VStack
 } from "@chakra-ui/react";
+import { sidebarSvg } from "@neoWeb/assets/images/svgs/Sidebar";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { Dispatch, Fragment, SetStateAction, useEffect } from "react";
 import { NavLink } from "react-router-dom";
@@ -121,7 +121,7 @@ export default function NavItem({
             ? false
             : window.location.href.includes(href))
             ? {
-                background: colorScheme.primary_500,
+                // background: colorScheme.primary_500,
                 "& p": {
                   color: colorScheme.white
                 },
@@ -149,10 +149,7 @@ export default function NavItem({
             ? notActiveLink
             : {
                 borderRadius: 10,
-                background: isChild
-                  ? colorScheme.primary_400
-                  : colorScheme.primary_500,
-
+                background: colorScheme.primary_500,
                 "& p": {
                   color: colorScheme.white
                 },
@@ -183,7 +180,7 @@ export default function NavItem({
 
         <HStack justifyContent="space-between">
           <HStack alignItems="center" flex={1}>
-            {icon && <Icon as={icon} fontSize="xl" mb={1} />}
+            {icon && <Icon as={icon} fontSize="xl" />}
             <HStack
               justifyContent={"space-between"}
               alignItems={"center"}
@@ -221,7 +218,9 @@ export default function NavItem({
           </HStack>
           {isNotLink && (
             <Icon
-              as={ArrowRightIcon}
+              as={sidebarSvg.ArrowRight}
+              height={"20px"}
+              width={"20px"}
               color="gray.500"
               transform={isOpen ? "rotate(90deg)" : ""}
             />
@@ -232,14 +231,13 @@ export default function NavItem({
         animate
         in={isOpen && !collapsed}
         style={{
-          width: "inherit",
+          width: "100%",
           overflow: "visible",
-          boxShadow: `inset 5px 2px 15px ${colorScheme.purple_100}`,
           margin: "0px",
           padding: "10px 0px"
         }}
       >
-        <VStack w="95%" m="auto">
+        <VStack m="auto">
           {childNav?.map((child, index) => (
             <NavItem
               {...child}
