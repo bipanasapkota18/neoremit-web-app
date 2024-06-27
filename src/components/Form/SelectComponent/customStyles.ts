@@ -16,7 +16,13 @@ const px = {
   lg: "1rem"
 };
 
-export const useCustomStyles = (error?: any) => {
+export const useCustomStyles = ({
+  error,
+  noFloating
+}: {
+  error?: any;
+  noFloating?: boolean;
+}) => {
   const customStyles: StylesConfig = {
     // When disabled, react-select sets the pointer-state to none
     // which prevents the `not-allowed` cursor style from chakra
@@ -61,6 +67,11 @@ export const useCustomStyles = (error?: any) => {
       }
     ) => ({
       ...provided,
+      background: "#ffffff",
+      _hover: {
+        background: "#ffffff",
+        borderColor: colorScheme.primary_500
+      },
       borderWidth: "1px",
       borderColor: error
         ? colorScheme.danger_500
@@ -108,7 +119,7 @@ export const useCustomStyles = (error?: any) => {
         }
       }
     ) => {
-      let padding = `0.125rem ${px[size ?? "sm"]}`;
+      let padding = `0.12rem ${px[size ?? "sm"]}`;
       if (
         formatOptionLabel && isMulti
           ? (value as PropsValue<any>)?.length
@@ -127,9 +138,9 @@ export const useCustomStyles = (error?: any) => {
     },
     placeholder: (provided, state) => ({
       ...provided,
-      padding: "0px 4px",
+      padding: "3px 0",
       position: "absolute",
-      color: colorScheme.gray_700,
+      color: colorScheme.gray_500,
       zIndex: 2,
       top: "11px",
       transition: "all 0.2s",
@@ -139,8 +150,8 @@ export const useCustomStyles = (error?: any) => {
             background: "none",
             whiteSpace: "nowrap",
             transform: "translateX(-8%)",
-            top: "-1px",
-            left: "11px"
+            top: "-2px",
+            left: "10px"
           }
         : {})
     }),
@@ -159,7 +170,8 @@ export const useCustomStyles = (error?: any) => {
     }),
     singleValue: styles => {
       return {
-        ...styles
+        ...styles,
+        marginTop: noFloating ? 0 : "9px"
       };
     },
     multiValue: styles => {

@@ -50,7 +50,7 @@ const OTPComponent = ({
               id={name}
               maxW={"350px !important"}
             >
-              <Flex gap={inputLength === 6 ? 7 : 14}>
+              <Flex gap={inputLength === 6 ? 5 : 14}>
                 <PinInput
                   placeholder=""
                   otp

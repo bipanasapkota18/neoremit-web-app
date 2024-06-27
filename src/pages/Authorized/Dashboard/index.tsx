@@ -18,15 +18,27 @@ import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
-import { formatSelectOptions } from "@neoWeb/utility/format";
+import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 
+const defaultValues = {
+  sendFrom: null as ISelectOptions<number> | null,
+  sendTo: null as ISelectOptions<number> | null
+};
 function Dashboard() {
+  // const navigate = useNavigate();
   const { data: countriesList } = useGetCountryList();
+  const { initData } = useStoreInitData();
+
+  const { control, reset } = useForm({
+    defaultValues: defaultValues
+  });
 
   const countryOptions = formatSelectOptions<number>({
-    data: countriesList?.data?.data,
+    data: countriesList,
     labelKey: "name",
     valueKey: "id",
     icon: {
@@ -36,7 +48,25 @@ function Dashboard() {
     }
   });
 
-  const { control } = useForm();
+  useEffect(() => {
+    reset({
+      sendFrom: countryOptions?.find(
+        item => item.value === initData?.sendingCountry?.id
+      ),
+      sendTo: countryOptions?.find(
+        item => item.value === initData?.receivingCountry?.id
+      )
+    });
+  }, [countriesList]);
+
+  const calculatdRate = useMemo(() => {
+    return initData?.baseRate?.marginType === "PERCENTAGE"
+      ? initData?.baseRate?.baseRate -
+          initData?.baseRate?.baseRate * (initData?.baseRate?.marginRate / 100)
+      : (initData?.baseRate?.baseRate ?? 0) -
+          (initData?.baseRate?.marginRate ?? 0);
+  }, [initData]);
+
   return (
     <>
       <VStack w="full" gap={6}>
@@ -77,7 +107,11 @@ function Dashboard() {
             >
               <VStack gap={0}>
                 <Text>Conversion Rate</Text>
-                <Text fontSize={"large"}>1.00 USD = 132.00 NPR</Text>
+                <Text fontSize={"large"}>
+                  1.00 {`${initData?.sendingCountry?.currency?.shortName}`} ={" "}
+                  {calculatdRate}{" "}
+                  {`${initData?.receivingCountry?.currency?.shortName}`}
+                </Text>
               </VStack>
               {/* PLEASE FIX THE REACT SELECT COMPOEMENT */}
               <HStack gap={4} w={"full"}>
@@ -125,6 +159,9 @@ function Dashboard() {
                 py={4}
                 size={"sm"}
                 leftIcon={<svgAssets.SendIcon />}
+                // onClick={() => {
+                //   navigate(NAVIGATION_ROUTES.SEND_MONEY);
+                // }}
               >
                 Send Money
               </Button>

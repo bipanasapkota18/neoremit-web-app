@@ -1,4 +1,5 @@
 const service = `internal-service`;
+const transaction_service = `transaction-service`;
 
 export const api = {
   auth: {
@@ -44,12 +45,20 @@ export const api = {
   payout_partner: {
     get: `${service}/payout-partner/list/app/{payoutMethodId}`
   },
+  purpose_of_payment: {
+    get: `${service}/payment-purpose/list/app`
+  },
   Kyc: {
     getAll: `${service}/customer/kyc`,
-
     update: `${service}/customer/kyc/update/personal`,
     addressData: `${service}/customer/kyc/update/address`,
     getCountryKycFields: `${service}/country/kyc-form/{countryId}`
+  },
+  send_money: {
+    promo_code_validate: `${service}/promo-code/validate`,
+    beneficiary_validate: `${transaction_service}/trans/validate/beneficiary/account`,
+    validate_sender: `${transaction_service}/trans/validate/sender/account`,
+    confirm_payment: `${transaction_service}/trans/confirm-payment`
   },
   init: `${service}/users/init`
 };

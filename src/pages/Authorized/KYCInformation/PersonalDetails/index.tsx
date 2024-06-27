@@ -57,6 +57,7 @@ const defaultValues = {
   postalCode: ""
 };
 const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
+  const [gender, setGender] = useState<string>("");
   const { data: maritalList } = useGetMaritalStatus();
   const { data: occupationList } = useGetOccupation();
   const { mutateAsync: mutateKycCreate, isPending: isKycLoading } =
@@ -75,7 +76,6 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
   const {
     control,
     handleSubmit,
-    watch,
     setValue,
     reset,
     formState: { isValid }
@@ -112,6 +112,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
   useEffect(() => {
     if (kycData) {
       setValue("gender", personalData?.gender ?? "");
+      setGender(personalData?.gender ?? "");
       reset(oldValues => ({
         ...oldValues,
         firstName: personalData?.firstName ?? "",
@@ -330,32 +331,31 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
           w="100%"
         >
           <Text fontSize={"lg"}>Gender</Text>
-
           <Flex gap={"16px"}>
-            {GenderOptions.map((data, index) => (
-              <Button
-                pointerEvents={editId && editDisabled ? "none" : "all"}
-                key={index}
-                variant={"gender_button"}
-                leftIcon={<Icon as={data.icon} />}
-                _active={{
-                  bg: colorScheme.primary_500,
-                  color: colorScheme.white,
-                  "svg > *": {
-                    fill: `${colorScheme.white}!important`
-                  }
-                }}
-                isActive={
-                  watch("gender") === data.label ||
-                  kycData?.personalInfo?.gender === data.label.toUpperCase()
-                }
-                onClick={() => {
-                  setValue("gender", data.label);
-                }}
-              >
-                {data.label}
-              </Button>
-            ))}
+            {GenderOptions.map((data, index) => {
+              return (
+                <Button
+                  pointerEvents={editId && editDisabled ? "none" : "all"}
+                  key={index}
+                  variant={"gender_button"}
+                  leftIcon={<Icon as={data.icon} />}
+                  _active={{
+                    bg: colorScheme.primary_500,
+                    color: colorScheme.white,
+                    "svg > *": {
+                      fill: `${colorScheme.white}!important`
+                    }
+                  }}
+                  isActive={gender === data.label.toUpperCase()}
+                  onClick={() => {
+                    setValue("gender", data.label.toUpperCase());
+                    setGender(data.label.toUpperCase());
+                  }}
+                >
+                  {data.label}
+                </Button>
+              );
+            })}
           </Flex>
         </GridItem>
       )
@@ -367,7 +367,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
       formFieldData,
       personalDataFormFields
     )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
-  }, [formFieldData, watch("gender")]);
+  }, [formFieldData, gender]);
 
   useEffect(() => {
     const requiredFieldValidations = personalDetailFieldList?.reduce(
@@ -396,7 +396,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
       ...data,
       kycId: personalData?.kycId ?? null,
       email: data?.emailAddress,
-      gender: data?.gender?.toUpperCase(),
+      gender: data?.gender,
       maritalStatusId: data?.maritalStatus?.value,
       occupationId: data?.occupation?.value
     };

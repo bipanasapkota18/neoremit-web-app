@@ -93,16 +93,19 @@ const TextInput: React.FC<TextInputProps & InputProps & TextareaProps> = ({
                 ) : null}
                 {type == "textarea" ? (
                   <Textarea
+                    borderRadius={"16px"}
                     paddingLeft={startIcon ? 9 : ""}
                     placeholder={label}
-                    height={"inherit"}
+                    height={"120px"}
                     onChange={onChange}
                     value={value ?? ""}
                     isInvalid={!!error}
                     errorBorderColor={colorScheme.danger_500}
-                    boxShadow="inset 0px 1px 1px rgba(0, 0, 0, 0.12)"
+                    boxShadow="none !important"
                     disabled={disabled}
                     variant={variant}
+                    _hover={{ borderColor: colorScheme.primary_500 }}
+                    _focus={{ borderColor: colorScheme.primary_500 }}
                     {...extraProps}
                   />
                 ) : (
@@ -133,6 +136,11 @@ const TextInput: React.FC<TextInputProps & InputProps & TextareaProps> = ({
                         borderStyle: "solid",
                         backgroundImage: `url(${imageAssets.CalendarIcon})`
                       }
+                    }}
+                    _hover={{ borderColor: colorScheme.primary_500 }}
+                    _focus={{
+                      borderColor: colorScheme.primary_500,
+                      boxShadow: "none"
                     }}
                     {...extraProps}
                   />

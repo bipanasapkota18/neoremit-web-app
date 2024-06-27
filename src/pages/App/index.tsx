@@ -6,8 +6,10 @@ import {
 } from "@neoWeb/services/service-auth";
 import { useFetchInitData } from "@neoWeb/services/service-init";
 import { useGetKycInformation } from "@neoWeb/services/service-kyc";
+import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { Suspense, lazy, useEffect } from "react";
-import { Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
 import AdditionalInfo from "../NoAuth/Components/AdditionalInfo";
 import ForgotPassword from "../NoAuth/Components/ForgotPassword";
 import { appRoutes } from "./appRoutes";
@@ -16,6 +18,7 @@ const Login = lazy(() => import("@neoWeb/pages/NoAuth/Login"));
 const Register = lazy(() => import("@neoWeb/pages/NoAuth/Register"));
 
 export default function App() {
+  const { pathname } = useLocation();
   const {
     data: isAuthenticated,
     isLoading: isAuthLoading,
@@ -29,6 +32,21 @@ export default function App() {
     useFetchInitData(!!isAuthenticated);
   const { isLoading: isKycDataLoading } =
     useGetKycInformation(!!isAuthenticated);
+  const { initData } = useStoreInitData();
+  const { setSendMoneyData } = useSendMoneyStore();
+
+  useEffect(() => {
+    if (pathname != "/send-money") {
+      setSendMoneyData({
+        sendingCountryId: initData?.sendingCountry?.id ?? null,
+        receivingCountryId: initData?.receivingCountry?.id ?? null,
+        sendingAmount: "",
+        receivingAmount: "",
+        payoutMethodId: null
+      });
+    }
+  }, [pathname]);
+
   useEffect(() => {
     if (typeof isAuthenticated === "boolean" && !isAuthenticated) {
       localStorage.getItem("token") ? logoutUser() : null;
