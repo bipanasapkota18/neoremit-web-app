@@ -3,7 +3,7 @@ import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
 import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
-import { currencyFormat } from "@neoWeb/utility/currencyFormat";
+import { currencyFormat, formatAmount } from "@neoWeb/utility/currencyFormat";
 
 interface SendMoneyProps {
   amount?: number;
@@ -12,7 +12,6 @@ interface SendMoneyProps {
 const SendMoneyView = ({ amount }: SendMoneyProps) => {
   const { initData } = useStoreInitData();
   const { sendMoneyData } = useSendMoneyStore();
-  console.log(sendMoneyData?.sendingAmount);
   return (
     <Box
       w="full"
@@ -42,8 +41,8 @@ const SendMoneyView = ({ amount }: SendMoneyProps) => {
         {initData?.sendingCountry?.currency?.symbol}{" "}
         {amount + "" != "NaN"
           ? sendMoneyData?.sendingAmount != undefined
-            ? sendMoneyData?.sendingAmount
-            : currencyFormat(amount ?? 0)
+            ? currencyFormat(+formatAmount(sendMoneyData?.sendingAmount))
+            : currencyFormat(+formatAmount(amount ?? 0))
           : "0.00"}
       </Text>
       <Box sx={{ pos: "absolute", top: 7, right: -8 }}>

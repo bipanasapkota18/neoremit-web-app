@@ -11,11 +11,21 @@ import {
 } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
+import { useTransactionStore } from "@neoWeb/store/SendMoney";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 const Invoice = () => {
   const navigate = useNavigate();
+  const { transactionData } = useTransactionStore();
+  const { initData } = useStoreInitData();
+
+  console.log(transactionData);
+  const sendingCountryCurrencySymbol =
+    initData?.sendingCountry?.currency?.symbol ?? "";
+
   return (
     <Card padding={"24px"} gap={"16px"}>
       <HStack justifyContent={"space-between"}>
@@ -51,12 +61,14 @@ const Invoice = () => {
           <Avatar borderRadius={"7px"} />
           <Box>
             <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
-            <Text textStyle={"beneficiaryCardSubHeader"}>12th July,2020</Text>
+            <Text textStyle={"beneficiaryCardSubHeader"}>
+              {moment(transactionData?.processDate).format("DD MMM YYYY")}
+            </Text>
           </Box>
         </HStack>
         <Box>
           <Text textStyle={"beneficiaryCardHeader"} color={"red"}>
-            $500{" "}
+            {sendingCountryCurrencySymbol + transactionData?.totalAmount}{" "}
             <Text as={"span"} fontSize={"12px"} color="black">
               USD
             </Text>
@@ -73,50 +85,72 @@ const Invoice = () => {
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Transaction
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {transactionData?.transactionStatus}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Transaction PIN
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {transactionData?.transactionId}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Name
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Kumari Bank</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {transactionData?.beneficiaryName}
+            </Text>
           </GridItem>
           {/* //asd */}
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Receiver Bank Account
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>admin@neo.com</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {transactionData?.beneficiaryBankName}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Account Number
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>9808129300</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {transactionData?.beneficiaryAccountNumber}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Processed By
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Nepal</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {transactionData?.processBy}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Sent Amount
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Nepal</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {sendingCountryCurrencySymbol + transactionData?.sendingAmount}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Total Amount
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Nepal</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {sendingCountryCurrencySymbol + transactionData?.totalAmount}
+            </Text>
           </GridItem>
         </SimpleGrid>
       </Stack>

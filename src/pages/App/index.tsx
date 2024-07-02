@@ -6,7 +6,10 @@ import {
 } from "@neoWeb/services/service-auth";
 import { useFetchInitData } from "@neoWeb/services/service-init";
 import { useGetKycInformation } from "@neoWeb/services/service-kyc";
-import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
+import {
+  useBeneficiaryAccountStore,
+  useSendMoneyStore
+} from "@neoWeb/store/SendMoney";
 import { useStoreInitData } from "@neoWeb/store/initData";
 import { Suspense, lazy, useEffect } from "react";
 import { Navigate, Outlet, Route, Routes, useLocation } from "react-router-dom";
@@ -34,20 +37,45 @@ export default function App() {
     useGetKycInformation(!!isAuthenticated);
   const { initData } = useStoreInitData();
   const { setSendMoneyData } = useSendMoneyStore();
+  const { setBeneficiaryAccountData, beneficiaryAccountData } =
+    useBeneficiaryAccountStore();
 
   useEffect(() => {
     if (pathname != "/send-money") {
       setSendMoneyData({
-        sendingCountryId: initData?.sendingCountry?.id ?? null,
-        receivingCountryId: initData?.receivingCountry?.id ?? null,
+        sendingCountry: {
+          label: initData?.sendingCountry.name ?? "",
+          value: initData?.sendingCountry.id ?? 0
+        },
+        receivingCountry: {
+          label: initData?.receivingCountry.name ?? "",
+          value: initData?.receivingCountry.id ?? 0
+        },
         sendingAmount: "",
         receivingAmount: "",
-        payoutMethodId: null
+        payoutMethod: null,
+        promoCode: "",
+        fee: "",
+        totalAmount: "",
+        exchangeRate: null
+      });
+      setBeneficiaryAccountData({
+        ...beneficiaryAccountData,
+        purposeOfPayment: null,
+        remarks: "",
+        payoutMethodId: null,
+        payoutPartnerId: null,
+        accountName: "",
+        accountNumber: "",
+        mobileNumber: "",
+        country: "",
+        beneficiaryId: null
       });
     }
   }, [pathname]);
 
   useEffect(() => {
+    console.log(isAuthenticated);
     if (typeof isAuthenticated === "boolean" && !isAuthenticated) {
       localStorage.getItem("token") ? logoutUser() : null;
     }

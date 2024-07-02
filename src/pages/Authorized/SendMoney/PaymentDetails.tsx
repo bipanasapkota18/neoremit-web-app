@@ -16,7 +16,10 @@ import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetBeneficiaryById } from "@neoWeb/services/service-beneficiary";
 import { useGetPurposeOfPayment } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
-import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
+import {
+  useBeneficiaryAccountStore,
+  useSendMoneyStore
+} from "@neoWeb/store/SendMoney";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useEffect, useMemo } from "react";
@@ -48,10 +51,12 @@ const PaymentDetails = ({
   const { sendMoneyData } = useSendMoneyStore();
   const { data: beneficiaryAccountData } = useGetBeneficiaryById(beneficiaryId);
   const { data: Payoutmethoddata } = useGetPayoutMethodById(
-    sendMoneyData?.receivingCountryId ?? 0
+    sendMoneyData?.receivingCountry?.value ?? 0
   );
+
   const { data: purposeOfPaymentData } = useGetPurposeOfPayment();
 
+  const { setBeneficiaryAccountData } = useBeneficiaryAccountStore();
   const benificiaryAccount = useMemo(
     () =>
       beneficiaryAccountData?.beneficiaryCheckoutDetail?.find(
@@ -59,6 +64,9 @@ const PaymentDetails = ({
       ),
     [beneficiaryAccountData]
   );
+  const { beneficiaryAccountData: beneficiaryAccountStoreData } =
+    useBeneficiaryAccountStore();
+
   const beneficiaryAccountOptions = formatSelectOptions<number>({
     data: beneficiaryAccountData?.beneficiaryCheckoutDetail?.map(
       item => item?.payoutPartner
@@ -117,7 +125,7 @@ const PaymentDetails = ({
       .refine(data => !!data?.label && !!data?.value, {
         message: "Please select purpose of payment"
       }),
-    remarks: z.string().min(1, { message: "Account Name is required" })
+    remarks: z.string().min(1, { message: "Remarks is required" })
   });
   const { control, reset, handleSubmit } = useForm({
     defaultValues: defaultValues,
@@ -126,7 +134,7 @@ const PaymentDetails = ({
 
   useEffect(() => {
     const selectedPaymentMethod = paymentMethodOptions?.find(
-      item => item?.value === sendMoneyData?.payoutMethodId
+      item => item?.value === sendMoneyData?.payoutMethod?.value
     );
     const selectedPartner = beneficiaryAccountOptions?.find(
       item => item?.value === benificiaryAccount?.payoutPartner?.id
@@ -135,12 +143,19 @@ const PaymentDetails = ({
       payoutMethodId: selectedPaymentMethod,
       payoutPartnerId: selectedPartner,
       accountName: benificiaryAccount?.accountName ?? "",
-      accountNumber: benificiaryAccount?.accountNumber ?? ""
+      accountNumber: benificiaryAccount?.accountNumber ?? "",
+      purposeOfPayment: beneficiaryAccountStoreData?.purposeOfPayment ?? null,
+      remarks: beneficiaryAccountStoreData?.remarks ?? ""
     });
   }, [benificiaryAccount]);
 
   const submitDetails = (data: typeof defaultValues) => {
-    console.log(data);
+    setBeneficiaryAccountData({
+      ...data,
+      mobileNumber: beneficiaryAccountData?.mobileNumber ?? "",
+      country: beneficiaryAccountData?.country?.name ?? "",
+      beneficiaryId: beneficiaryAccountData?.id ?? 0
+    });
     setPageName("cardPayment");
   };
   return (

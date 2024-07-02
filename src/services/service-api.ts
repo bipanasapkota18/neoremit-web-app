@@ -58,7 +58,8 @@ export const api = {
     promo_code_validate: `${service}/promo-code/validate`,
     beneficiary_validate: `${transaction_service}/trans/validate/beneficiary/account`,
     validate_sender: `${transaction_service}/trans/validate/sender/account`,
-    confirm_payment: `${transaction_service}/trans/confirm-payment`
+    confirm_payment: `${transaction_service}/trans/confirm-payment`,
+    calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`
   },
   init: `${service}/users/init`
 };

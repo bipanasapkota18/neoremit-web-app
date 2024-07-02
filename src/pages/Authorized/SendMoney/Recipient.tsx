@@ -2,7 +2,6 @@ import { Button, Card, HStack, SimpleGrid, Text } from "@chakra-ui/react";
 import RecipientCard from "@neoWeb/components/Beneficiary/RecipientCard";
 import GoBack from "@neoWeb/components/Button";
 import { useGetBeneficiary } from "@neoWeb/services/service-beneficiary";
-import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { Dispatch, SetStateAction } from "react";
 import { ISendMoneyForm } from "./SendMoney";
@@ -17,8 +16,6 @@ const Recipient = ({
   setNewTransfer
 }: IReceipientAccountProps) => {
   const { data } = useGetBeneficiary();
-  const { sendMoneyData } = useSendMoneyStore();
-  console.log(sendMoneyData);
   return (
     <Card padding={"24px"} gap={"16px"}>
       <Text fontSize={"17px"} fontWeight={700} color={colorScheme.gray_700}>

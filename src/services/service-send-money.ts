@@ -44,16 +44,21 @@ export interface ConfirmPaymentRequest {
   beneficiaryId: number;
   beneficiaryAccountNumber: string;
   remarks: string;
-  totalAmount: number;
-  sendingAmount: number;
-  receivingAmount: number;
-  sendingCountryId: number;
-  receivingCountryId: number;
+  totalAmount: string;
+  sendingAmount: string;
+  receivingAmount: string;
+  sendingCountryId: number | null;
+  receivingCountryId: number | null;
   paymentPurpose: string;
-  payoutMethodId: number;
-  payoutPartnerId: number;
+  payoutMethodId: number | null;
+  payoutPartnerId: number | null;
   processBy: string;
-  mpin: number;
+  mpin: string;
+}
+
+interface CalculatedBaseRateRequest {
+  sendingCountryId: number | null;
+  receivingCountryId: number | null;
 }
 const validatePromoCode = (data: PromoCodeValidationRequest) => {
   return NeoHttpClient.post(api.send_money.promo_code_validate, data);
@@ -106,7 +111,25 @@ const useConfirmPayment = () => {
   });
 };
 
+const fetchCalculatedBaseRate = ({
+  sendingCountryId,
+  receivingCountryId
+}: CalculatedBaseRateRequest) => {
+  return NeoHttpClient.post(api.send_money.calculated_base_rate, {
+    senderCountryId: sendingCountryId,
+    receiverCountryId: receivingCountryId
+  });
+};
+const useCalculatedBaseRate = () => {
+  return useMutation({
+    mutationFn: fetchCalculatedBaseRate,
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
 export {
+  useCalculatedBaseRate,
   useConfirmPayment,
   useValidateBeneficiary,
   useValidatePromoCode,

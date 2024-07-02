@@ -9,10 +9,24 @@ import {
 } from "@chakra-ui/react";
 import GoBack from "@neoWeb/components/Button";
 import SendMoneyView from "@neoWeb/components/MoneyView";
+import {
+  useBeneficiaryAccountStore,
+  useSendMoneyStore
+} from "@neoWeb/store/SendMoney";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISendMoneyForm } from "../SendMoney";
 
 const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
+  const { sendMoneyData } = useSendMoneyStore();
+  const { initData } = useStoreInitData();
+  const { beneficiaryAccountData } = useBeneficiaryAccountStore();
+
+  const sendingCountryCurrencySymbol =
+    initData?.sendingCountry?.currency?.symbol ?? "";
+
+  const receivingCountryCurrencySymbol =
+    initData?.receivingCountry?.currency?.symbol ?? "";
   return (
     <Card padding={"24px"} gap={"16px"}>
       <Text fontSize={"17px"} fontWeight={700} color={colorScheme.gray_700}>
@@ -28,38 +42,51 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Name
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {beneficiaryAccountData?.accountName}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Account Number
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {beneficiaryAccountData?.accountNumber}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Bank Name
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Kumari Bank</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {beneficiaryAccountData?.payoutPartnerId?.label}
+            </Text>
           </GridItem>
           {/* //asd */}
-          <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
+          {/* <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Email Address
             </Text>
             <Text textStyle={"beneficiaryCardHeader"}>admin@neo.com</Text>
-          </GridItem>
+          </GridItem> */}
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Contact Number
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>9808129300</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {" "}
+              {beneficiaryAccountData?.mobileNumber}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Country
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Nepal</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {beneficiaryAccountData?.country}
+            </Text>
           </GridItem>
         </SimpleGrid>
       </Stack>
@@ -78,15 +105,16 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Purpose
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {beneficiaryAccountData?.purposeOfPayment?.label}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Remarks
             </Text>
             <Text textStyle={"beneficiaryCardHeader"}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Error ab
-              minus harum ut saepe
+              {beneficiaryAccountData?.remarks}
             </Text>
           </GridItem>
         </SimpleGrid>
@@ -100,43 +128,75 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Promo Code
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text
+              backgroundColor={
+                sendMoneyData?.promoCode != ""
+                  ? "#C6F6D5"
+                  : colorScheme.gray_100
+              }
+              px={4}
+              py={1}
+              borderRadius={8}
+              textStyle={"beneficiaryCardHeader"}
+              width={"max-content"}
+            >
+              {sendMoneyData?.promoCode != ""
+                ? sendMoneyData?.promoCode
+                : "---"}
+            </Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {sendMoneyData?.promoCode}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Exchange Rate
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>John Doe</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {sendingCountryCurrencySymbol +
+                sendMoneyData?.exchangeRate +
+                " = " +
+                receivingCountryCurrencySymbol +
+                "1"}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Sending Amount
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Kumari Bank</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {sendingCountryCurrencySymbol + sendMoneyData?.sendingAmount}
+            </Text>
           </GridItem>
           {/* //asd */}
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Receiver Receives
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>admin@neo.com</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {receivingCountryCurrencySymbol + sendMoneyData?.receivingAmount}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Fee
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>9808129300</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {sendingCountryCurrencySymbol + sendMoneyData?.fee}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Total Amount
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Nepal</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {sendingCountryCurrencySymbol + sendMoneyData?.totalAmount}
+            </Text>
           </GridItem>
         </SimpleGrid>
       </Stack>
       <HStack justifyContent={"space-between"}>
-        <GoBack onClick={() => console.log("first")} />
+        <GoBack onClick={() => setPageName("cardPayment")} />
 
         <Button
           onClick={() => setPageName("mpinConfirmation")}

@@ -275,7 +275,7 @@ const CardPayment = ({ setPageName }: ISendMoneyForm) => {
         </>
       )}
       <HStack justifyContent={"space-between"}>
-        <GoBack onClick={() => console.log("first")} />
+        <GoBack onClick={() => setPageName("paymentDetails")} />
 
         <HStack>
           {!flag && (

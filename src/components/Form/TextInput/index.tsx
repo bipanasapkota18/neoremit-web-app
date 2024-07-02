@@ -97,6 +97,8 @@ const TextInput: React.FC<TextInputProps & InputProps & TextareaProps> = ({
                     paddingLeft={startIcon ? 9 : ""}
                     placeholder={label}
                     height={"120px"}
+                    _hover={{ borderColor: colorScheme.primary_500 }}
+                    _focus={{ borderColor: colorScheme.primary_500 }}
                     onChange={onChange}
                     value={value ?? ""}
                     isInvalid={!!error}
@@ -104,8 +106,6 @@ const TextInput: React.FC<TextInputProps & InputProps & TextareaProps> = ({
                     boxShadow="none !important"
                     disabled={disabled}
                     variant={variant}
-                    _hover={{ borderColor: colorScheme.primary_500 }}
-                    _focus={{ borderColor: colorScheme.primary_500 }}
                     {...extraProps}
                   />
                 ) : (

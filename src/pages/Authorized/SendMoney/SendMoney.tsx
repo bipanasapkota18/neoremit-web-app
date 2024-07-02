@@ -16,19 +16,50 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
+import TextInputWithRef from "@neoWeb/components/Form/TextInput/InputWithRef";
 import SendMoneyView from "@neoWeb/components/MoneyView";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
-import { useValidatePromoCode } from "@neoWeb/services/service-send-money";
+import {
+  useCalculatedBaseRate,
+  useValidatePromoCode
+} from "@neoWeb/services/service-send-money";
 import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
 import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import { formatAmount } from "@neoWeb/utility/currencyFormat";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+import { inRange } from "lodash";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+export interface IChargeDetails {
+  id: number;
+  payoutMethods: PayoutMethod[];
+  feeAndChargeType: string;
+  fromAmount: number;
+  toAmount: number;
+  fee: number;
+}
+
+export interface PayoutMethod {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  icon: string;
+  isCash: boolean;
+  isActive: boolean;
+}
 export interface ISendMoneyForm {
   setPageName: Dispatch<SetStateAction<string>>;
 }
@@ -40,26 +71,12 @@ const defaultValues = {
   paymentMethod: null as ISelectOptions<number> | null,
   promoCode: ""
 };
+interface PromoCodeValidationResponse {
+  promoCode: string;
+  newCustomerRate: number;
+  serviceChargeDiscount: number;
+}
 const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
-  const { initData } = useStoreInitData();
-  const { setSendMoneyData, sendMoneyData } = useSendMoneyStore();
-  const {
-    mutateAsync: mutateValidatePromoCode,
-    isPending: isPromocodeValidationLoading
-  } = useValidatePromoCode();
-
-  const { data: countriesList } = useGetCountryList();
-  const [flag, setFlag] = useBoolean(false);
-  const [promoCode, setPromoCode] = useState<string>("");
-
-  const calculatdRate = useMemo(() => {
-    return initData?.baseRate?.marginType === "PERCENTAGE"
-      ? initData?.baseRate?.baseRate -
-          initData?.baseRate?.baseRate * (initData?.baseRate?.marginRate / 100)
-      : (initData?.baseRate?.baseRate ?? 0) -
-          (initData?.baseRate?.marginRate ?? 0);
-  }, [initData]);
-
   const schema = z.object({
     sendFrom: z
       .object({
@@ -93,17 +110,6 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     promoCode: z.string().optional()
   });
 
-  const countryOptions = formatSelectOptions<number>({
-    data: countriesList,
-    labelKey: "name",
-    valueKey: "id",
-    icon: {
-      iconKey: "flagIcon",
-      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`,
-      iconCode: "flagIcon"
-    }
-  });
-
   const {
     control,
     handleSubmit,
@@ -115,6 +121,83 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     defaultValues: defaultValues,
     resolver: zodResolver(schema)
   });
+
+  //Ref for sending amount and receiving amount
+  const sendRef = useRef(null);
+  const receiveRef = useRef(null);
+
+  const [chargeDeatils, setChargeDetails] = useState<IChargeDetails[]>([]);
+
+  const fee = useMemo(
+    () =>
+      chargeDeatils
+        ?.filter(
+          item => item.payoutMethods[0]?.id === watch("paymentMethod")?.value
+        )
+        ?.find(item =>
+          inRange(+watch("sendAmount"), item.fromAmount, item.toAmount)
+        )?.fee,
+    [watch("paymentMethod"), watch("sendAmount"), chargeDeatils]
+  );
+
+  const { initData } = useStoreInitData();
+  const { setSendMoneyData, sendMoneyData } = useSendMoneyStore();
+  const {
+    mutateAsync: mutateValidatePromoCode,
+    isPending: isPromocodeValidationLoading
+  } = useValidatePromoCode();
+  const { mutateAsync: mutateBaseRate } = useCalculatedBaseRate();
+  //state for promocode response
+  const [promoCode, setPromoCode] = useState<string>("");
+  const [promoCodeResponse, setPromoCodeResponse] =
+    useState<PromoCodeValidationResponse | null>(null);
+
+  //country list API
+  const { data: countriesList } = useGetCountryList();
+
+  const countryOptions = formatSelectOptions<number>({
+    data: countriesList,
+    labelKey: "name",
+    valueKey: "id",
+    icon: {
+      iconKey: "flagIcon",
+      iconPath: `${baseURL}/document-service/master/flag-icon?fileId=`,
+      iconCode: "flagIcon"
+    }
+  });
+  const [flag, setFlag] = useBoolean(false);
+
+  //sending country currency symbol
+  const sendingCountryCurrencySymbol =
+    initData?.sendingCountry?.currency?.symbol;
+
+  //calculated rate based on base rate and margin rate
+  const calculatdRate = useMemo(() => {
+    return initData?.baseRate?.marginType === "PERCENTAGE"
+      ? initData?.baseRate?.baseRate -
+          initData?.baseRate?.baseRate * (initData?.baseRate?.marginRate / 100)
+      : (initData?.baseRate?.baseRate ?? 0) -
+          (initData?.baseRate?.marginRate ?? 0);
+  }, [initData]);
+
+  //get base rate details according to sending and receiving country
+  const getBaseRateDetails = async () => {
+    const baseRateResponse = await mutateBaseRate({
+      sendingCountryId: initData?.sendingCountry?.id ?? null,
+      receivingCountryId: watch("sendTo")?.value ?? null
+    });
+    if (baseRateResponse?.data?.data) {
+      setChargeDetails(
+        baseRateResponse?.data?.data?.feeAndCharges?.feeAndChargesDetails
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (watch("sendTo")) {
+      getBaseRateDetails();
+    }
+  }, [watch("sendTo")]);
 
   const { data: Payoutmethoddata } = useGetPayoutMethodById(
     watch("sendTo")?.value ?? null
@@ -131,25 +214,6 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     }
   });
 
-  const calculatedValues = [
-    {
-      label: "Promo Code",
-      value: promoCode ? promoCode : "--"
-    },
-    {
-      label: "ExchangeRate",
-      value: "$1 - NRs 135"
-    },
-    {
-      label: "Fee",
-      value: "$10"
-    },
-    {
-      label: "Total Amount",
-      value: "$500"
-    }
-  ];
-
   useEffect(() => {
     reset(oldValues => ({
       ...oldValues,
@@ -165,16 +229,21 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
   }, [countriesList]);
 
   useEffect(() => {
-    setValue(
-      "receiveAmount",
-      parseFloat(watch("sendAmount")) * calculatdRate + ""
-    );
+    if (sendRef.current === document.activeElement) {
+      setValue(
+        "receiveAmount",
+        parseFloat(watch("sendAmount")) * calculatdRate + ""
+      );
+    }
   }, [watch("sendAmount")]);
+
   useEffect(() => {
-    setValue(
-      "sendAmount",
-      parseFloat(watch("receiveAmount")) / calculatdRate + ""
-    );
+    if (receiveRef.current === document.activeElement) {
+      setValue(
+        "sendAmount",
+        parseFloat(watch("receiveAmount")) / calculatdRate + ""
+      );
+    }
   }, [watch("receiveAmount")]);
 
   useEffect(() => {
@@ -182,29 +251,32 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
       reset({
         sendFrom:
           countryOptions?.find(
-            item => item.value === sendMoneyData?.sendingCountryId
+            item => item.value === sendMoneyData?.sendingCountry?.value
           ) ?? null,
         sendTo: countryOptions?.find(
-          item => item.value === sendMoneyData?.receivingCountryId
+          item => item.value === sendMoneyData?.receivingCountry?.value
         ),
         sendAmount: sendMoneyData?.sendingAmount,
         receiveAmount: sendMoneyData?.receivingAmount,
         paymentMethod: paymentMethodOptions?.find(
-          item => item.value === sendMoneyData?.payoutMethodId
+          item => item.value === sendMoneyData?.payoutMethod?.value
         )
       });
     }
   }, [sendMoneyData, Payoutmethoddata]);
+
   const validatePromoCode = async (data: typeof defaultValues) => {
     const preparedData = {
-      code: data?.promoCode,
-      amount: data?.sendAmount,
+      code: data?.promoCode?.trim(),
+      amount: data?.sendAmount?.trim() ?? "",
       sendingCountryId: data?.sendFrom?.value ?? null,
       receivingCountryId: data?.sendTo?.value ?? null,
       payoutMethodId: data?.paymentMethod?.value ?? null
     };
     try {
-      await mutateValidatePromoCode(preparedData);
+      const response = await mutateValidatePromoCode(preparedData);
+
+      setPromoCodeResponse(response?.data?.data);
       setPromoCode(data?.promoCode.toUpperCase());
     } catch (e) {
       console.error(e);
@@ -214,17 +286,59 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
   const handleSendMoney = (data: typeof defaultValues) => {
     try {
       setSendMoneyData({
-        sendingCountryId: data?.sendFrom?.value ?? null,
-        receivingCountryId: data?.sendTo?.value ?? null,
+        sendingCountry: data?.sendFrom ?? null,
+        receivingCountry: data?.sendTo ?? null,
         sendingAmount: data?.sendAmount,
         receivingAmount: data?.receiveAmount,
-        payoutMethodId: data?.paymentMethod?.value ?? null
+        payoutMethod: data?.paymentMethod ?? null,
+        promoCode: data?.promoCode ?? "",
+        fee: promoCodeResponse?.serviceChargeDiscount
+          ? promoCodeResponse?.serviceChargeDiscount + ""
+          : "",
+        totalAmount: data?.sendAmount,
+        exchangeRate:
+          promoCodeResponse?.newCustomerRate ??
+          initData?.baseRate?.baseRate ??
+          null
       });
       setPageName("selectRecipient");
     } catch (e) {
       console.error(e);
     }
   };
+
+  console.log(fee);
+
+  const calculatedValues = [
+    {
+      label: "Promo Code",
+      value: promoCodeResponse ? promoCodeResponse?.promoCode : "--"
+    },
+    {
+      label: "ExchangeRate",
+      value: `${sendingCountryCurrencySymbol} 1 =  ${initData?.receivingCountry?.currency?.symbol + " " + promoCodeResponse?.newCustomerRate}`
+    },
+    {
+      label: "Fee",
+      value: ` ${sendingCountryCurrencySymbol + " " + (fee ? formatAmount(fee + "") : 0)}`
+    },
+    {
+      label: "Discount",
+      value: (
+        <s>
+          {sendingCountryCurrencySymbol +
+            " " +
+            formatAmount(promoCodeResponse?.serviceChargeDiscount + "")}
+        </s>
+      )
+    },
+
+    {
+      label: "Total Amount",
+      value: sendingCountryCurrencySymbol + formatAmount(watch("sendAmount"))
+    }
+  ];
+
   return (
     <Card>
       <CardBody
@@ -255,6 +369,7 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
                 placeholder="Sending From"
                 control={control}
                 noFloating
+                isDisabled
               />
               <Icon
                 as={svgAssets.ArrowSwap}
@@ -272,7 +387,8 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
             </HStack>
           </GridItem>
           <GridItem colSpan={1}>
-            <TextInput
+            <TextInputWithRef
+              ref={sendRef}
               control={control}
               name="sendAmount"
               type="number"
@@ -280,7 +396,8 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
             />
           </GridItem>
           <GridItem colSpan={1}>
-            <TextInput
+            <TextInputWithRef
+              ref={receiveRef}
               control={control}
               name="receiveAmount"
               type="number"

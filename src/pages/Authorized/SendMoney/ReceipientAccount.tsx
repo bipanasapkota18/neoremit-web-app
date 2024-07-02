@@ -1,4 +1,4 @@
-import { Button, Card, HStack, Text } from "@chakra-ui/react";
+import { Card, HStack, Text } from "@chakra-ui/react";
 import RecipientAccountCard from "@neoWeb/components/Beneficiary/RecipientAccountCard";
 import GoBack from "@neoWeb/components/Button";
 import { useGetBeneficiaryById } from "@neoWeb/services/service-beneficiary";
@@ -15,7 +15,6 @@ const ReceipientAccount = ({
   beneficiaryId,
   setBeneficiaryAccountId
 }: IReceipientAccountProps) => {
-  console.log(beneficiaryId);
   const { data } = useGetBeneficiaryById(beneficiaryId);
   return (
     <Card padding={"24px"} gap={"16px"} width={"100%"}>
@@ -28,11 +27,7 @@ const ReceipientAccount = ({
         setBeneficiaryAccountId={setBeneficiaryAccountId}
       />
       <HStack justifyContent={"space-between"}>
-        <GoBack onClick={() => console.log("first")} />
-
-        <Button type="submit" variant="send_money">
-          Proceed
-        </Button>
+        <GoBack onClick={() => setPageName("selectRecipient")} />
       </HStack>
     </Card>
   );
