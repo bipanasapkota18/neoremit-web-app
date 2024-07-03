@@ -37,13 +37,14 @@ const SendMoneyView = ({ amount }: SendMoneyProps) => {
         fontWeight={700}
         color={colorScheme.primary_500}
         display={"flex"}
+        gap={1}
       >
-        {initData?.sendingCountry?.currency?.symbol}{" "}
-        {amount + "" != "NaN"
-          ? sendMoneyData?.sendingAmount != undefined
-            ? currencyFormat(+formatAmount(sendMoneyData?.sendingAmount))
-            : currencyFormat(+formatAmount(amount ?? 0))
-          : "0.00"}
+        {initData?.sendingCountry?.currency?.symbol}
+        {amount || amount === 0
+          ? currencyFormat(+formatAmount(amount ?? 0))
+          : sendMoneyData?.sendingAmount != undefined
+            ? currencyFormat(+formatAmount(sendMoneyData?.sendingAmount ?? 0))
+            : "0.00"}
       </Text>
       <Box sx={{ pos: "absolute", top: 7, right: -8 }}>
         <svgAssets.ArtifactFlower />

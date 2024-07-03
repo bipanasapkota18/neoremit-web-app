@@ -8,7 +8,7 @@ interface SendMoneyData {
   receivingAmount: string;
   payoutMethod: ISelectOptions<number> | null;
   promoCode: string;
-  fee: string;
+  fee: number | null;
   totalAmount: string;
   exchangeRate: number | null;
 }

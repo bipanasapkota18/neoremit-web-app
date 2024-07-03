@@ -128,15 +128,15 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
 
   const [chargeDeatils, setChargeDetails] = useState<IChargeDetails[]>([]);
 
-  const fee = useMemo(
+  const feeDetail = useMemo(
     () =>
       chargeDeatils
         ?.filter(
           item => item.payoutMethods[0]?.id === watch("paymentMethod")?.value
         )
         ?.find(item =>
-          inRange(+watch("sendAmount"), item.fromAmount, item.toAmount)
-        )?.fee,
+          inRange(+watch("sendAmount") ?? 0, item.fromAmount, item.toAmount)
+        ),
     [watch("paymentMethod"), watch("sendAmount"), chargeDeatils]
   );
 
@@ -148,7 +148,6 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
   } = useValidatePromoCode();
   const { mutateAsync: mutateBaseRate } = useCalculatedBaseRate();
   //state for promocode response
-  const [promoCode, setPromoCode] = useState<string>("");
   const [promoCodeResponse, setPromoCodeResponse] =
     useState<PromoCodeValidationResponse | null>(null);
 
@@ -232,16 +231,28 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     if (sendRef.current === document.activeElement) {
       setValue(
         "receiveAmount",
-        parseFloat(watch("sendAmount")) * calculatdRate + ""
+        formatAmount(parseFloat(watch("sendAmount")) * calculatdRate) + ""
       );
     }
   }, [watch("sendAmount")]);
 
   useEffect(() => {
+    if (promoCodeResponse) {
+      setValue(
+        "receiveAmount",
+        formatAmount(
+          (+watch("sendAmount") ?? 0) *
+            (promoCodeResponse?.newCustomerRate ?? 0)
+        ) + ""
+      );
+    }
+  }, [promoCodeResponse]);
+
+  useEffect(() => {
     if (receiveRef.current === document.activeElement) {
       setValue(
         "sendAmount",
-        parseFloat(watch("receiveAmount")) / calculatdRate + ""
+        formatAmount(parseFloat(watch("receiveAmount")) / calculatdRate) + ""
       );
     }
   }, [watch("receiveAmount")]);
@@ -256,8 +267,10 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
         sendTo: countryOptions?.find(
           item => item.value === sendMoneyData?.receivingCountry?.value
         ),
-        sendAmount: sendMoneyData?.sendingAmount,
-        receiveAmount: sendMoneyData?.receivingAmount,
+        ...(sendMoneyData?.sendingAmount
+          ? { sendAmount: sendMoneyData?.sendingAmount ?? "" }
+          : {}),
+        receiveAmount: sendMoneyData?.receivingAmount ?? "",
         paymentMethod: paymentMethodOptions?.find(
           item => item.value === sendMoneyData?.payoutMethod?.value
         )
@@ -277,7 +290,6 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
       const response = await mutateValidatePromoCode(preparedData);
 
       setPromoCodeResponse(response?.data?.data);
-      setPromoCode(data?.promoCode.toUpperCase());
     } catch (e) {
       console.error(e);
     }
@@ -288,14 +300,24 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
       setSendMoneyData({
         sendingCountry: data?.sendFrom ?? null,
         receivingCountry: data?.sendTo ?? null,
-        sendingAmount: data?.sendAmount,
-        receivingAmount: data?.receiveAmount,
+        sendingAmount: data?.sendAmount ?? "",
+        receivingAmount: data?.receiveAmount ?? "",
         payoutMethod: data?.paymentMethod ?? null,
         promoCode: data?.promoCode ?? "",
-        fee: promoCodeResponse?.serviceChargeDiscount
-          ? promoCodeResponse?.serviceChargeDiscount + ""
-          : "",
-        totalAmount: data?.sendAmount,
+        fee: feeDetail
+          ? formatAmount(
+              feeDetail?.feeAndChargeType === "FLAT"
+                ? feeDetail?.fee
+                : ((feeDetail?.fee ?? 0) / 100) * (+watch("sendAmount") ?? 0) +
+                    ""
+            )
+          : 0,
+        totalAmount:
+          formatAmount(
+            +(watch("sendAmount") ?? 0) +
+              feeAmount -
+              (promoCodeResponse?.serviceChargeDiscount ?? 0)
+          ) + "" ?? "",
         exchangeRate:
           promoCodeResponse?.newCustomerRate ??
           initData?.baseRate?.baseRate ??
@@ -307,7 +329,10 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     }
   };
 
-  console.log(fee);
+  const feeAmount =
+    feeDetail?.feeAndChargeType === "FLAT"
+      ? feeDetail?.fee
+      : ((feeDetail?.fee ?? 0) / 100) * +watch("sendAmount");
 
   const calculatedValues = [
     {
@@ -316,26 +341,45 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     },
     {
       label: "ExchangeRate",
-      value: `${sendingCountryCurrencySymbol} 1 =  ${initData?.receivingCountry?.currency?.symbol + " " + promoCodeResponse?.newCustomerRate}`
+      value: `${sendingCountryCurrencySymbol} 1 =  ${initData?.receivingCountry?.currency?.symbol + " " + (promoCodeResponse?.newCustomerRate ?? calculatdRate)}`
     },
     {
       label: "Fee",
-      value: ` ${sendingCountryCurrencySymbol + " " + (fee ? formatAmount(fee + "") : 0)}`
+      value: ` ${
+        (sendingCountryCurrencySymbol ?? "") +
+        (feeDetail
+          ? formatAmount(
+              feeDetail?.feeAndChargeType === "FLAT"
+                ? feeDetail?.fee
+                : ((feeDetail?.fee ?? 0) / 100) * (+watch("sendAmount") ?? 0) +
+                    ""
+            )
+          : 0)
+      }`
     },
-    {
-      label: "Discount",
-      value: (
-        <s>
-          {sendingCountryCurrencySymbol +
-            " " +
-            formatAmount(promoCodeResponse?.serviceChargeDiscount + "")}
-        </s>
-      )
-    },
+    ...(promoCodeResponse
+      ? [
+          {
+            label: "Discount",
+            value: (
+              <s>
+                {(sendingCountryCurrencySymbol ?? "") +
+                  formatAmount(promoCodeResponse?.serviceChargeDiscount + "")}
+              </s>
+            )
+          }
+        ]
+      : []),
 
     {
       label: "Total Amount",
-      value: sendingCountryCurrencySymbol + formatAmount(watch("sendAmount"))
+      value:
+        (sendingCountryCurrencySymbol ?? "") +
+        formatAmount(
+          +(watch("sendAmount") ?? 0) +
+            feeAmount -
+            (promoCodeResponse?.serviceChargeDiscount ?? 0)
+        )
     }
   ];
 
@@ -478,7 +522,7 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
                   <Text
                     backgroundColor={
                       item.label === "Promo Code"
-                        ? promoCode
+                        ? promoCodeResponse?.promoCode
                           ? "#C6F6D5"
                           : colorScheme.gray_100
                         : "inherit"

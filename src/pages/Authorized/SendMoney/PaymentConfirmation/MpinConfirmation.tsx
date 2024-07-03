@@ -65,10 +65,9 @@ const MpinConfirmation = ({ setPageName }: ISendMoneyForm) => {
     };
     try {
       const response = await confirmMPIN(preparedData);
-      console.log(response);
       setTransactionData(response?.data?.data);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     setPageName("invoice");
   };

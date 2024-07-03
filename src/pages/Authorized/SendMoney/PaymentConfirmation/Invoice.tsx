@@ -22,7 +22,6 @@ const Invoice = () => {
   const { transactionData } = useTransactionStore();
   const { initData } = useStoreInitData();
 
-  console.log(transactionData);
   const sendingCountryCurrencySymbol =
     initData?.sendingCountry?.currency?.symbol ?? "";
 
@@ -85,9 +84,21 @@ const Invoice = () => {
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Transaction
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>
-              {transactionData?.transactionStatus}
-            </Text>
+
+            {transactionData?.transactionStatus === "SUCCESS" ? (
+              <Text
+                textStyle={"beneficiaryCardHeader"}
+                backgroundColor={"#C6F6D5"}
+                px={2}
+                py={1}
+                borderRadius={8}
+                width={"max-content"}
+              >
+                SUCCESS{" "}
+              </Text>
+            ) : (
+              <Text textStyle={"beneficiaryCardHeader"}>FAILED </Text>
+            )}
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>

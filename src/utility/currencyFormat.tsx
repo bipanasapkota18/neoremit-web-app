@@ -19,5 +19,5 @@ export const currencyFormat = (value: number, returnValue?: boolean) => {
 };
 //format amount to send with float
 export const formatAmount = (amount: number | string) => {
-  return Math.trunc(Number(amount) * Math.pow(10, 2)) / Math.pow(10, 2) + "";
+  return Math.trunc(Number(amount) * Math.pow(10, 2)) / Math.pow(10, 2);
 };

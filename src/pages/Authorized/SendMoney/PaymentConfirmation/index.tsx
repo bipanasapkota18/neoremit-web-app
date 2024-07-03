@@ -144,9 +144,6 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
                 ? sendMoneyData?.promoCode
                 : "---"}
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>
-              {sendMoneyData?.promoCode}
-            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>

@@ -44,8 +44,8 @@ export default function App() {
     if (pathname != "/send-money") {
       setSendMoneyData({
         sendingCountry: {
-          label: initData?.sendingCountry.name ?? "",
-          value: initData?.sendingCountry.id ?? 0
+          label: initData?.sendingCountry?.name ?? "",
+          value: initData?.sendingCountry?.id ?? 0
         },
         receivingCountry: {
           label: initData?.receivingCountry.name ?? "",
@@ -55,7 +55,7 @@ export default function App() {
         receivingAmount: "",
         payoutMethod: null,
         promoCode: "",
-        fee: "",
+        fee: null,
         totalAmount: "",
         exchangeRate: null
       });
@@ -72,10 +72,9 @@ export default function App() {
         beneficiaryId: null
       });
     }
-  }, [pathname]);
+  }, [pathname, initData]);
 
   useEffect(() => {
-    console.log(isAuthenticated);
     if (typeof isAuthenticated === "boolean" && !isAuthenticated) {
       localStorage.getItem("token") ? logoutUser() : null;
     }
