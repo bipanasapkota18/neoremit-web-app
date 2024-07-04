@@ -82,7 +82,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
   });
 
   const countryOptions = formatSelectOptions<number>({
-    data: countriesList?.data?.data,
+    data: countriesList,
     labelKey: "name",
     valueKey: "id",
     icon: {

@@ -1,23 +1,16 @@
-import { HStack, Icon, Stack, Text } from "@chakra-ui/react";
+import { Avatar, HStack, Icon, Stack, Text } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { IBeneficiaryAccountEditId } from "@neoWeb/pages/Authorized/BeneficiaryDetails/AddBeneficiary";
+import { baseURL } from "@neoWeb/services/service-axios";
 import { BeneficiaryCheckoutDetailRequest } from "@neoWeb/services/service-beneficiary";
 import { Dispatch, SetStateAction } from "react";
 
 interface BeneficiaryCardProps {
-  // primary: boolean;
-  // payoutPartnerName: string;
-  // accountName: string;
-  // accountNumber: string;
   setEditDetailId: Dispatch<SetStateAction<IBeneficiaryAccountEditId>>;
   onOpen: () => void;
   data: BeneficiaryCheckoutDetailRequest[];
 }
 const CardComponent = ({
-  // primary,
-  // payoutPartnerName,
-  // accountName,
-  // accountNumber,
   setEditDetailId,
   onOpen,
   data
@@ -35,9 +28,16 @@ const CardComponent = ({
             width={"404px"}
           >
             <HStack justifyContent={"space-between"}>
-              <Text textStyle={"beneficiaryCard"}>
-                {item?.payoutPartner?.name ?? item?.payoutPartner?.label}
-              </Text>
+              <HStack>
+                <Avatar
+                  height={"29px"}
+                  width={"29px"}
+                  src={`${baseURL}/document-service/master/payout/partner/image?fileId=${item?.payoutPartner?.image}`}
+                />
+                <Text textStyle={"beneficiaryCard"}>
+                  {item?.payoutPartner?.name ?? item?.payoutPartner?.label}
+                </Text>
+              </HStack>
               <HStack justifyContent={"center"} alignItems={"center"}>
                 {item?.isPrimary ? (
                   <Icon as={svgAssets.TickCircle} height={"24px"} w={"24px"} />
@@ -85,13 +85,6 @@ const CardComponent = ({
       })}
     </HStack>
   );
-  // {
-  //   data?.map((item)=>{
-
-  //   }
-
-  //   )
-  // }
 };
 
 export default CardComponent;

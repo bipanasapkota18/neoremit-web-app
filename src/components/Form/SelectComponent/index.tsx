@@ -99,7 +99,7 @@ function Select({
   ...args
 }: SelectProps) {
   const [focused, setFocused] = useState(false);
-  const customStyles = useCustomStyles();
+  const customStyles = useCustomStyles({ noFloating });
   let options: OptionsOrGroups<unknown, GroupBase<unknown>> | undefined;
   if (selectAllOptions?.hasSelectAll) {
     options = [selectAllOption, ...(args?.options ?? [])];
@@ -133,7 +133,7 @@ function Select({
         name={name}
         control={control}
         render={({ field, fieldState: { error } }) => {
-          const customStyles = useCustomStyles(error);
+          const customStyles = useCustomStyles({ error });
           const onChangeHandler = (
             newValue: OnChangeValue<any, boolean>,
             actionMeta: ActionMeta<unknown>

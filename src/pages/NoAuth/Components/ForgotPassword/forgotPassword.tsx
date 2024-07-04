@@ -18,7 +18,10 @@ const defaultValues = {
 
 const ForgotPasswordForm = ({ setScreen }: AuthPageProps) => {
   const { setEmail } = useStore();
-  const { mutateAsync: emailVerification } = useEmailVerification();
+  const {
+    mutateAsync: emailVerification,
+    isPending: isEmailVerificationPending
+  } = useEmailVerification();
 
   const schema = z.object({
     email: z
@@ -66,7 +69,12 @@ const ForgotPasswordForm = ({ setScreen }: AuthPageProps) => {
           placeholder={"Email"}
           control={control}
         />
-        <Button isDisabled={!isValid} size={"lg"} type="submit">
+        <Button
+          isLoading={isEmailVerificationPending}
+          isDisabled={!isValid}
+          size={"lg"}
+          type="submit"
+        >
           Send Code
         </Button>
       </VStack>

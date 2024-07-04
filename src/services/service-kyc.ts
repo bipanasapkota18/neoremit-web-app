@@ -123,7 +123,7 @@ const getKycInformation = () => {
 const useGetKycInformation = (enabled?: boolean) => {
   const { setKycData } = useKycStoreData();
   return useQuery({
-    queryKey: [api.Kyc.getAll],
+    queryKey: [api.Kyc.update],
     queryFn: async () => {
       const kycData = await getKycInformation();
       setKycData(kycData?.data?.data);

@@ -100,48 +100,20 @@ export default function KYCInformation() {
         }}
         pointerEvents={"auto"}
         variant={"circles-alt"}
-        colorScheme="none"
+        colorScheme="primary"
         sx={{
           backgroundColor: "#FFF",
           padding: "24px",
           borderRadius: "32px",
           border: "1px solid  #E2E8F0",
-          boxShadow: "md",
-
-          "& .cui-steps__horizontal-step-container": {
-            display: "flex",
-            width: "100%",
-            justifyContent: "flex-start",
-            columnGap: 3,
-            position: "relative"
-          },
-          "& .cui-steps__horizontal-step": {
-            "&::after": {
-              backgroundColor: "#CBD5E0 !important",
-              borderRadius: "4px !important"
-            },
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "0 1%",
-            minWidth: "230px",
-            "& .cui-steps__step-icon-container": {
-              backgroundColor: `${colorScheme.primary_100}`,
-              _activeStep: {
-                backgroundColor: `${colorScheme.primary_500}`,
-                svg: {
-                  path: {
-                    fill: "#EFEAF4"
-                  }
-                }
-              }
-            },
-            _active: {
-              span: {
-                color: "#2D3748"
-              }
-            }
-          }
+          boxShadow: "md"
+          // "& .chakra-step__separator": {
+          //   // Customize the line between steps
+          //   background: "red",
+          //   borderWidth: "2px"
+          // }
         }}
+        trackColor={colorScheme.primary_200}
         activeStep={activeStep}
       >
         {steps.map(({ label, icon, component }) => (

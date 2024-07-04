@@ -30,12 +30,15 @@ export const TextStyles = {
     fontSize: "14px",
     fontWeight: 400,
     color: colorScheme.normalTextColor
+  },
+  paymentDetailsHeader: {
+    fontSize: "14px",
+    fontWeight: 700,
+    color: colorScheme.gray_700
+  },
+  cardText: {
+    fontSize: "17px",
+    fontWeight: 600,
+    color: "#F7FAFC"
   }
-
-  //   h2: {
-  //     fontSize: ["36px", "48px"],
-  //     fontWeight: "semibold",
-  //     lineHeight: "110%",
-  //     letterSpacing: "-1%"
-  //   }
 };

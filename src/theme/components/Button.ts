@@ -81,6 +81,40 @@ export const ButtonConfig: ComponentStyleConfig = {
       border: `1px solid ${colorScheme.input_border}`,
       color: colorScheme.primary_500,
       fontWeight: 700
+    }),
+    send_money: () => ({
+      bg: colorScheme.primary_400,
+      color: colorScheme.white,
+      borderRadius: "30px",
+      padding: "25px 24px",
+      fontSize: "17px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight: 600,
+      lineHeight: "normal",
+      width: "280px",
+      _disabled: {
+        bg: colorScheme.primary_500,
+        _hover: {
+          bg: `${colorScheme.primary_500} !important`
+        }
+      }
+    }),
+    download: () => ({
+      bg: colorScheme.primary_50,
+      color: colorScheme.primary_500,
+      borderRadius: "30px",
+      fontSize: "16px",
+      fontWeight: 700
+    }),
+    share: () => ({
+      bg: colorScheme.white,
+      border: `1px solid ${colorScheme.input_border}`,
+      color: colorScheme.primary_500,
+      borderRadius: "30px",
+      fontSize: "16px",
+      fontWeight: 700
     })
   },
 

@@ -31,6 +31,7 @@ import {
   useGetRelationship
 } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { SetStateAction } from "jotai";
 import { Dispatch, useEffect, useState } from "react";
@@ -165,7 +166,7 @@ const AddBeneficiary = ({
   }, [beneficiaryData]);
 
   const countryOptions = formatSelectOptions<number>({
-    data: countriesList?.data?.data,
+    data: countriesList,
     labelKey: "name",
     valueKey: "id",
     icon: {
@@ -272,7 +273,7 @@ const AddBeneficiary = ({
 
               <GridItem mt={1} colSpan={1}>
                 <Select
-                  // noFloating
+                  noFloating
                   name="countryId"
                   placeholder="Country"
                   control={control}
@@ -303,7 +304,7 @@ const AddBeneficiary = ({
             <SimpleGrid>
               <GridItem>
                 <Select
-                  // noFloating
+                  noFloating
                   name="bankId"
                   placeholder="Select Payout method"
                   control={control}
@@ -314,7 +315,7 @@ const AddBeneficiary = ({
             <Button
               variant="light"
               isDisabled={editBeneficiaryId ? false : !watch("bankId")}
-              leftIcon={<svgAssets.AddCircle />}
+              leftIcon={<svgAssets.AddCircle color={colorScheme.primary_500} />}
               onClick={onOpenAddAccountModal}
               width={"max-content"}
             >

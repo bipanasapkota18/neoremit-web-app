@@ -70,7 +70,7 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
   const [editId] = useState();
 
   const countryOptions = formatSelectOptions<number>({
-    data: countryList?.data?.data,
+    data: countryList,
     labelKey: "name",
     valueKey: "id"
   });
@@ -97,7 +97,7 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
         postalCode: addressInfo?.postalCode ?? ""
       });
     }
-  }, [kycData]);
+  }, [kycData, countryList, stateList]);
 
   const AddressDataFormFields = {
     country: {
@@ -253,6 +253,7 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       AddressDataFormFields
     )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
   }, [formFieldData, countryList, stateList]);
+
   useEffect(() => {
     const requiredFieldValidations = AddressDataFormFieldList?.reduce(
       (acc: any, item) => {
@@ -281,7 +282,6 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       countryId: data?.country?.value,
       stateId: data?.state?.value
     };
-    console.log(preparedData);
     try {
       await mutateAddressData(preparedData);
       stepProps.nextStep();
