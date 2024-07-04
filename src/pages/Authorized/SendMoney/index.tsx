@@ -63,7 +63,7 @@ const SendMoney = () => {
         return <SendMoneyForm setPageName={setPageName} />;
     }
   };
-  return <h1>{renderComponent(pageName)}</h1>;
+  return <>{renderComponent(pageName)}</>;
 };
 
 export default SendMoney;

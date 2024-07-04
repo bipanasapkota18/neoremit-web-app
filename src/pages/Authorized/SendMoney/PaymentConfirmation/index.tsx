@@ -64,13 +64,6 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
               {beneficiaryAccountData?.payoutPartnerId?.label}
             </Text>
           </GridItem>
-          {/* //asd */}
-          {/* <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
-            <Text textStyle={"normalStyle"} fontSize={"14px"}>
-              Email Address
-            </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>admin@neo.com</Text>
-          </GridItem> */}
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Contact Number

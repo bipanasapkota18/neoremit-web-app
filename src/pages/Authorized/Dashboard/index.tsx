@@ -29,7 +29,6 @@ const defaultValues = {
   sendTo: null as ISelectOptions<number> | null
 };
 function Dashboard() {
-  // const navigate = useNavigate();
   const { data: countriesList } = useGetCountryList();
   const { initData } = useStoreInitData();
 
@@ -113,7 +112,6 @@ function Dashboard() {
                   {`${initData?.receivingCountry?.currency?.shortName}`}
                 </Text>
               </VStack>
-              {/* PLEASE FIX THE REACT SELECT COMPOEMENT */}
               <HStack gap={4} w={"full"}>
                 <Select
                   name="sendFrom"
@@ -159,9 +157,6 @@ function Dashboard() {
                 py={4}
                 size={"sm"}
                 leftIcon={<svgAssets.SendIcon />}
-                // onClick={() => {
-                //   navigate(NAVIGATION_ROUTES.SEND_MONEY);
-                // }}
               >
                 Send Money
               </Button>
