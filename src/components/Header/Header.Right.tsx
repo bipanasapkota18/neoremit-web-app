@@ -1,8 +1,11 @@
 import {
   Avatar,
   AvatarBadge,
+  Badge,
+  Box,
   HStack,
   IconButton,
+  keyframes,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -16,8 +19,8 @@ import {
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { FC, useRef } from "react";
 
+import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { BsCheck2Circle, BsChevronDown } from "react-icons/bs";
-import { GoBell } from "react-icons/go";
 import { HeaderAnchor } from "./Header";
 
 interface IRightHeader {
@@ -26,7 +29,27 @@ interface IRightHeader {
   mobileMenuId: string;
   handleMobileMenuClose: () => void;
 }
+const shake = keyframes({
+  "0%": {
+    transform: "rotate(0)"
+  },
+  "15%": {
+    transform: "rotate(15deg)"
+  },
+  "30%": {
+    transform: "rotate(-15deg)"
+  },
+  "45%": {
+    transform: "rotate(14deg)"
+  },
+  "60%": {
+    transform: "rotate(-14deg)"
+  },
 
+  "100%": {
+    transform: "rotate(0)"
+  }
+});
 export const RightHeader: FC<IRightHeader> = () => {
   const initialFocusRef = useRef();
   // const { initData } = useStoreInitData();
@@ -35,18 +58,33 @@ export const RightHeader: FC<IRightHeader> = () => {
     <HStack gap={8}>
       <Popover initialFocusRef={initialFocusRef.current} placement="bottom">
         <PopoverTrigger>
-          <IconButton
-            aria-label="notification"
-            borderRadius={"full"}
-            bg={"white"}
-            _hover={{
-              boxShadow: `0 0 6px 1px ${colorScheme.gray_400}`
-            }}
-            _expanded={{
-              boxShadow: `0 0 6px 1px ${colorScheme.gray_400}`
-            }}
-            icon={<GoBell color={colorScheme.blue_700} size={24} />}
-          ></IconButton>
+          <Box position={"relative"}>
+            <IconButton
+              variant={"light"}
+              aria-label="notification"
+              border={"1px solid #E2E8F0"}
+              borderRadius={"full"}
+              bg={"white"}
+              _hover={{
+                animation: `${shake} 1s `
+              }}
+              _expanded={{
+                transform: "rotate(15deg)"
+              }}
+              icon={<svgAssets.NotificationIcon />}
+            />
+            <Badge
+              position={"absolute"}
+              height={"10px"}
+              w={"10px"}
+              background={"red"}
+              zIndex={1}
+              top={"8%"}
+              borderRadius={"120%"}
+              right={"1%"}
+              border={"1px solid #E2E8F0"}
+            />
+          </Box>
         </PopoverTrigger>
         <PopoverContent
           color={colorScheme.gray_800}
