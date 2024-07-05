@@ -135,7 +135,9 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
           item => item.payoutMethods[0]?.id === watch("paymentMethod")?.value
         )
         ?.find(item =>
-          inRange(+watch("sendAmount") ?? 0, item.fromAmount, item.toAmount)
+          item?.toAmount === null
+            ? +watch("sendAmount") >= item.fromAmount
+            : inRange(+watch("sendAmount") ?? 0, item.fromAmount, item.toAmount)
         ),
     [watch("paymentMethod"), watch("sendAmount"), chargeDeatils]
   );
