@@ -40,6 +40,7 @@ import { ReactComponent as ListItemArrow } from "@neoWeb/assets/images/svgs/list
 import { ReactComponent as Location } from "@neoWeb/assets/images/svgs/location.svg";
 import { ReactComponent as Logout } from "@neoWeb/assets/images/svgs/logout.svg";
 import { ReactComponent as MoreInfo } from "@neoWeb/assets/images/svgs/more-square.svg";
+import { ReactComponent as NotificationIcon } from "@neoWeb/assets/images/svgs/notification.svg";
 import { ReactComponent as PasswordIcon } from "@neoWeb/assets/images/svgs/password.svg";
 import { ReactComponent as PersonalDetail } from "@neoWeb/assets/images/svgs/personal-detail.svg";
 import { ReactComponent as pinIcon } from "@neoWeb/assets/images/svgs/pinIcon.svg";
@@ -103,5 +104,6 @@ export const svgAssets = {
   MasterCardLogo,
   Guard,
   ShareIcon,
-  DownloadIcon
+  DownloadIcon,
+  NotificationIcon
 };
