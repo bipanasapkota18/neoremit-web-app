@@ -16,7 +16,7 @@ const ForgotPassword = () => {
       case "otp":
         return <OTP type="FORGOT_PASSWORD" setScreen={setScreen} />;
       case "passwordForm":
-        return <SetPassword setScreen={setScreen} />;
+        return <SetPassword setScreen={setScreen} type="FORGOT_PASSWORD" />;
       default:
         return <ForgotPasswordForm setScreen={setScreen} />;
     }
