@@ -15,5 +15,6 @@ export const NAVIGATION_ROUTES = {
   SUPPORT: "/support",
   NEO_SETTINGS: "/neo-settings",
   CONTACT: "/contact",
-  EXAMPLE: "/example"
+  EXAMPLE: "/example",
+  GOOGLE_REDIRECT: "/google-signup-success"
 };
