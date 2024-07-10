@@ -1,6 +1,5 @@
 import { Flex, Spinner } from "@chakra-ui/react";
 import {
-  logoutAllTabs,
   useAuthentication,
   useLogoutMutation
 } from "@neoWeb/services/service-auth";
@@ -92,9 +91,6 @@ export default function App() {
       }
     };
   }, [isAuthenticated, checkTokenAndRefresh]);
-  useEffect(() => {
-    logoutAllTabs();
-  }, []);
 
   if (
     (isInitDataLoading || isAuthLoading || isKycDataLoading) &&

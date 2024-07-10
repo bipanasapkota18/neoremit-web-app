@@ -19,7 +19,7 @@ export const navLinks = [
     childNav: [
       {
         icon: sidebarSvg.Ellipse,
-        href: NAVIGATION_ROUTES.ACCOUNT.KYC_INFORMATION,
+        href: NAVIGATION_ROUTES.KYC_INFORMATION,
         label: "Kyc Information"
       }
     ]
