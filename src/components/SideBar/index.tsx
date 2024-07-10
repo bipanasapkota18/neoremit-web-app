@@ -25,7 +25,7 @@ interface SidebarProps {
 }
 
 export const parentNavRoutes = {
-  collapse: "/collapse"
+  account: "/account"
 };
 
 export default function Sidebar({
@@ -42,7 +42,7 @@ export default function Sidebar({
   // const { initData } = useStoreInitData();
 
   // parentNavList includes the collapsable sidebar elements so that when reloading we can check for and highlight the parent of selected link
-  const parentNavList = [{ nav: "Collaple", url: parentNavRoutes.collapse }];
+  const parentNavList = [{ nav: "Account", url: parentNavRoutes.account }];
 
   // This useEffect sets the active sidebar link whether it is a normal link or a collapsable link or it is a child of collapsable link
   // activeCollapse checks if the url contains the parentNavList item eg http://example.com/clients/add -> here the url inclides /clients so clients is selected
@@ -63,7 +63,7 @@ export default function Sidebar({
           ?.label ?? ""
       );
     }
-  }, []);
+  }, [window.location.pathname]);
 
   const labelData = [{ navName: "Example", value: 10 }];
 
@@ -73,7 +73,9 @@ export default function Sidebar({
       return navLabelValue.value ?? null;
     }
   };
+
   const allNavlinks = categorizedNavlinks(navLinks);
+
   const handleLogout = () => {
     logout();
   };
@@ -103,7 +105,7 @@ export default function Sidebar({
             scrollbarGutter: "stable",
             overflowY: "auto",
             "&::-webkit-scrollbar": {
-              width: "0.5rem",
+              width: "0.2rem",
               position: "absolute",
               transitionDuration: "all 2s"
             },

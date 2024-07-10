@@ -45,7 +45,7 @@ import { ReactComponent as PasswordIcon } from "@neoWeb/assets/images/svgs/passw
 import { ReactComponent as PersonalDetail } from "@neoWeb/assets/images/svgs/personal-detail.svg";
 import { ReactComponent as pinIcon } from "@neoWeb/assets/images/svgs/pinIcon.svg";
 import { ReactComponent as PinSetSuccess } from "@neoWeb/assets/images/svgs/pin_set_success.svg";
-import { ReactComponent as SearchIcon } from "@neoWeb/assets/images/svgs/search.svg";
+import { ReactComponent as SearchIcon } from "@neoWeb/assets/images/svgs/search-normal.svg";
 import { ReactComponent as SecurityIcon } from "@neoWeb/assets/images/svgs/security.svg";
 import { ReactComponent as SendIcon } from "@neoWeb/assets/images/svgs/send.svg";
 import { ReactComponent as TickCircle } from "@neoWeb/assets/images/svgs/tick-circle.svg";

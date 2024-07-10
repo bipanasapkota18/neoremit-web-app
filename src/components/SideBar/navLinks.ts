@@ -19,7 +19,7 @@ export const navLinks = [
     childNav: [
       {
         icon: sidebarSvg.Ellipse,
-        href: NAVIGATION_ROUTES.ACCOUNT.KYC_INFORMATION,
+        href: NAVIGATION_ROUTES.KYC_INFORMATION,
         label: "Kyc Information"
       }
     ]
@@ -59,20 +59,20 @@ export const navLinks = [
   {
     icon: sidebarSvg.UserIcon,
     href: NAVIGATION_ROUTES.SUPPORT,
-    label: "Support",
-    header: "NEO"
+    label: "FAQs",
+    header: "SUPPORT"
   },
   {
     icon: sidebarSvg.Transaction,
     href: NAVIGATION_ROUTES.CONTACT,
-    label: "Contact",
-    header: "NEO"
+    label: "Support",
+    header: "SUPPORT"
   },
   {
     icon: sidebarSvg.settings,
     href: NAVIGATION_ROUTES.NEO_SETTINGS,
-    label: "Settings",
-    header: "NEO"
+    label: "Privacy Policy",
+    header: "SUPPORT"
   }
 
   // {

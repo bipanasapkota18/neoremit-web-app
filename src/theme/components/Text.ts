@@ -40,5 +40,10 @@ export const TextStyles = {
     fontSize: "17px",
     fontWeight: 600,
     color: "#F7FAFC"
+  },
+  transaction_date: {
+    fontSize: "12px",
+    fontWeight: 400,
+    color: colorScheme.sideBar_text
   }
 };

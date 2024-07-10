@@ -1,31 +1,44 @@
 import {
   Button,
-  GridItem,
+  HStack,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
-  SimpleGrid,
+  Stack,
   Text
 } from "@chakra-ui/react";
 import TextInput from "@neoWeb/components/Form/TextInput";
-import React from "react";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
+import React, { MouseEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface AddFilterModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
+const defaultValues = {
+  fromDate: "",
+  toDate: "",
+  paymentMethod: "",
+  type: "",
+  date: ""
+};
 
 const AddFilterModal: React.FC<AddFilterModalProps> = ({ isOpen, onClose }) => {
-  const { control } = useForm();
+  const { control, reset } = useForm({
+    defaultValues: defaultValues
+  });
+
+  const [paymentOptionValue, setPaymentOptionValue] = useState<string>("");
+  const [month, setMonth] = useState<string>("1");
+  const [typeValue, setTypeValue] = useState<string>("");
   const fetchedData = [
     {
       label: "30 Days",
-      value: 30
+      value: "1"
     },
     {
       label: "6 Months",
@@ -65,59 +78,149 @@ const AddFilterModal: React.FC<AddFilterModalProps> = ({ isOpen, onClose }) => {
       value: "failed"
     },
     {
-      label: "Verification",
-      value: "veriication"
+      label: "Verification Failed",
+      value: "veriicationFailed"
     }
   ];
+
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [startX, setStartX] = useState<number>(0);
+  const [scrollLeft, setScrollLeft] = useState<number>(0);
+  const hStackRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    setIsDragging(true);
+    setStartX(e.pageX - (hStackRef.current?.offsetLeft || 0));
+    setScrollLeft(hStackRef.current?.scrollLeft || 0);
+  };
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!isDragging || !hStackRef.current) return;
+    const x = e.pageX - (hStackRef.current?.offsetLeft || 0);
+    const walk = (x - startX) * 2; // Adjust the scroll speed multiplier as needed
+    hStackRef.current.scrollLeft = scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
-      <ModalContent>
+      <ModalContent borderRadius={"16px"} padding={"0 0 32px 0"}>
         <ModalHeader>Filter</ModalHeader>
-        <ModalBody justifyContent={"space-between"}>
-          <Text fontSize={"16px"} fontWeight={600}>
-            Date
-          </Text>
-          {fetchedData.map((data, index) => (
-            <Button key={index}>{data.label}</Button>
-          ))}
+        <ModalBody display={"flex"} flexDirection={"column"} gap={4}>
+          <Stack gap={2}>
+            <Text fontSize={"14px"} fontWeight={600}>
+              Date
+            </Text>
+            <HStack>
+              {fetchedData.map((data, index) => (
+                <Button
+                  variant={"transaction_filter_buttons"}
+                  key={index}
+                  isActive={month === data.value}
+                  onClick={() => {
+                    setMonth(data.value);
+                  }}
+                >
+                  {data.label}
+                </Button>
+              ))}
+            </HStack>
+          </Stack>
+          <Stack gap={"8"}>
+            <TextInput
+              type="date"
+              name="fromDate"
+              label="From"
+              control={control}
+            />
 
-          <SimpleGrid columns={{ sm: 1 }} gap={"8"}>
-            <GridItem colSpan={1}>
-              <TextInput
-                type="date"
-                name="from"
-                label="From"
-                control={control}
-              />
-            </GridItem>
-            <GridItem>
-              <TextInput type="date" name="to" label="To" control={control} />
-            </GridItem>
-          </SimpleGrid>
+            <TextInput type="date" name="toDate" label="To" control={control} />
+          </Stack>
+          <Stack>
+            <Text fontSize={"14px"} fontWeight={600}>
+              Channel
+            </Text>
+            <HStack>
+              {paymentOption.map((data, index) => (
+                <Button
+                  variant={"transaction_filter_buttons"}
+                  key={index}
+                  isActive={paymentOptionValue === data.value}
+                  onClick={() => {
+                    setPaymentOptionValue(data.value);
+                  }}
+                >
+                  {data.label}
+                </Button>
+              ))}
+            </HStack>
+          </Stack>
+          <Stack>
+            <Text fontSize={"14px"}>Types</Text>
+            <HStack
+              ref={hStackRef}
+              cursor={"grab"}
+              sx={{
+                overflowX: "auto",
+                "&::-webkit-scrollbar": {
+                  height: "4px"
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "gray.300",
+                  borderRadius: "full"
+                }
+              }}
+              py={1}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              gap={4}
+            >
+              {paymentoptionData.map((data, index) => (
+                <Button
+                  variant={"transaction_filter_buttons"}
+                  minW={"max-content"}
+                  key={index}
+                  isActive={typeValue === data.value}
+                  onClick={() => {
+                    setTypeValue(data.value);
+                  }}
+                >
+                  {data.label}
+                </Button>
+              ))}
+            </HStack>
+          </Stack>
+          <HStack justifyContent={"space-between"}>
+            <Button
+              padding={"12px 24px"}
+              background={"white"}
+              color={colorScheme.primary_500}
+              border={`1px solid ${colorScheme.primary_500}`}
+              onClick={() => {
+                onClose();
+                reset();
+              }}
+              _hover={{
+                background: "white"
+              }}
+              _focus={{
+                background: "white"
+              }}
+              flex={1}
+            >
+              Reset
+            </Button>
+            <Button flex={1} padding={"12px 24px"}>
+              Apply
+            </Button>
+          </HStack>
         </ModalBody>
-        <Text fontSize={"16px"} fontWeight={600} pl={5}>
-          Payment Option
-        </Text>
-        <ModalFooter justifyContent={"space-between"}>
-          {paymentOption.map((data, index) => (
-            <Button key={index}>{data.label}</Button>
-          ))}
-        </ModalFooter>
-        <Text fontSize={"18px"} pl={5}>
-          Types
-        </Text>
-        <ModalFooter justifyContent={"space-between"}>
-          {paymentoptionData.map((data, index) => (
-            <Button key={index}>{data.label}</Button>
-          ))}
-        </ModalFooter>
-
-        <ModalFooter justifyContent={"space-between"}>
-          <Button onClick={onClose}>Close</Button>
-          <Button>Apply</Button>
-        </ModalFooter>
         <ModalCloseButton />
       </ModalContent>
     </Modal>

@@ -41,7 +41,7 @@ export const appRoutes = [
         element: <Transaction />
       },
       {
-        path: NAVIGATION_ROUTES.ACCOUNT.KYC_INFORMATION,
+        path: NAVIGATION_ROUTES.KYC_INFORMATION,
         element: <KycInformation />
       },
       {
