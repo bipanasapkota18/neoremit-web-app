@@ -59,20 +59,20 @@ export const navLinks = [
   {
     icon: sidebarSvg.UserIcon,
     href: NAVIGATION_ROUTES.SUPPORT,
-    label: "Support",
-    header: "NEO"
+    label: "FAQs",
+    header: "SUPPORT"
   },
   {
     icon: sidebarSvg.Transaction,
     href: NAVIGATION_ROUTES.CONTACT,
-    label: "Contact",
-    header: "NEO"
+    label: "Support",
+    header: "SUPPORT"
   },
   {
     icon: sidebarSvg.settings,
     href: NAVIGATION_ROUTES.NEO_SETTINGS,
-    label: "Settings",
-    header: "NEO"
+    label: "Privacy Policy",
+    header: "SUPPORT"
   }
 
   // {

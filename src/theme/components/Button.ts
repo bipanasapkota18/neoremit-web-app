@@ -115,6 +115,19 @@ export const ButtonConfig: ComponentStyleConfig = {
       borderRadius: "30px",
       fontSize: "16px",
       fontWeight: 700
+    }),
+    transaction_filter_buttons: () => ({
+      bg: colorScheme.gray_50,
+      color: colorScheme.primary_500,
+      border: `1px solid ${colorScheme.input_border}`,
+      borderRadius: "8px",
+      fontSize: "14px",
+      fontWeight: 700,
+      padding: "10px 20px",
+      _active: {
+        bg: colorScheme.primary_500,
+        color: colorScheme.white
+      }
     })
   },
 
