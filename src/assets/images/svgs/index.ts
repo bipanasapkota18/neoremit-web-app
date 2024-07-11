@@ -14,6 +14,7 @@ import { ReactComponent as ShareIcon } from "@neoWeb/assets/images/svgs/ShareNet
 import { ReactComponent as AddCircle } from "@neoWeb/assets/images/svgs/add-circle.svg";
 import { ReactComponent as AddressDetail } from "@neoWeb/assets/images/svgs/address-detail.svg";
 import { ReactComponent as AppleIcon } from "@neoWeb/assets/images/svgs/apple.svg";
+import { ReactComponent as ArrowRightIcon } from "@neoWeb/assets/images/svgs/arrow-down.svg";
 import { ReactComponent as ArrowSwap } from "@neoWeb/assets/images/svgs/arrow-swap.svg";
 import { ReactComponent as ArrowLeftIcon } from "@neoWeb/assets/images/svgs/arrow_back.svg";
 import { ReactComponent as ArtifactFlower } from "@neoWeb/assets/images/svgs/background-artifacr-flower.svg";
@@ -39,6 +40,7 @@ import { ReactComponent as Line } from "@neoWeb/assets/images/svgs/line.svg";
 import { ReactComponent as ListItemArrow } from "@neoWeb/assets/images/svgs/list-item-arrow.svg";
 import { ReactComponent as Location } from "@neoWeb/assets/images/svgs/location.svg";
 import { ReactComponent as Logout } from "@neoWeb/assets/images/svgs/logout.svg";
+import { ReactComponent as MessageIcon } from "@neoWeb/assets/images/svgs/message_faq.svg";
 import { ReactComponent as MoreInfo } from "@neoWeb/assets/images/svgs/more-square.svg";
 import { ReactComponent as NotificationIcon } from "@neoWeb/assets/images/svgs/notification.svg";
 import { ReactComponent as PasswordIcon } from "@neoWeb/assets/images/svgs/password.svg";
@@ -105,5 +107,7 @@ export const svgAssets = {
   Guard,
   ShareIcon,
   DownloadIcon,
-  NotificationIcon
+  NotificationIcon,
+  MessageIcon,
+  ArrowRightIcon
 };

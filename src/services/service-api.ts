@@ -61,6 +61,11 @@ export const api = {
     confirm_payment: `${transaction_service}/trans/confirm-payment`,
     calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`
   },
+  support: {
+    faq: {
+      getAll: `${service}/v1/faqs/list`
+    }
+  },
   init: `${service}/users/init`
 };
 

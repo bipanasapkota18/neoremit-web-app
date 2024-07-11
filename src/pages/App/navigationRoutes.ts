@@ -19,7 +19,9 @@ export const NAVIGATION_ROUTES = {
   TRANSACTION_HISTORY: "/transaction-history",
   SETTINGS: "/settings",
   SUPPORT: "/support",
-  NEO_SETTINGS: "/neo-settings",
+  NEO_SETTINGS: "/settings",
+
+  FAQS: "/faqs",
   CONTACT: "/contact",
   EXAMPLE: "/example",
   GOOGLE_REDIRECT: "/google-signup-success"

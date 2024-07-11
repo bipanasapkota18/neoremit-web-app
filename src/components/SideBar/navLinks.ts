@@ -58,13 +58,13 @@ export const navLinks = [
 
   {
     icon: sidebarSvg.UserIcon,
-    href: NAVIGATION_ROUTES.SUPPORT,
+    href: NAVIGATION_ROUTES.FAQS,
     label: "FAQs",
     header: "SUPPORT"
   },
   {
     icon: sidebarSvg.Transaction,
-    href: NAVIGATION_ROUTES.CONTACT,
+    href: NAVIGATION_ROUTES.SUPPORT,
     label: "Support",
     header: "SUPPORT"
   },

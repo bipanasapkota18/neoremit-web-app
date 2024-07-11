@@ -2,6 +2,8 @@ import LayoutWrapper from "@neoWeb/components/LayoutWrapper";
 import PageNotFound from "@neoWeb/components/LayoutWrapper/PageNotFound";
 import { lazy } from "react";
 import BeneficiaryDetails from "../Authorized/BeneficiaryDetails";
+import FAQs from "../Authorized/Support/FAQs";
+import Support from "../Authorized/Support/Support";
 import { NAVIGATION_ROUTES } from "./navigationRoutes";
 
 const Dashboard = lazy(() => import("@neoWeb/pages/Authorized/Dashboard"));
@@ -43,6 +45,14 @@ export const appRoutes = [
       {
         path: NAVIGATION_ROUTES.KYC_INFORMATION,
         element: <KycInformation />
+      },
+      {
+        path: NAVIGATION_ROUTES.FAQS,
+        element: <FAQs />
+      },
+      {
+        path: NAVIGATION_ROUTES.SUPPORT,
+        element: <Support />
       },
       {
         path: "*",
