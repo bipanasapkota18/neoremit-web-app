@@ -64,6 +64,18 @@ export const api = {
   support: {
     faq: {
       getAll: `${service}/v1/faqs/list`
+    },
+    feedback: {
+      getAll: `${service}/v1/help/feedback/user/all`
+    },
+    support_request: {
+      getAll: `${service}/support-requests/list`
+    },
+    comment: {
+      getByFeedBack: `${service}/v1/help/{feedbackId}/comment/all`
+    },
+    support_reason: {
+      getAll: `${service}/support-reasons/list`
     }
   },
   init: `${service}/users/init`

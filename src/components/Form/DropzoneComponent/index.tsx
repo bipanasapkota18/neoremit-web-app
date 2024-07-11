@@ -2,7 +2,6 @@ import {
   Box,
   CloseButton,
   FormControl,
-  Heading,
   HStack,
   IconButton,
   Image,
@@ -49,6 +48,7 @@ export interface IDropzoneComponentControlledProps {
       sm?: number;
     };
   };
+  isSupport?: boolean;
 }
 
 export const defaultMaxSize = 2;
@@ -57,7 +57,8 @@ export function DropzoneComponentControlled({
   name,
   control,
   imagePreview,
-  options
+  options,
+  isSupport
 }: IDropzoneComponentControlledProps) {
   const {
     isMultiple,
@@ -120,16 +121,31 @@ export function DropzoneComponentControlled({
     // Default COntainer and information for image upload (No items uploaded)
     return (
       <>
-        <svgAssets.ImagePlaceHolderDropZonee />
-        <Heading
-          display="flex"
-          flexDirection={"column"}
-          justifyContent={"center"}
-          gap={"8px"}
-          alignItems={"center"}
+        {isSupport ? (
+          <Box
+            display={"flex"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            bg={colorScheme.primary_50}
+            p={3}
+            borderRadius={"20px"}
+          >
+            <svgAssets.GalleryIcon />
+          </Box>
+        ) : (
+          <svgAssets.ImagePlaceHolderDropZonee />
+        )}
+
+        <Text
+          fontSize={"14px"}
+          fontWeight={400}
+          color={colorScheme.sideBar_text}
         >
-          {/* <Text fontSize={"20px"}> Select Image</Text> */}
-          {/* <Text
+          {isSupport
+            ? "Please upload a relevant image to help us address your issue."
+            : ""}
+        </Text>
+        {/* <Text
             fontSize={"14px"}
             color={colorScheme.search_icon}
             display={"inline-block"}
@@ -141,7 +157,6 @@ export function DropzoneComponentControlled({
             </Text>
             through your machine
           </Text> */}
-        </Heading>
         <VStack spacing={1}>
           {accept && (
             <Text color={colorScheme.gray_400}>{`Only ${Object.values(
@@ -264,14 +279,22 @@ export function DropzoneComponentControlled({
                       border={
                         error
                           ? `1px dashed ${colorScheme.danger_500}`
-                          : "1px dashed #E2E8F0"
+                          : isSupport
+                            ? "none"
+                            : "1px dashed #E2E8F0"
                       }
                       padding={6}
-                      borderRadius={"3px"}
+                      borderRadius={isSupport ? "16px" : "3px"}
                       height={"100%"}
+                      background={isSupport ? colorScheme.gray_50 : "none"}
                     >
                       <input {...getInputProps()} />
-                      <VStack spacing={4}>{renderDropzoneContainer()}</VStack>
+                      <VStack
+                        spacing={isSupport ? 0 : 4}
+                        py={isSupport ? 4 : 0}
+                      >
+                        {renderDropzoneContainer()}
+                      </VStack>
                     </Box>
 
                     <Text
