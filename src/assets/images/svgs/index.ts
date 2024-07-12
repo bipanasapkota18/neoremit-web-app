@@ -52,6 +52,7 @@ import { ReactComponent as pinIcon } from "@neoWeb/assets/images/svgs/pinIcon.sv
 import { ReactComponent as PinSetSuccess } from "@neoWeb/assets/images/svgs/pin_set_success.svg";
 import { ReactComponent as SearchIcon } from "@neoWeb/assets/images/svgs/search-normal.svg";
 import { ReactComponent as SecurityIcon } from "@neoWeb/assets/images/svgs/security.svg";
+import { ReactComponent as SendChatIcon } from "@neoWeb/assets/images/svgs/send-chat.svg";
 import { ReactComponent as SendIcon } from "@neoWeb/assets/images/svgs/send.svg";
 import { ReactComponent as SMS } from "@neoWeb/assets/images/svgs/sms.svg";
 import { ReactComponent as TickCircle } from "@neoWeb/assets/images/svgs/tick-circle.svg";
@@ -117,5 +118,6 @@ export const svgAssets = {
   SMS,
   SupportMessageIcon,
   SupportCall,
-  GalleryIcon
+  GalleryIcon,
+  SendChatIcon
 };

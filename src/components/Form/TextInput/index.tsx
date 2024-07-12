@@ -154,7 +154,11 @@ const TextInput: React.FC<TextInputProps & InputProps & TextareaProps> = ({
                   </FormLabel>
                 )}
                 {endIcons ? (
-                  <InputRightElement onClick={onIconClick} top="20%">
+                  <InputRightElement
+                    onClick={onIconClick}
+                    top="20%"
+                    right={"1%"}
+                  >
                     {endIcons}
                   </InputRightElement>
                 ) : (

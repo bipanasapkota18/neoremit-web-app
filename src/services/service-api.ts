@@ -72,10 +72,14 @@ export const api = {
       getAll: `${service}/support-requests/list`
     },
     comment: {
-      getByFeedBack: `${service}/v1/help/{feedbackId}/comment/all`
+      getByFeedBack: `${service}/v1/help/{feedbackId}/comment/all`,
+      create: `${service}/v1/help/create/{feedbackId}/comment`
     },
     support_reason: {
       getAll: `${service}/support-reasons/list`
+    },
+    user_guide: {
+      getAll: `${service}/v1/help/setup/all`
     }
   },
   init: `${service}/users/init`

@@ -66,10 +66,16 @@ const LoginForm = () => {
       localStorage.removeItem("email");
     }
     try {
-      await login({
+      const loginResponse = await login({
         username: data.email,
         password: data.password
       });
+      if (loginResponse?.status === 200) {
+        localStorage.setItem(
+          "userID",
+          loginResponse?.data?.data?.userDetails?.id + ""
+        );
+      }
       reset(defaultValues);
     } catch (error) {
       console.error(error);

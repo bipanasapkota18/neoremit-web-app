@@ -4,7 +4,6 @@ import {
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
-  Box,
   Card,
   CardBody,
   Center,
@@ -41,13 +40,20 @@ const FAQs = () => {
                       <AccordionButton justifyContent={"space-between"}>
                         <HStack>
                           <Icon as={svgAssets.MessageIcon} />
-                          <Box as="span" flex="1" textAlign="left">
+                          <Text
+                            as="span"
+                            textAlign="left"
+                            noOfLines={2}
+                            maxW={"790px"}
+                          >
                             {parse(item.question)}
-                          </Box>
+                          </Text>
                         </HStack>
                         <AccordionIcon as={svgAssets.ArrowRightIcon} />
                       </AccordionButton>
-                      <AccordionPanel>{parse(item.answer)}</AccordionPanel>
+                      <AccordionPanel maxW={"870px"}>
+                        {parse(item.answer)}
+                      </AccordionPanel>
                     </AccordionItem>
                   ))}
                 </Flex>
