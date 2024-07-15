@@ -20,6 +20,7 @@ import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { FC, useRef } from "react";
 
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { BsCheck2Circle, BsChevronDown } from "react-icons/bs";
 import { HeaderAnchor } from "./Header";
 
@@ -52,7 +53,7 @@ const shake = keyframes({
 });
 export const RightHeader: FC<IRightHeader> = () => {
   const initialFocusRef = useRef();
-  // const { initData } = useStoreInitData();
+  const { initData } = useStoreInitData();
 
   return (
     <HStack gap={8}>
@@ -195,17 +196,24 @@ export const RightHeader: FC<IRightHeader> = () => {
         </PopoverContent>
       </Popover>
       <Tooltip label="View Profile">
-        <Avatar
-          cursor={"pointer"}
-          // onClick={() => navigate("/user-profile")}
-          src={""}
-          // src={
-          //   initData?.profileImage &&
-          //   `${baseURL}document/internal-user/profile?image=${initData?.profileImage}`
-          // }
-        >
-          <AvatarBadge boxSize="1.25em" bg="green.500" />
-        </Avatar>
+        <HStack>
+          <Avatar
+            cursor={"pointer"}
+            // onClick={() => navigate("/user-profile")}
+            height={"40px"}
+            width={"40px"}
+            name={initData?.fullName}
+            // src={
+            //   initData?.profileImage &&
+            //   `${baseURL}document/internal-user/profile?image=${initData?.profileImage}`
+            // }
+          >
+            {/* <AvatarBadge boxSize="1.25em" bg="green.500" /> */}
+          </Avatar>
+          <Text fontWeight={500} color={colorScheme.sideBar_text}>
+            {initData?.fullName}
+          </Text>
+        </HStack>
       </Tooltip>
     </HStack>
   );

@@ -13,6 +13,8 @@ import {
 } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import BeneficiaryCard from "@neoWeb/components/Beneficiary/BeneficiaryCard";
+import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { useGetBeneficiary } from "@neoWeb/services/service-beneficiary";
 import { useState } from "react";
 import AddBeneficiary from "./AddBeneficiary";
@@ -20,9 +22,17 @@ const BeneficiaryDetails = () => {
   const { data: benefeciaryData } = useGetBeneficiary();
   const [flag, setFlag] = useBoolean();
   const [editId, setEditId] = useState<number | null>(null);
-
+  const pages = [
+    {
+      pageName: flag ? "Add Beneficiary" : "Beneficiary",
+      href: NAVIGATION_ROUTES.BENEFICIARY,
+      isCurrentPage: true
+    }
+  ];
   return (
-    <Flex direction={"column"}>
+    <Stack>
+      <BreadCrumbs pages={pages} />
+
       {!flag ? (
         <Card background={"#FEFEFE"} borderRadius="24px" alignItems={"center"}>
           <CardBody
@@ -95,7 +105,7 @@ const BeneficiaryDetails = () => {
           setFlag={setFlag}
         />
       )}
-    </Flex>
+    </Stack>
   );
 };
 

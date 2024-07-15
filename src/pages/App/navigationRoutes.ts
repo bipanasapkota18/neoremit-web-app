@@ -23,6 +23,7 @@ export const NAVIGATION_ROUTES = {
 
   FAQS: "/faqs",
   CONTACT: "/contact",
+  PRIVACY_POLICY: "/privacy-policy",
   EXAMPLE: "/example",
   GOOGLE_REDIRECT: "/google-signup-success"
 };

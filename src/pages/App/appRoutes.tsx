@@ -1,9 +1,7 @@
 import LayoutWrapper from "@neoWeb/components/LayoutWrapper";
 import PageNotFound from "@neoWeb/components/LayoutWrapper/PageNotFound";
 import { lazy } from "react";
-import BeneficiaryDetails from "../Authorized/BeneficiaryDetails";
-import FAQs from "../Authorized/Support/FAQs";
-import Support from "../Authorized/Support/Support";
+
 import { NAVIGATION_ROUTES } from "./navigationRoutes";
 
 const Dashboard = lazy(() => import("@neoWeb/pages/Authorized/Dashboard"));
@@ -12,7 +10,14 @@ const SendMoney = lazy(() => import("@neoWeb/pages/Authorized/SendMoney"));
 const KycInformation = lazy(
   () => import("@neoWeb/pages/Authorized/KYCInformation")
 );
-
+const FAQs = lazy(() => import("@neoWeb/pages/Authorized/Support/FAQs"));
+const Support = lazy(() => import("@neoWeb/pages/Authorized/Support/Support"));
+const PrivacyPolicy = lazy(
+  () => import("@neoWeb/pages/Authorized/Support/PrivacyPolicy")
+);
+const BeneficiaryDetails = lazy(
+  () => import("@neoWeb/pages/Authorized/BeneficiaryDetails")
+);
 const Transaction = lazy(
   () => import("@neoWeb/pages/Authorized/Transaction History")
 );
@@ -53,6 +58,10 @@ export const appRoutes = [
       {
         path: NAVIGATION_ROUTES.SUPPORT,
         element: <Support />
+      },
+      {
+        path: NAVIGATION_ROUTES.PRIVACY_POLICY,
+        element: <PrivacyPolicy />
       },
       {
         path: "*",

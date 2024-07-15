@@ -1,7 +1,6 @@
 import {
   Avatar,
   Card,
-  Flex,
   HStack,
   IconButton,
   SimpleGrid,
@@ -10,7 +9,9 @@ import {
   useDisclosure
 } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import SearchInput from "@neoWeb/components/Form/SearchInput";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import AddFilterModal from "./AddFilterModal";
 
@@ -121,9 +122,17 @@ const Transaction = () => {
       amount: "$3000"
     }
   ];
-
+  const pages = [
+    {
+      pageName: "Transaction History",
+      href: NAVIGATION_ROUTES.TRANSACTION_HISTORY,
+      isCurrentPage: true
+    }
+  ];
   return (
-    <Flex direction={"column"}>
+    <Stack>
+      <BreadCrumbs pages={pages} />
+
       <Card padding={6} display={"flex"} gap={4}>
         <Text textStyle={"paymentDetailsHeader"}>Transaction History</Text>
 
@@ -154,7 +163,7 @@ const Transaction = () => {
           onClose={onCloseAddFilterButtonModal}
         />
       </Card>
-    </Flex>
+    </Stack>
   );
 };
 

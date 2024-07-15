@@ -3,7 +3,6 @@ import {
   Card,
   Flex,
   GridItem,
-  Heading,
   Icon,
   SimpleGrid,
   Text,
@@ -408,8 +407,10 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
     }
   };
   return (
-    <Card borderRadius={"16px"} padding={"24px"} w={"100%"}>
-      <Heading size="lg">Personal Information</Heading>
+    <Card padding={"24px"} w={"100%"} boxShadow={"none"}>
+      <Text fontSize={"14px"} fontWeight={700} color={colorScheme.gray_700}>
+        Personal Information
+      </Text>
       <VStack
         spacing={10}
         as={"form"}
