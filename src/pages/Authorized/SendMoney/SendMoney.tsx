@@ -14,10 +14,12 @@ import {
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import TextInputWithRef from "@neoWeb/components/Form/TextInput/InputWithRef";
 import SendMoneyView from "@neoWeb/components/MoneyView";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
@@ -384,175 +386,185 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
         )
     }
   ];
-
+  const pages = [
+    {
+      pageName: "Send Money",
+      href: NAVIGATION_ROUTES.SEND_MONEY,
+      isCurrentPage: true
+    }
+  ];
   return (
-    <Card>
-      <CardBody
-        as="form"
-        onSubmit={handleSubmit(handleSendMoney)}
-        display={"flex"}
-        flexDir={"column"}
-        padding={6}
-        gap={4}
-      >
-        <Box
-          textStyle={"normalStyle"}
-          color={colorScheme.gray_700}
-          fontWeight={700}
+    <Stack>
+      <BreadCrumbs pages={pages} />
+
+      <Card>
+        <CardBody
+          as="form"
+          onSubmit={handleSubmit(handleSendMoney)}
+          display={"flex"}
+          flexDir={"column"}
+          padding={6}
+          gap={4}
         >
-          Send Money
-        </Box>
-        <SendMoneyView
-          amount={watch("sendAmount") ? Number(watch("sendAmount")) : 0}
-        />
-
-        <SimpleGrid columns={2} gap={4}>
-          <GridItem colSpan={2}>
-            <HStack gap={4} w={"full"} alignItems={"center"}>
-              <Select
-                name="sendFrom"
-                options={countryOptions}
-                placeholder="Sending From"
-                control={control}
-                noFloating
-                isDisabled
-              />
-              <Icon
-                as={svgAssets.ArrowSwap}
-                height={"24px"}
-                width={"24px"}
-                color={colorScheme.primary_500}
-              />
-              <Select
-                name="sendTo"
-                options={countryOptions}
-                placeholder="Receiving"
-                control={control}
-                noFloating
-              />
-            </HStack>
-          </GridItem>
-          <GridItem colSpan={1}>
-            <TextInputWithRef
-              ref={sendRef}
-              control={control}
-              name="sendAmount"
-              type="number"
-              label="You Send"
-            />
-          </GridItem>
-          <GridItem colSpan={1}>
-            <TextInputWithRef
-              ref={receiveRef}
-              control={control}
-              name="receiveAmount"
-              type="number"
-              label="Receiver Receives"
-            />
-          </GridItem>
-          <GridItem mt={2} colSpan={1}>
-            <Select
-              name="paymentMethod"
-              options={paymentMethodOptions}
-              placeholder="Select Payment Method"
-              control={control}
-              noFloating
-            />
-          </GridItem>
-        </SimpleGrid>
-        {watch("paymentMethod") && (
-          <Stack
-            borderRadius={16}
-            padding={4}
-            gap={4}
-            background={colorScheme.gray_50}
-          >
-            <Stack gap={3}>
-              <HStack
-                justifyContent={"space-between"}
-                borderRadius={8}
-                border={`1px dashed ${colorScheme.primary_500}`}
-              >
-                <Box></Box>
-                <Text
-                  textStyle={"normalStyle"}
-                  color={colorScheme.sideBar_text}
-                  fontWeight={600}
-                  textAlign={"center"}
-                  padding={2}
-                  cursor={"pointer"}
-                  onClick={setFlag.on}
-                >
-                  Do You have promo code?
-                </Text>
-                <CloseIcon
-                  cursor={"pointer"}
-                  onClick={setFlag.off}
-                  height={"10px"}
-                  width={"10px"}
-                  mr={2}
-                />
-              </HStack>
-              {flag && (
-                <HStack alignItems={"center"}>
-                  <TextInput
-                    type="text"
-                    label="Enter Promo Code"
-                    control={control}
-                    name="promoCode"
-                  />
-
-                  <Button
-                    flex={"25%"}
-                    mt={1}
-                    py={"25px"}
-                    isDisabled={!watch("promoCode")}
-                    isLoading={isPromocodeValidationLoading}
-                    onClick={handleSubmit(validatePromoCode)}
-                  >
-                    Apply
-                  </Button>
-                </HStack>
-              )}
-            </Stack>
-            <Stack>
-              {calculatedValues.map((item, index) => (
-                <HStack key={index} justifyContent={"space-between"}>
-                  <Text textStyle={"beneficiaryCardSubHeader"}>
-                    {item.label}
-                  </Text>
-                  <Text
-                    backgroundColor={
-                      item.label === "Promo Code"
-                        ? promoCodeResponse?.promoCode
-                          ? "#C6F6D5"
-                          : colorScheme.gray_100
-                        : "inherit"
-                    }
-                    px={item.label === "Promo Code" ? 4 : 0}
-                    py={item.label === "Promo Code" ? 1 : 0}
-                    borderRadius={item.label === "Promo Code" ? 8 : 0}
-                    textStyle={"beneficiaryCardHeader"}
-                  >
-                    {item.value}
-                  </Text>
-                </HStack>
-              ))}
-            </Stack>
-          </Stack>
-        )}
-        <HStack justifyContent={"flex-end"}>
-          <Button
-            type="submit"
-            leftIcon={<svgAssets.WalletIcon />}
-            variant="send_money"
-            isDisabled={!isValid}
+          <Box
+            textStyle={"normalStyle"}
+            color={colorScheme.gray_700}
+            fontWeight={700}
           >
             Send Money
-          </Button>
-        </HStack>
-      </CardBody>
-    </Card>
+          </Box>
+          <SendMoneyView
+            amount={watch("sendAmount") ? Number(watch("sendAmount")) : 0}
+          />
+
+          <SimpleGrid columns={2} gap={4}>
+            <GridItem colSpan={2}>
+              <HStack gap={4} w={"full"} alignItems={"center"}>
+                <Select
+                  name="sendFrom"
+                  options={countryOptions}
+                  placeholder="Sending From"
+                  control={control}
+                  noFloating
+                  isDisabled
+                />
+                <Icon
+                  as={svgAssets.ArrowSwap}
+                  height={"24px"}
+                  width={"24px"}
+                  color={colorScheme.primary_500}
+                />
+                <Select
+                  name="sendTo"
+                  options={countryOptions}
+                  placeholder="Receiving"
+                  control={control}
+                  noFloating
+                />
+              </HStack>
+            </GridItem>
+            <GridItem colSpan={1}>
+              <TextInputWithRef
+                ref={sendRef}
+                control={control}
+                name="sendAmount"
+                type="number"
+                label="You Send"
+              />
+            </GridItem>
+            <GridItem colSpan={1}>
+              <TextInputWithRef
+                ref={receiveRef}
+                control={control}
+                name="receiveAmount"
+                type="number"
+                label="Receiver Receives"
+              />
+            </GridItem>
+            <GridItem mt={2} colSpan={1}>
+              <Select
+                name="paymentMethod"
+                options={paymentMethodOptions}
+                placeholder="Select Payment Method"
+                control={control}
+                noFloating
+              />
+            </GridItem>
+          </SimpleGrid>
+          {watch("paymentMethod") && (
+            <Stack
+              borderRadius={16}
+              padding={4}
+              gap={4}
+              background={colorScheme.gray_50}
+            >
+              <Stack gap={3}>
+                <HStack
+                  justifyContent={"space-between"}
+                  borderRadius={8}
+                  border={`1px dashed ${colorScheme.primary_500}`}
+                >
+                  <Box></Box>
+                  <Text
+                    textStyle={"normalStyle"}
+                    color={colorScheme.sideBar_text}
+                    fontWeight={600}
+                    textAlign={"center"}
+                    padding={2}
+                    cursor={"pointer"}
+                    onClick={setFlag.on}
+                  >
+                    Do You have promo code?
+                  </Text>
+                  <CloseIcon
+                    cursor={"pointer"}
+                    onClick={setFlag.off}
+                    height={"10px"}
+                    width={"10px"}
+                    mr={2}
+                  />
+                </HStack>
+                {flag && (
+                  <HStack alignItems={"center"}>
+                    <TextInput
+                      type="text"
+                      label="Enter Promo Code"
+                      control={control}
+                      name="promoCode"
+                    />
+
+                    <Button
+                      flex={"25%"}
+                      mt={1}
+                      py={"25px"}
+                      isDisabled={!watch("promoCode")}
+                      isLoading={isPromocodeValidationLoading}
+                      onClick={handleSubmit(validatePromoCode)}
+                    >
+                      Apply
+                    </Button>
+                  </HStack>
+                )}
+              </Stack>
+              <Stack>
+                {calculatedValues.map((item, index) => (
+                  <HStack key={index} justifyContent={"space-between"}>
+                    <Text textStyle={"beneficiaryCardSubHeader"}>
+                      {item.label}
+                    </Text>
+                    <Text
+                      backgroundColor={
+                        item.label === "Promo Code"
+                          ? promoCodeResponse?.promoCode
+                            ? "#C6F6D5"
+                            : colorScheme.gray_100
+                          : "inherit"
+                      }
+                      px={item.label === "Promo Code" ? 4 : 0}
+                      py={item.label === "Promo Code" ? 1 : 0}
+                      borderRadius={item.label === "Promo Code" ? 8 : 0}
+                      textStyle={"beneficiaryCardHeader"}
+                    >
+                      {item.value}
+                    </Text>
+                  </HStack>
+                ))}
+              </Stack>
+            </Stack>
+          )}
+          <HStack justifyContent={"flex-end"}>
+            <Button
+              type="submit"
+              leftIcon={<svgAssets.WalletIcon />}
+              variant="send_money"
+              isDisabled={!isValid}
+            >
+              Send Money
+            </Button>
+          </HStack>
+        </CardBody>
+      </Card>
+    </Stack>
   );
 };
 export default SendMoneyForm;

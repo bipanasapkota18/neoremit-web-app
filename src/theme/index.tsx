@@ -9,6 +9,7 @@ import { ContainerConfig } from "./components/Container";
 import Input from "./components/Input";
 import { modalConfig } from "./components/Modal";
 
+import { AccordionConfig } from "./components/Accordion";
 import { CustomSteps } from "./components/Steps";
 import Switch from "./components/Switch";
 import { TableConfig } from "./components/Table";
@@ -47,7 +48,8 @@ export const theme = extendTheme(
       Checkbox: CheckboxConfig,
       Card: CardConfig,
       Modal: modalConfig,
-      Steps: CustomSteps
+      Steps: CustomSteps,
+      Accordion: AccordionConfig
     },
     breakpoints: {
       sm: "320px",

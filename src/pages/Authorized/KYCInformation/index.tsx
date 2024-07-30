@@ -1,5 +1,7 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import {
   KycFormField,
   useGetCountryFields
@@ -88,12 +90,20 @@ export default function KYCInformation() {
   //   navigate(NAVIGATION_ROUTES.KYC);
   // }
   const bg = "white";
-
-  // const { pathname } = useLocation();
-  // const activePath = breadcrumbTitle(pathname);
-
+  const pages = [
+    {
+      pageName: "Account",
+      href: NAVIGATION_ROUTES.ACCOUNT
+    },
+    {
+      pageName: "KYC",
+      href: NAVIGATION_ROUTES.KYC_INFORMATION,
+      isCurrentPage: true
+    }
+  ];
   return (
-    <Flex flexDir="column" gap={"16px"} width="100%" userSelect={"none"}>
+    <Stack gap={0} width="100%" userSelect={"none"}>
+      <BreadCrumbs pages={pages} />
       <Steps
         onClickStep={i => {
           activeStep > i ? setStep(i) : null;
@@ -102,30 +112,23 @@ export default function KYCInformation() {
         variant={"circles-alt"}
         colorScheme="primary"
         sx={{
-          backgroundColor: "#FFF",
-          padding: "24px",
-          borderRadius: "32px",
-          border: "1px solid  #E2E8F0",
-          boxShadow: "md"
-          // "& .chakra-step__separator": {
-          //   // Customize the line between steps
-          //   background: "red",
-          //   borderWidth: "2px"
-          // }
+          backgroundColor: "#FFFFFF",
+          paddingTop: "24px"
         }}
         trackColor={colorScheme.primary_200}
         activeStep={activeStep}
       >
         {steps.map(({ label, icon, component }) => (
           <Step checkIcon={icon} label={label} key={label} icon={icon}>
-            <Box sx={{ bg, my: 8, rounded: "md" }}>{component}</Box>
+            <Box sx={{ bg, rounded: "md" }}>{component}</Box>
           </Step>
         ))}
       </Steps>
-    </Flex>
+    </Stack>
   );
 }
 
+//Util Functions for KYCInformation
 function categorizeKycFields(fields: KycFormField[]): CategorizedKycFields {
   const personalDetails: KycFormField[] = [];
   const addressDetails: KycFormField[] = [];

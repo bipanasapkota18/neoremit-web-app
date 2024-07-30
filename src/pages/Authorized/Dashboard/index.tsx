@@ -16,19 +16,23 @@ import {
 import { imageAssets } from "@neoWeb/assets/images";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import { formatAmount } from "@neoWeb/utility/currencyFormat";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const defaultValues = {
   sendFrom: null as ISelectOptions<number> | null,
   sendTo: null as ISelectOptions<number> | null
 };
 function Dashboard() {
+  const navigate = useNavigate();
   const { data: countriesList } = useGetCountryList();
   const { initData } = useStoreInitData();
 
@@ -83,7 +87,12 @@ function Dashboard() {
                   transfer
                 </Text>
               </Stack>
-              <Button px={8} py={4} size={"sm"}>
+              <Button
+                px={8}
+                py={4}
+                size={"sm"}
+                onClick={() => navigate(NAVIGATION_ROUTES.KYC_INFORMATION)}
+              >
                 Verify KYC
               </Button>
             </HStack>
@@ -108,7 +117,7 @@ function Dashboard() {
                 <Text>Conversion Rate</Text>
                 <Text fontSize={"large"}>
                   1.00 {`${initData?.sendingCountry?.currency?.shortName}`} ={" "}
-                  {calculatdRate}{" "}
+                  {formatAmount(calculatdRate)}{" "}
                   {`${initData?.receivingCountry?.currency?.shortName}`}
                 </Text>
               </VStack>
@@ -157,6 +166,7 @@ function Dashboard() {
                 py={4}
                 size={"sm"}
                 leftIcon={<svgAssets.SendIcon />}
+                onClick={() => navigate(NAVIGATION_ROUTES.SEND_MONEY)}
               >
                 Send Money
               </Button>

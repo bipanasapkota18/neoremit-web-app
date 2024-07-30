@@ -13,13 +13,13 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from "@chakra-ui/react";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { FC, useRef } from "react";
 
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { BsCheck2Circle, BsChevronDown } from "react-icons/bs";
 import { HeaderAnchor } from "./Header";
 
@@ -52,7 +52,7 @@ const shake = keyframes({
 });
 export const RightHeader: FC<IRightHeader> = () => {
   const initialFocusRef = useRef();
-  // const { initData } = useStoreInitData();
+  const { initData } = useStoreInitData();
 
   return (
     <HStack gap={8}>
@@ -194,19 +194,21 @@ export const RightHeader: FC<IRightHeader> = () => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      <Tooltip label="View Profile">
+      <HStack>
         <Avatar
           cursor={"pointer"}
-          // onClick={() => navigate("/user-profile")}
-          src={""}
+          height={"40px"}
+          width={"40px"}
+          name={initData?.firstName}
           // src={
           //   initData?.profileImage &&
           //   `${baseURL}document/internal-user/profile?image=${initData?.profileImage}`
           // }
-        >
-          <AvatarBadge boxSize="1.25em" bg="green.500" />
-        </Avatar>
-      </Tooltip>
+        ></Avatar>
+        <Text fontWeight={500} color={colorScheme.sideBar_text}>
+          {initData?.firstName}
+        </Text>
+      </HStack>
     </HStack>
   );
 };

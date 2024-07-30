@@ -61,6 +61,28 @@ export const api = {
     confirm_payment: `${transaction_service}/trans/confirm-payment`,
     calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`
   },
+  support: {
+    faq: {
+      getAll: `${service}/v1/faqs/list`
+    },
+    feedback: {
+      getAll: `${service}/v1/help/feedback/user/all`,
+      createFeedback: `${service}/v1/help/feedback/create`
+    },
+    support_request: {
+      getAll: `${service}/support-requests/list`
+    },
+    comment: {
+      getByFeedBack: `${service}/v1/help/{feedbackId}/comment/all`,
+      create: `${service}/v1/help/create/{feedbackId}/comment`
+    },
+    support_reason: {
+      getAll: `${service}/support-reasons/list`
+    },
+    user_guide: {
+      getAll: `${service}/v1/help/setup/all`
+    }
+  },
   init: `${service}/users/init`
 };
 

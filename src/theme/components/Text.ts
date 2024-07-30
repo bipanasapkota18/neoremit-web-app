@@ -24,7 +24,8 @@ export const TextStyles = {
   beneficiaryCardHeader: {
     fontSize: "14px",
     fontWeight: 600,
-    color: colorScheme.gray_700
+    color: colorScheme.gray_700,
+    wordBreak: "break-all"
   },
   beneficiaryCardSubHeader: {
     fontSize: "14px",

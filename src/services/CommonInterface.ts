@@ -32,3 +32,8 @@ export interface PayoutMethod {
   isCash: boolean;
   isActive: boolean;
 }
+
+export interface IPageParams {
+  page?: number;
+  size?: number;
+}

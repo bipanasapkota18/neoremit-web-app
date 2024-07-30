@@ -24,12 +24,7 @@ export const navLinks = [
       }
     ]
   },
-  {
-    icon: sidebarSvg.User,
-    href: NAVIGATION_ROUTES.SERVICES,
-    label: "Services",
-    header: "MENUS"
-  },
+
   {
     icon: sidebarSvg.UserIcon,
     href: NAVIGATION_ROUTES.SEND_MONEY,
@@ -49,28 +44,22 @@ export const navLinks = [
     label: "Transaction History",
     header: "MENUS"
   },
-  {
-    icon: sidebarSvg.settings,
-    href: NAVIGATION_ROUTES.SETTINGS,
-    label: "Settings",
-    header: "MENUS"
-  },
 
   {
     icon: sidebarSvg.UserIcon,
-    href: NAVIGATION_ROUTES.SUPPORT,
+    href: NAVIGATION_ROUTES.FAQS,
     label: "FAQs",
     header: "SUPPORT"
   },
   {
     icon: sidebarSvg.Transaction,
-    href: NAVIGATION_ROUTES.CONTACT,
+    href: NAVIGATION_ROUTES.SUPPORT,
     label: "Support",
     header: "SUPPORT"
   },
   {
     icon: sidebarSvg.settings,
-    href: NAVIGATION_ROUTES.NEO_SETTINGS,
+    href: NAVIGATION_ROUTES.PRIVACY_POLICY,
     label: "Privacy Policy",
     header: "SUPPORT"
   }
