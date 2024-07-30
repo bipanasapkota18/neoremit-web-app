@@ -4,12 +4,13 @@ import { AxiosError } from "axios";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient } from "./service-axios";
 export interface ISignUpRequest {
-  fullName: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
   email: string;
   sendFrom: number | null;
   receiveIn: number | null;
   phoneNumber: string;
-  referralCode: string;
 }
 
 const signUp = (data: ISignUpRequest) => {

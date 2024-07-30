@@ -15,6 +15,7 @@ import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import GoBack from "@neoWeb/components/Button";
 import CardPagination from "@neoWeb/components/CardPagination";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
+import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetAllUserGuides } from "@neoWeb/services/Support/service-support";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import parse from "html-react-parser";
@@ -90,7 +91,7 @@ const UserGuide = ({ setFlag1 }: CommonProps) => {
                         >
                           <Flex justifyContent={"center"}>
                             <Image
-                              src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202403/youtube-music-030422307-16x9_2.jpg?VersionId=5UDdS80A8db7Rf3fgi7X10TCZ876ALo6&size=690:388"
+                              src={`${baseURL}/document-service/master/help/setup/image?fileId=${item?.thumbNail}`}
                               objectFit={"cover"}
                               height={"117px"}
                               borderRadius={"8px"}

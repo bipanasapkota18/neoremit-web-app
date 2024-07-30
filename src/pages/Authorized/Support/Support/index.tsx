@@ -24,10 +24,11 @@ import TextInput from "@neoWeb/components/Form/TextInput";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import {
   IFeedBackResponse,
-  useGetAllFeedBacks
+  useGetAllFeedBacks,
+  useGetAllSupportReasons
 } from "@neoWeb/services/Support/service-support";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import UserGuide from "../UserGuide";
 import SupportResponse from "./SupportResponse";
@@ -89,13 +90,14 @@ const SupportRequest = ({ setFlag, setFeedBackId }: CommonProps) => {
 };
 
 const MyRequest = () => {
-  // const { mutateAsync, data } = useGetAllSupportReasons();
-  // useEffect(() => {
-  //   mutateAsync({
-  //     pageParams: { page: 0, size: 10 },
-  //     filterParams: {}
-  //   });
-  // }, []);
+  const { mutateAsync, data } = useGetAllSupportReasons();
+  console.log(data);
+  useEffect(() => {
+    mutateAsync({
+      pageParams: { page: 0, size: 10 },
+      filterParams: {}
+    });
+  }, []);
   const { control, handleSubmit } = useForm();
 
   const submitData = (data: any) => {

@@ -13,8 +13,7 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from "@chakra-ui/react";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { FC, useRef } from "react";
@@ -195,26 +194,21 @@ export const RightHeader: FC<IRightHeader> = () => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      <Tooltip label="View Profile">
-        <HStack>
-          <Avatar
-            cursor={"pointer"}
-            // onClick={() => navigate("/user-profile")}
-            height={"40px"}
-            width={"40px"}
-            name={initData?.fullName}
-            // src={
-            //   initData?.profileImage &&
-            //   `${baseURL}document/internal-user/profile?image=${initData?.profileImage}`
-            // }
-          >
-            {/* <AvatarBadge boxSize="1.25em" bg="green.500" /> */}
-          </Avatar>
-          <Text fontWeight={500} color={colorScheme.sideBar_text}>
-            {initData?.fullName}
-          </Text>
-        </HStack>
-      </Tooltip>
+      <HStack>
+        <Avatar
+          cursor={"pointer"}
+          height={"40px"}
+          width={"40px"}
+          name={initData?.firstName}
+          // src={
+          //   initData?.profileImage &&
+          //   `${baseURL}document/internal-user/profile?image=${initData?.profileImage}`
+          // }
+        ></Avatar>
+        <Text fontWeight={500} color={colorScheme.sideBar_text}>
+          {initData?.firstName}
+        </Text>
+      </HStack>
     </HStack>
   );
 };

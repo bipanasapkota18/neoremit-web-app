@@ -9,13 +9,18 @@ interface UserGuideDetailsProps {
 }
 
 const UserGuideDetails = ({ guideData, guideId }: UserGuideDetailsProps) => {
-  const selectedGuide = guideData?.find((item: any) => item.id === guideId);
+  const selectedGuide = guideData?.find(item => item.id === guideId);
+  const youtubeId = selectedGuide?.link?.slice(
+    selectedGuide?.link?.indexOf("=") + 1,
+    selectedGuide?.link?.indexOf("=") + 12
+  );
+
   return (
     <Stack gap={2}>
       <iframe
         width="790"
         height="480"
-        src={`https://www.youtube.com/embed/Tn6-PIqc4UM?autoplay=1`}
+        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1`}
         allow="autoplay; encrypted-media; "
         allowFullScreen
         title="Youtube Video"
