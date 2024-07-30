@@ -13,15 +13,26 @@ export interface FaqList {
   answer: string;
   status: boolean;
 }
-const getAllFaq = () => {
-  return NeoHttpClient.get<NeoResponse<FAQResponse>>(api.support.faq.getAll);
-};
+export interface PageParams {
+  pageSize: number;
+  pageIndex: number;
+}
+const getAllFaq =
+  ({ pageSize, pageIndex }: PageParams) =>
+  () => {
+    return NeoHttpClient.get<NeoResponse<FAQResponse>>(api.support.faq.getAll, {
+      params: {
+        page: pageIndex,
+        size: pageSize
+      }
+    });
+  };
 
-const useGetAllFaq = () => {
+const useGetAllFaq = ({ pageSize, pageIndex }: PageParams) => {
   return useQuery({
     select: data => data?.data?.data,
     queryKey: [api.support.faq.getAll],
-    queryFn: getAllFaq
+    queryFn: getAllFaq({ pageSize, pageIndex })
   });
 };
 

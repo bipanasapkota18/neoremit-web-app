@@ -17,11 +17,19 @@ import {
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
-import { useGetAllFaq } from "@neoWeb/services/Support/service-faq";
+import { PageParams, useGetAllFaq } from "@neoWeb/services/Support/service-faq";
 import parse from "html-react-parser";
+import { useState } from "react";
 
 const FAQs = () => {
-  const { data: faqData, isLoading } = useGetAllFaq();
+  const [pageParams] = useState<PageParams>({
+    pageIndex: 0,
+    pageSize: 100
+  });
+  const { data: faqData, isLoading } = useGetAllFaq({
+    pageIndex: pageParams.pageIndex,
+    pageSize: pageParams.pageSize
+  });
   const pages = [
     {
       pageName: "FAQ",
@@ -55,14 +63,14 @@ const FAQs = () => {
                               as="span"
                               textAlign="left"
                               noOfLines={2}
-                              maxW={"790px"}
+                              wordBreak={"break-all"}
                             >
                               {parse(item.question)}
                             </Text>
                           </HStack>
                           <AccordionIcon as={svgAssets.ArrowRightIcon} />
                         </AccordionButton>
-                        <AccordionPanel maxW={"870px"}>
+                        <AccordionPanel wordBreak={"break-all"}>
                           {parse(item.answer)}
                         </AccordionPanel>
                       </AccordionItem>

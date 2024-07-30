@@ -66,7 +66,8 @@ export const api = {
       getAll: `${service}/v1/faqs/list`
     },
     feedback: {
-      getAll: `${service}/v1/help/feedback/user/all`
+      getAll: `${service}/v1/help/feedback/user/all`,
+      createFeedback: `${service}/v1/help/feedback/create`
     },
     support_request: {
       getAll: `${service}/support-requests/list`

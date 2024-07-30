@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -7,6 +8,7 @@ import {
   HStack,
   Icon,
   Image,
+  Link,
   Stack,
   Tab,
   TabList,
@@ -16,20 +18,28 @@ import {
   Text,
   useBoolean
 } from "@chakra-ui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import { DropzoneComponentControlled } from "@neoWeb/components/Form/DropzoneComponent";
 import Select from "@neoWeb/components/Form/SelectComponent";
 import TextInput from "@neoWeb/components/Form/TextInput";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
+import { baseURL } from "@neoWeb/services/service-axios";
 import {
   IFeedBackResponse,
+  useCreateFeedBack,
   useGetAllFeedBacks,
-  useGetAllSupportReasons
+  useGetAllSupportReasons,
+  useGetAllUserGuides
 } from "@neoWeb/services/Support/service-support";
+import { useFirstCommentStore } from "@neoWeb/store/store";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import { formatSelectOptions, ISelectOptions } from "@neoWeb/utility/format";
+import parse from "html-react-parser";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import z from "zod";
 import UserGuide from "../UserGuide";
 import SupportResponse from "./SupportResponse";
 
@@ -45,6 +55,7 @@ interface CommonProps {
 
 //Card shown in Support Request
 const SupportCard = ({ setFlag, setFeedBackId, data }: CommonProps) => {
+  const { setComment } = useFirstCommentStore();
   return (
     <>
       {data?.map(item => {
@@ -56,13 +67,15 @@ const SupportCard = ({ setFlag, setFeedBackId, data }: CommonProps) => {
             bg={colorScheme.gray_50}
             borderRadius={"8px"}
             onClick={() => {
+              setComment(item?.content);
               setFlag.on();
               setFeedBackId(item.id);
             }}
             cursor={"pointer"}
+            width={"100%"}
           >
             <Stack gap={0}>
-              <Text textStyle={"beneficiaryCardHeader"}>{item.title}</Text>
+              <Text textStyle={"beneficiaryCardHeader"}>{item.content}</Text>
               <Text textStyle={"transaction_date"}>{item.createdDate}</Text>
             </Stack>
             <Stack>
@@ -89,22 +102,53 @@ const SupportRequest = ({ setFlag, setFeedBackId }: CommonProps) => {
   );
 };
 
-const MyRequest = () => {
-  const { mutateAsync, data } = useGetAllSupportReasons();
-  console.log(data);
-  useEffect(() => {
-    mutateAsync({
-      pageParams: { page: 0, size: 10 },
-      filterParams: {}
-    });
-  }, []);
-  const { control, handleSubmit } = useForm();
+const MyRequest = ({
+  setTabIndex
+}: {
+  setTabIndex: Dispatch<SetStateAction<number>>;
+}) => {
+  const defaultFormValues = {
+    content: "",
+    supportReasonId: null as ISelectOptions<number> | null,
+    feedBackImage: ""
+  };
+  const { data: supportReasons } = useGetAllSupportReasons();
+  const { mutateAsync: mutateCreateFeedBack } = useCreateFeedBack();
+  const reasonsOptions = formatSelectOptions<number>({
+    data: supportReasons,
+    labelKey: "name",
+    valueKey: "id"
+  });
+  const validationSchema = z.object({
+    content: z.string().min(1, { message: "Please enter your message" }),
+    supportReasonId: z
+      .object({
+        label: z.string(),
+        value: z.number()
+      })
+      .nullable()
+      .refine(data => !!data?.label && !!data?.value, {
+        message: "Please select a reason"
+      }),
+    feedBackImage: z.any()
+  });
+  const { control, handleSubmit, reset } = useForm({
+    defaultValues: defaultFormValues,
+    resolver: zodResolver(validationSchema)
+  });
 
-  const submitData = (data: any) => {
-    console.log({
-      ...data,
-      image: data.image[0]
-    });
+  const submitData = async (data: typeof defaultFormValues) => {
+    try {
+      await mutateCreateFeedBack({
+        ...data,
+        supportReasonId: data?.supportReasonId?.value ?? null,
+        feedBackImage: data?.feedBackImage ? data?.feedBackImage[0] : null
+      });
+      setTabIndex(0);
+      reset();
+    } catch (e) {
+      console.error(e);
+    }
   };
   return (
     <Stack>
@@ -116,22 +160,19 @@ const MyRequest = () => {
       <Stack as={"form"} gap={3} onSubmit={handleSubmit(submitData)}>
         <Select
           control={control}
-          name={"reason"}
+          name={"supportReasonId"}
           placeholder={"Select Reason"}
-          options={[
-            { label: "Reason 1", value: "reason1" },
-            { label: "Reason 2", value: "reason2" }
-          ]}
+          options={reasonsOptions}
         />
         <TextInput
           control={control}
-          name={"title"}
+          name={"content"}
           placeholder={"Your Message Here"}
           type={"textarea"}
         />
         <DropzoneComponentControlled
           isSupport
-          name="image"
+          name="feedBackImage"
           control={control}
           options={{ maxSize: 2 }}
         />
@@ -147,16 +188,22 @@ const MyRequest = () => {
 
 //Main Component
 const Support = () => {
+  const [tabIndex, setTabIndex] = useState(0);
   const [flag, setFlag] = useBoolean();
   const [flag1, setFlag1] = useBoolean();
   const [feedBackId, setFeedBackId] = useState<number | null>(null);
-  // const { mutateAsync, data } = useGetAllSupportRequest();
-  // useEffect(() => {
-  //   mutateAsync({
-  //     pageParams: { page: 0, size: 10 },
-  //     filterParams: { searchParam: "" }
-  //   });
-  // }, []);
+
+  const { mutateAsync, data: userGuideData } = useGetAllUserGuides();
+  const userGuideFirstData =
+    userGuideData?.data?.data?.helpSetupResponseDtoList[0];
+  const [pageIndex] = useState<number>(0);
+  const [pageSize] = useState(9);
+  useEffect(() => {
+    mutateAsync({
+      pageParams: { page: pageIndex, size: pageSize },
+      filterParams: { searchParam: "" }
+    });
+  }, [pageIndex, pageSize]);
   const tabsList = [
     {
       title: "My Request",
@@ -166,7 +213,7 @@ const Support = () => {
     },
     {
       title: "Support Request",
-      content: <MyRequest />
+      content: <MyRequest setTabIndex={setTabIndex} />
     }
   ];
 
@@ -179,7 +226,6 @@ const Support = () => {
           },
           {
             pageName: "Question and Answer",
-            // href: NAVIGATION_ROUTES.SUPPORT
             isCurrentPage: true
           }
         ]
@@ -191,15 +237,18 @@ const Support = () => {
           }
         ])
   ];
+  const handleTabsChange = (index: number) => {
+    setTabIndex(index);
+  };
   return (
-    <HStack gap={6} width={"100%"} alignItems={"start"}>
+    <HStack gap={6} maxWidth={"100%"} alignItems={"start"}>
       {flag1 ? (
         <UserGuide setFlag1={setFlag1} />
       ) : (
         <Stack gap={1}>
           <BreadCrumbs pages={pages} />
           <Box display={"flex"} gap={5}>
-            <Card minHeight={"88vh"} minWidth={"632px"}>
+            <Card minHeight={"88vh"} minW={"584px"}>
               <CardBody
                 display={"flex"}
                 flexDirection={"column"}
@@ -213,7 +262,11 @@ const Support = () => {
                     setFeedBackId={setFeedBackId}
                   />
                 ) : (
-                  <Tabs variant="unstyled">
+                  <Tabs
+                    index={tabIndex}
+                    onChange={handleTabsChange}
+                    variant="unstyled"
+                  >
                     <TabList gap={3}>
                       {tabsList.map((tab, index) => (
                         <Tab
@@ -240,7 +293,7 @@ const Support = () => {
                 )}
               </CardBody>
             </Card>
-            <Stack gap={6}>
+            <Stack gap={6} minW={"343px"}>
               <Card>
                 <CardBody
                   display={"flex"}
@@ -275,29 +328,40 @@ const Support = () => {
                   </Stack>
                   <Stack gap={3}>
                     <Image
-                      src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202403/youtube-music-030422307-16x9_2.jpg?VersionId=5UDdS80A8db7Rf3fgi7X10TCZ876ALo6&size=690:388"
+                      src={`${baseURL}/document-service/master/help/setup/image?fileId=${userGuideFirstData?.thumbNail}`}
                       objectFit={"cover"}
                       height={"117px"}
                       borderRadius={"8px"}
                     />
                     <Stack gap={0}>
-                      <Text fontWeight={700} fontSize={"17px"}>
-                        Title
-                      </Text>
                       <Text
-                        color={colorScheme.gray_700}
-                        fontWeight={600}
-                        fontSize={"14px"}
+                        fontWeight={700}
+                        fontSize={"17px"}
+                        wordBreak={"break-all"}
                       >
-                        VideoLink
+                        {userGuideFirstData?.title}
                       </Text>
+                      {userGuideFirstData?.link && (
+                        <Link
+                          color={colorScheme.primary_500}
+                          fontWeight={600}
+                          fontSize={"14px"}
+                          cursor={"pointer"}
+                          href={userGuideFirstData?.link}
+                          isExternal
+                          wordBreak={"break-all"}
+                        >
+                          Watch on Youtube <ExternalLinkIcon mb={"4px"} />
+                        </Link>
+                      )}
                       <Text
                         color={colorScheme.search_icon}
                         fontSize={"14px"}
                         fontWeight={400}
+                        wordBreak={"break-all"}
+                        noOfLines={2}
                       >
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit
-                        kuqolas asuuek
+                        {parse(userGuideFirstData?.description ?? "")}
                       </Text>
                     </Stack>
                   </Stack>

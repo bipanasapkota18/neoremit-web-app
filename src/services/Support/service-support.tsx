@@ -1,4 +1,4 @@
-import { toastFail } from "@neoWeb/utility/Toast";
+import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { IPageParams } from "../CommonInterface";
@@ -14,7 +14,11 @@ export interface IFeedBackResponse {
   username: string;
   createdDate: string;
 }
-
+export interface IFeedBackRequest {
+  supportReasonId: number | null;
+  content: string;
+  feedBackImage: string | null;
+}
 export interface ICommentResponse {
   id: number;
   content?: string;
@@ -130,24 +134,36 @@ const useGetAllSupportRequest = () => {
   });
 };
 
-const getAllSupportReasons = ({ pageParams, filterParams }: IFilterParams) => {
-  return NeoHttpClient.post<NeoResponse>(
-    api.support.support_reason.getAll,
-    {
-      ...filterParams
-    },
-    {
-      params: {
-        page: pageParams?.page,
-        size: pageParams?.size
-      }
-    }
-  );
+const getAllSupportReasons = () => {
+  return NeoHttpClient.get<NeoResponse>(api.support.support_reason.getAll);
 };
 const useGetAllSupportReasons = () => {
+  return useQuery({
+    select: data => data?.data?.data,
+    queryKey: [api.support.support_reason.getAll],
+    queryFn: getAllSupportReasons
+  });
+};
+
+//Feedback Create
+const createFeedback = (data: IFeedBackRequest) => {
+  return NeoHttpClient.post<NeoResponse>(
+    api.support.feedback.createFeedback,
+    toFormData(data)
+  );
+};
+
+const useCreateFeedBack = () => {
+  const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: [api.support.support_reason.getAll],
-    mutationFn: getAllSupportReasons
+    mutationFn: createFeedback,
+    mutationKey: [api.support.feedback.createFeedback],
+    onSuccess: data => {
+      queryClient.invalidateQueries({
+        queryKey: [api.support.feedback.getAll]
+      });
+      toastSuccess(data?.data?.message);
+    }
   });
 };
 
@@ -173,6 +189,7 @@ const useGetAllUserGuides = () => {
 };
 export {
   useCreateComment,
+  useCreateFeedBack,
   useGetAllFeedBacks,
   useGetAllSupportReasons,
   useGetAllSupportRequest,

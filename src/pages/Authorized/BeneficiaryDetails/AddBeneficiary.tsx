@@ -192,7 +192,7 @@ const AddBeneficiary = ({
     valueKey: "id"
   });
 
-  const addBeneficiaryy = async (data: any) => {
+  const addBeneficiaryy = async (data: typeof defaultValues) => {
     const finalTableData = editedAccountData.map(item => {
       return {
         id: item.id ?? null,
