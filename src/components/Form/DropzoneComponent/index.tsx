@@ -145,18 +145,7 @@ export function DropzoneComponentControlled({
             ? "Please upload a relevant image to help us address your issue."
             : ""}
         </Text>
-        {/* <Text
-            fontSize={"14px"}
-            color={colorScheme.search_icon}
-            display={"inline-block"}
-          >
-            Drop {isMultiple ? "files" : "a file"}, here or click to
-            <Text as="span" cursor={"pointer"} color={colorScheme.primary_500}>
-              {" "}
-              browse{" "}
-            </Text>
-            through your machine
-          </Text> */}
+
         <VStack spacing={1}>
           {accept && (
             <Text color={colorScheme.gray_400}>{`Only ${Object.values(

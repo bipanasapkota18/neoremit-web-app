@@ -74,33 +74,7 @@ function CardPagination({
         float={"right"}
         flexWrap="wrap"
         mt={3}
-      >
-        {/* <HStack>
-            <FormControl variant={"floating"}>
-              <Select
-                icon={<MdArrowDropDown />}
-                w="70px"
-                colorScheme={MofinColor.color_scheme}
-                value={pageSize}
-                onChange={e => {
-                  setPageSize(parseInt(e.target.value));
-                }}
-              >
-                {[10, 20, 30, 40, 50].map(pageSize => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
-                  </option>
-                ))}
-              </Select>
-              <FormLabel
-                marginInlineStart={"5% !important"}
-                marginStart={"5% !important"}
-              >
-                Items
-              </FormLabel>
-            </FormControl>
-          </HStack> */}
-      </HStack>
+      ></HStack>
       <Box
         display={"flex"}
         justifyContent="flex-end"
