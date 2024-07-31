@@ -1,3 +1,4 @@
+import { ISelectOptions } from "@neoWeb/utility/format";
 import { toastFail } from "@neoWeb/utility/Toast";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
@@ -59,6 +60,14 @@ export interface ConfirmPaymentRequest {
 interface CalculatedBaseRateRequest {
   sendingCountryId: number | null;
   receivingCountryId: number | null;
+}
+
+export interface ICreateQuote {
+  amount: string | null;
+  sendFrom: number | null;
+  receiveIn: number | null;
+  senderUUID?: string;
+  paymentOptionId: ISelectOptions<number> | null;
 }
 const validatePromoCode = (data: PromoCodeValidationRequest) => {
   return NeoHttpClient.post(api.send_money.promo_code_validate, data);
@@ -128,9 +137,22 @@ const useCalculatedBaseRate = () => {
     }
   });
 };
+
+const createQuote = (data: ICreateQuote) => {
+  return NeoHttpClient.post(api.send_money.creat_quote, data);
+};
+const useCreateQuote = () => {
+  return useMutation({
+    mutationFn: createQuote,
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
 export {
   useCalculatedBaseRate,
   useConfirmPayment,
+  useCreateQuote,
   useValidateBeneficiary,
   useValidatePromoCode,
   useValidateSender

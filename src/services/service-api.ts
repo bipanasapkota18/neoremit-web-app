@@ -59,7 +59,9 @@ export const api = {
     beneficiary_validate: `${transaction_service}/trans/validate/beneficiary/account`,
     validate_sender: `${transaction_service}/trans/validate/sender/account`,
     confirm_payment: `${transaction_service}/trans/confirm-payment`,
-    calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`
+    calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`,
+
+    creat_quote: `${transaction_service}/api/v1/transactions/create-quote`
   },
   support: {
     faq: {
