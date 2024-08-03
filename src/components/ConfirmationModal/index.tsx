@@ -12,6 +12,7 @@ import {
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ReactElement, useRef } from "react";
+
 export interface IConfirmationModalProps {
   variant?: string;
   isOpen: boolean;

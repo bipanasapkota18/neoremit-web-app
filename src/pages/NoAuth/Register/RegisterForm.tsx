@@ -66,8 +66,7 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
       .object({
         label: z.string().min(1),
         value: z.number().min(0)
-      })
-      .nullable()
+      })      .nullable()
       .refine(data => !!data?.label && !!data?.value, {
         message: "Please enter  Recieve In"
       })
@@ -154,7 +153,6 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
           <SimpleGrid columns={2} gap={"20px"}>
             <GridItem colSpan={1}>
               <Select
-                noFloating
                 name="sendFrom"
                 placeholder="Send From"
                 control={control}

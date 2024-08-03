@@ -24,10 +24,7 @@ export const appRoutes = [
         path: NAVIGATION_ROUTES.HOME,
         element: <Dashboard />
       },
-      // {
-      //   path: NAVIGATION_ROUTES.ACCOUNT,
-      //   element: <Account />
-      // },
+
       {
         path: NAVIGATION_ROUTES.SERVICES,
         element: <Services />
