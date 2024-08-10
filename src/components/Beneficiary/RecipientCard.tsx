@@ -6,14 +6,14 @@ import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { Dispatch, SetStateAction } from "react";
 
 interface IBeneficiaryProps {
-  id: number;
+  id: string;
   fullName: string;
   address: string;
   mobileNumber: string;
   profileImage: string;
   relationship: string;
   setPageName: Dispatch<SetStateAction<string>>;
-  setBeneficiaryId: Dispatch<SetStateAction<number | undefined>>;
+  setBeneficiaryId: Dispatch<SetStateAction<string | undefined>>;
 }
 const RecipientCard = ({
   id,

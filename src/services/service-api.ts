@@ -26,11 +26,12 @@ export const api = {
     get: `${service}/state/list/app/{id}`
   },
   beneficiary: {
-    getAll: `${service}/beneficiary/detail`,
+    getAll: `${service}/beneficiary/detail/list`,
     create: `${service}/beneficiary/detail`,
+    // getBeneficiaryById: `${service}/beneficiary/checkout/detail/all/6f68861f-510e-4662-9783-ca377346b82a`,
     getBeneficiaryById: `${service}/beneficiary/detail/{id}`,
     delete: `${service}/beneficiary/detail/{id}`,
-    updatae: `${service}/beneficiary/detail/{id}`
+    update: `${service}/beneficiary/detail/{id}`
   },
   beneficiary_detail: {
     getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
@@ -84,6 +85,10 @@ export const api = {
     user_guide: {
       getAll: `${service}/v1/help/setup/all`
     }
+  },
+  funding_account: {
+    getAll: `${service}/funding-account`,
+    addAccount: `${service}/funding-account/add`
   },
   init: `${service}/users/init`
 };

@@ -1,11 +1,11 @@
 import { Avatar, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 import { ISendMoneyForm } from "@neoWeb/pages/Authorized/SendMoney/SendMoney";
 import { baseURL } from "@neoWeb/services/service-axios";
-import { IBeneficiaryResponse } from "@neoWeb/services/service-beneficiary";
+import { IBeneficiaryByIdResponse } from "@neoWeb/services/service-beneficiary";
 import { Dispatch, SetStateAction } from "react";
 
 interface BeneficiaryCardProps extends ISendMoneyForm {
-  data: IBeneficiaryResponse | undefined;
+  data: IBeneficiaryByIdResponse[] | undefined;
   setBeneficiaryAccountId: Dispatch<SetStateAction<number | undefined>>;
 }
 const RecipientAccountCard = ({
@@ -15,7 +15,7 @@ const RecipientAccountCard = ({
 }: BeneficiaryCardProps) => {
   return (
     <SimpleGrid columns={3} gap={4}>
-      {data?.beneficiaryCheckoutDetail?.map(item => {
+      {data?.map(item => {
         return (
           <Stack
             key={item.id}

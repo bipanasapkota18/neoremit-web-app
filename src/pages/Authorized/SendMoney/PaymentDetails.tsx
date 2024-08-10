@@ -37,7 +37,7 @@ const defaultValues = {
 };
 
 interface IPaymentDetailsProps extends ISendMoneyForm {
-  beneficiaryId: number;
+  beneficiaryId: string;
   beneficiaryAccountId: number;
   newTransfer: boolean;
 }
@@ -59,18 +59,14 @@ const PaymentDetails = ({
   const { setBeneficiaryAccountData } = useBeneficiaryAccountStore();
   const benificiaryAccount = useMemo(
     () =>
-      beneficiaryAccountData?.beneficiaryCheckoutDetail?.find(
-        item => item?.id === beneficiaryAccountId
-      ),
+      beneficiaryAccountData?.find(item => item?.id === beneficiaryAccountId),
     [beneficiaryAccountData]
   );
   const { beneficiaryAccountData: beneficiaryAccountStoreData } =
     useBeneficiaryAccountStore();
 
   const beneficiaryAccountOptions = formatSelectOptions<number>({
-    data: beneficiaryAccountData?.beneficiaryCheckoutDetail?.map(
-      item => item?.payoutPartner
-    ),
+    data: beneficiaryAccountData?.map(item => item?.payoutPartner),
     labelKey: "name",
     valueKey: "id",
     icon: {
@@ -96,26 +92,22 @@ const PaymentDetails = ({
     valueKey: "id"
   });
   const schema = z.object({
-    payoutMethodId: z
-      .object({
-        label: z.string().min(1),
-        value: z.number().min(0)
-      })
-      .nullable()
-      .refine(data => !!data?.label && !!data?.value, {
-        message: "Please select payment method"
-      }),
-    payoutPartnerId: z
-      .object({
-        label: z.string().min(1),
-        value: z.number().min(0)
-      })
-      .nullable()
-      .refine(data => !!data?.label && !!data?.value, {
-        message: "Please select payout partner"
-      }),
-    accountName: z.string().min(1, { message: "Account Name is required" }),
-    accountNumber: z.string().min(1, { message: "Account Number is required" }),
+    // payoutMethodId: z
+    //   .object({
+    //     label: z.string().min(1),
+    //     value: z.number().min(0)
+    //   })
+    //   .nullable()
+    //   .refine(data => !!data?.label && !!data?.value, {
+    //     message: "Please select payment method"
+    //   }),
+    payoutMethodId: z.object({
+      label: z.string(),
+      value: z.number()
+    }),
+    payoutPartnerId: z.object({}),
+    accountName: z.string(),
+    accountNumber: z.string(),
     purposeOfPayment: z
       .object({
         label: z.string().min(1),
@@ -152,9 +144,9 @@ const PaymentDetails = ({
   const submitDetails = (data: typeof defaultValues) => {
     setBeneficiaryAccountData({
       ...data,
-      mobileNumber: beneficiaryAccountData?.mobileNumber ?? "",
-      country: beneficiaryAccountData?.country?.name ?? "",
-      beneficiaryId: beneficiaryAccountData?.id ?? 0
+      mobileNumber: benificiaryAccount?.mobileNumber ?? "",
+      country: benificiaryAccount?.country?.name ?? "",
+      beneficiaryId: benificiaryAccount?.id ?? 0
     });
     setPageName("cardPayment");
   };

@@ -1,4 +1,4 @@
-import { Card, HStack, Text } from "@chakra-ui/react";
+import { Card, Center, HStack, Spinner, Text } from "@chakra-ui/react";
 import RecipientAccountCard from "@neoWeb/components/Beneficiary/RecipientAccountCard";
 import GoBack from "@neoWeb/components/Button";
 import { useGetBeneficiaryById } from "@neoWeb/services/service-beneficiary";
@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction } from "react";
 import { ISendMoneyForm } from "./SendMoney";
 
 interface IReceipientAccountProps extends ISendMoneyForm {
-  beneficiaryId: number;
+  beneficiaryId: number | null;
   setBeneficiaryAccountId: Dispatch<SetStateAction<number | undefined>>;
 }
 const ReceipientAccount = ({
@@ -15,17 +15,23 @@ const ReceipientAccount = ({
   beneficiaryId,
   setBeneficiaryAccountId
 }: IReceipientAccountProps) => {
-  const { data } = useGetBeneficiaryById(beneficiaryId);
+  const { data, isPending } = useGetBeneficiaryById(beneficiaryId);
   return (
     <Card padding={"24px"} gap={"16px"} width={"100%"}>
       <Text fontSize={"17px"} fontWeight={700} color={colorScheme.gray_700}>
         Select Receipient
       </Text>
-      <RecipientAccountCard
-        data={data}
-        setPageName={setPageName}
-        setBeneficiaryAccountId={setBeneficiaryAccountId}
-      />
+      {isPending ? (
+        <Center height={"50vh"}>
+          <Spinner size={"xl"} />
+        </Center>
+      ) : (
+        <RecipientAccountCard
+          data={data}
+          setPageName={setPageName}
+          setBeneficiaryAccountId={setBeneficiaryAccountId}
+        />
+      )}
       <HStack justifyContent={"space-between"}>
         <GoBack onClick={() => setPageName("selectRecipient")} />
       </HStack>

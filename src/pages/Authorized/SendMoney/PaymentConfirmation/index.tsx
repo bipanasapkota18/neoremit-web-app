@@ -11,6 +11,7 @@ import GoBack from "@neoWeb/components/Button";
 import SendMoneyView from "@neoWeb/components/MoneyView";
 import {
   useBeneficiaryAccountStore,
+  useFundingAccountStore,
   useSendMoneyStore
 } from "@neoWeb/store/SendMoney";
 import { useStoreInitData } from "@neoWeb/store/initData";
@@ -21,6 +22,7 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
   const { sendMoneyData } = useSendMoneyStore();
   const { initData } = useStoreInitData();
   const { beneficiaryAccountData } = useBeneficiaryAccountStore();
+  const { fundingData } = useFundingAccountStore();
 
   const sendingCountryCurrencySymbol =
     initData?.sendingCountry?.currency?.symbol ?? "";
@@ -92,7 +94,9 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
             <Text textStyle={"normalStyle"} fontSize={"14px"}>
               Processed By
             </Text>
-            <Text textStyle={"beneficiaryCardHeader"}>Master Card</Text>
+            <Text textStyle={"beneficiaryCardHeader"}>
+              {fundingData?.BankName}
+            </Text>
           </GridItem>
           <GridItem display={"flex"} flexDir={"column"} colSpan={1}>
             <Text textStyle={"normalStyle"} fontSize={"14px"}>

@@ -38,6 +38,13 @@ export interface TransactionData {
   sendingAmount: number;
 }
 
+export interface IFundingAccount {
+  idPayment: string;
+  mask: string;
+  name: string;
+  LoginRequired: boolean;
+  BankName: string;
+}
 interface SendMoneyStore {
   sendMoneyData?: SendMoneyData;
   setSendMoneyData: (sendMoneyData?: SendMoneyData) => void;
@@ -72,4 +79,14 @@ export const useTransactionStore = create<TransactionDataStore>(set => ({
   transactionData: undefined,
   setTransactionData: transactionData =>
     set(state => ({ ...state, transactionData }))
+}));
+
+interface FundingAccountDataStore {
+  fundingData?: IFundingAccount;
+  setFundingData: (fundingData?: IFundingAccount) => void;
+}
+
+export const useFundingAccountStore = create<FundingAccountDataStore>(set => ({
+  fundingData: undefined,
+  setFundingData: fundingData => set(state => ({ ...state, fundingData }))
 }));
