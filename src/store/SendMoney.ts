@@ -1,6 +1,6 @@
 import { ISelectOptions } from "@neoWeb/utility/format";
 import create from "zustand";
-
+import { persist } from "zustand/middleware";
 interface SendMoneyData {
   sendingCountry: ISelectOptions<number> | null;
   receivingCountry: ISelectOptions<number> | null;
@@ -50,10 +50,19 @@ interface SendMoneyStore {
   setSendMoneyData: (sendMoneyData?: SendMoneyData) => void;
 }
 
-export const useSendMoneyStore = create<SendMoneyStore>(set => ({
-  sendMoneyData: undefined,
-  setSendMoneyData: sendMoneyData => set(state => ({ ...state, sendMoneyData }))
-}));
+export const useSendMoneyStore = create(
+  persist<SendMoneyStore>(
+    set => ({
+      sendMoneyData: undefined,
+      setSendMoneyData: sendMoneyData =>
+        set(state => ({ ...state, sendMoneyData }))
+    }),
+    {
+      name: "send-money-storage", // Unique name for the storage key
+      getStorage: () => localStorage // Or sessionStorage
+    }
+  )
+);
 
 interface BeneficiaryAccountStore {
   beneficiaryAccountData?: BeneficiaryAccountData;

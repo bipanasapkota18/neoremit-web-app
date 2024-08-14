@@ -225,29 +225,29 @@ const VAmericaSendMoneyForm = ({ setPageName }: IVAmericaSendMoneyForm) => {
   }, [sendMoneyData, Payoutmethoddata]);
 
   const handleSendMoney = (data: typeof defaultValues) => {
-    if (!isSuccess) {
-      return;
-    } else {
-      try {
-        setSendMoneyData({
-          sendingCountry: data?.sendFrom ?? null,
-          receivingCountry: data?.sendTo ?? null,
-          sendingAmount: data?.sendAmount ?? "",
-          receivingAmount: data?.receiveAmount ?? "",
-          payoutMethod: data?.paymentMethod ?? null,
-          promoCode: data?.promoCode ?? "",
-          fee: formatAmount(createQuoteData?.data?.data?.fees ?? 0),
-          totalAmount:
-            formatAmount(createQuoteData?.data?.data?.totalToPay ?? 0) + "",
-          exchangeRate: formatAmount(
-            createQuoteData?.data?.data?.exchangeRate ?? 0
-          )
-        });
-        setPageName("selectRecipient");
-      } catch (e) {
-        console.error(e);
-      }
+    // if (!isSuccess) {
+    //   return;
+    // } else {
+    try {
+      setSendMoneyData({
+        sendingCountry: data?.sendFrom ?? null,
+        receivingCountry: data?.sendTo ?? null,
+        sendingAmount: data?.sendAmount ?? "",
+        receivingAmount: data?.receiveAmount ?? "",
+        payoutMethod: data?.paymentMethod ?? null,
+        promoCode: data?.promoCode ?? "",
+        fee: formatAmount(createQuoteData?.data?.data?.fees ?? 0),
+        totalAmount:
+          formatAmount(createQuoteData?.data?.data?.totalToPay ?? 0) + "",
+        exchangeRate: formatAmount(
+          createQuoteData?.data?.data?.exchangeRate ?? 0
+        )
+      });
+      setPageName("selectRecipient");
+    } catch (e) {
+      console.error(e);
     }
+    // }
   };
 
   const calculatedValues = [

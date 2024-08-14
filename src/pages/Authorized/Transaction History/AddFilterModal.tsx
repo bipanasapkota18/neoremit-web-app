@@ -11,9 +11,11 @@ import {
   Text
 } from "@chakra-ui/react";
 import TextInput from "@neoWeb/components/Form/TextInput";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import React, { MouseEvent, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 interface AddFilterModalProps {
   isOpen: boolean;
@@ -28,7 +30,8 @@ const defaultValues = {
 };
 
 const AddFilterModal: React.FC<AddFilterModalProps> = ({ isOpen, onClose }) => {
-  const { control, reset } = useForm({
+  const navigate = useNavigate();
+  const { control } = useForm({
     defaultValues: defaultValues
   });
 
@@ -203,8 +206,11 @@ const AddFilterModal: React.FC<AddFilterModalProps> = ({ isOpen, onClose }) => {
               color={colorScheme.primary_500}
               border={`1px solid ${colorScheme.primary_500}`}
               onClick={() => {
-                onClose();
-                reset();
+                navigate(
+                  `${NAVIGATION_ROUTES.SEND_MONEY}?page=accountDetails&status=error`
+                );
+                // onClose();
+                // reset();
               }}
               _hover={{
                 background: "white"
@@ -216,7 +222,15 @@ const AddFilterModal: React.FC<AddFilterModalProps> = ({ isOpen, onClose }) => {
             >
               Reset
             </Button>
-            <Button flex={1} padding={"12px 24px"}>
+            <Button
+              flex={1}
+              padding={"12px 24px"}
+              onClick={() =>
+                navigate(
+                  `${NAVIGATION_ROUTES.SEND_MONEY}?page=accountDetails&status=success`
+                )
+              }
+            >
               Apply
             </Button>
           </HStack>
