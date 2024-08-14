@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import CardPaymentVAmerica from "./CardPayment/CardPaymentVAmerica";
 import PaymentConfirmation from "./PaymentConfirmation";
 import Invoice from "./PaymentConfirmation/Invoice";
@@ -10,7 +11,10 @@ import SendMoneyForm from "./SendMoney";
 import VAmericaSendMoneyForm from "./VAmericaSendMoney";
 
 const SendMoney = () => {
-  const [pageName, setPageName] = useState<string>("sendMoney");
+  const [searchParams] = useSearchParams();
+  const [pageName, setPageName] = useState<string>(
+    searchParams?.get("page") ?? "sendMoney"
+  );
   const [beneficiaryId, setBeneficiaryId] = useState<number | null>(null);
   // const [beneficiaryAccountId, setBeneficiaryAccountId] = useState<number>();
   const [newTransfer, setNewTransfer] = useState<boolean>(false);
@@ -48,7 +52,7 @@ const SendMoney = () => {
           />
         );
 
-      case "cardPayment":
+      case "accountDetails":
         return <CardPaymentVAmerica setPageName={setPageName} />;
 
       case "paymentConfirmation":

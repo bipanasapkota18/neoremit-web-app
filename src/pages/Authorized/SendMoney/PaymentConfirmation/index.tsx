@@ -190,7 +190,7 @@ const PaymentConfirmation = ({ setPageName }: ISendMoneyForm) => {
         </SimpleGrid>
       </Stack>
       <HStack justifyContent={"space-between"}>
-        <GoBack onClick={() => setPageName("cardPayment")} />
+        <GoBack onClick={() => setPageName("accountDetails")} />
 
         <Button
           onClick={() => setPageName("mpinConfirmation")}

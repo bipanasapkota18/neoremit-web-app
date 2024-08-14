@@ -15,17 +15,33 @@ import {
 } from "@neoWeb/services/service-funding-account";
 import { useFundingAccountStore } from "@neoWeb/store/SendMoney";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
+import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
+import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ISendMoneyForm } from "../SendMoney";
 
 const CardPaymentVAmerica = ({ setPageName }: ISendMoneyForm) => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { data, isPending, refetch } = useGetAllFundingAccount();
 
   const { data: addData } = useAddFundingAccount();
   const { setFundingData } = useFundingAccountStore();
 
+  useEffect(() => {
+    if (searchParams?.get("status") === "error") {
+      toastFail("Failed to add account. Please try again later.");
+    } else {
+      toastSuccess("Account added successfully.");
+      refetch();
+    }
+  }, [searchParams]);
+
   const addCardDetails = (paymentId: string) => {
     const selectedAccount = data?.find(item => item?.idPayment === paymentId);
     setFundingData(selectedAccount);
+    searchParams.delete("page");
+    searchParams.delete("status");
+    setSearchParams(searchParams);
     setPageName("paymentConfirmation");
   };
 
@@ -89,7 +105,14 @@ const CardPaymentVAmerica = ({ setPageName }: ISendMoneyForm) => {
           </HStack>
         )}{" "}
         <HStack justifyContent={"space-between"}>
-          <GoBack onClick={() => setPageName("paymentDetails")} />
+          <GoBack
+            onClick={() => {
+              searchParams.delete("page");
+              searchParams.delete("status");
+              setSearchParams(searchParams);
+              setPageName("paymentDetails");
+            }}
+          />
 
           <HStack>
             <Button

@@ -25,5 +25,9 @@ export const NAVIGATION_ROUTES = {
   CONTACT: "/contact",
   PRIVACY_POLICY: "/privacy-policy",
   EXAMPLE: "/example",
-  GOOGLE_REDIRECT: "/google-signup-success"
+  GOOGLE_REDIRECT: "/google-signup-success",
+
+  //fundingaccound add
+  SUCCESS: "/success",
+  FAIL: "/error"
 };

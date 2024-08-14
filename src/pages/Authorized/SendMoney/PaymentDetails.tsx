@@ -148,7 +148,7 @@ const PaymentDetails = ({
       country: benificiaryAccount?.country?.name ?? "",
       beneficiaryId: benificiaryAccount?.id ?? 0
     });
-    setPageName("cardPayment");
+    setPageName("accountDetails");
   };
   return (
     <Card
