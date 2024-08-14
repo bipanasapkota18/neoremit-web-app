@@ -50,7 +50,6 @@ export default function KYCInformation() {
   const categorizedFields = categorizeKycFields(
     countryKycFieldValues?.data?.data?.kycFormField ?? []
   );
-
   const steps = [
     {
       label: "Personal Detail",

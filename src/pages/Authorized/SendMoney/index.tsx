@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CardPayment from "./CardPayment/CardPayment";
+import CardPaymentVAmerica from "./CardPayment/CardPaymentVAmerica";
 import PaymentConfirmation from "./PaymentConfirmation";
 import Invoice from "./PaymentConfirmation/Invoice";
 import MpinConfirmation from "./PaymentConfirmation/MpinConfirmation";
@@ -7,17 +7,18 @@ import PaymentDetails from "./PaymentDetails";
 import ReceipientAccount from "./ReceipientAccount";
 import Recipient from "./Recipient";
 import SendMoneyForm from "./SendMoney";
+import VAmericaSendMoneyForm from "./VAmericaSendMoney";
 
 const SendMoney = () => {
   const [pageName, setPageName] = useState<string>("sendMoney");
-  const [beneficiaryId, setBeneficiaryId] = useState<number>();
-  const [beneficiaryAccountId, setBeneficiaryAccountId] = useState<number>();
+  const [beneficiaryId, setBeneficiaryId] = useState<number | null>(null);
+  // const [beneficiaryAccountId, setBeneficiaryAccountId] = useState<number>();
   const [newTransfer, setNewTransfer] = useState<boolean>(false);
 
   const renderComponent = (name: string) => {
     switch (name) {
       case "sendMoney":
-        return <SendMoneyForm setPageName={setPageName} />;
+        return <VAmericaSendMoneyForm setPageName={setPageName} />;
 
       case "selectRecipient":
         return (
@@ -32,8 +33,8 @@ const SendMoney = () => {
         return (
           <ReceipientAccount
             setPageName={setPageName}
-            beneficiaryId={beneficiaryId ?? 0}
-            setBeneficiaryAccountId={setBeneficiaryAccountId}
+            beneficiaryId={beneficiaryId ?? null}
+            // setBeneficiaryAccountId={setBeneficiaryAccountId}
           />
         );
 
@@ -41,14 +42,14 @@ const SendMoney = () => {
         return (
           <PaymentDetails
             setPageName={setPageName}
-            beneficiaryId={beneficiaryId ?? 0}
-            beneficiaryAccountId={beneficiaryAccountId ?? 0}
+            beneficiaryId={beneficiaryId ?? null}
+            // beneficiaryAccountId={beneficiaryAccountId ?? 0}
             newTransfer={newTransfer}
           />
         );
 
       case "cardPayment":
-        return <CardPayment setPageName={setPageName} />;
+        return <CardPaymentVAmerica setPageName={setPageName} />;
 
       case "paymentConfirmation":
         return <PaymentConfirmation setPageName={setPageName} />;

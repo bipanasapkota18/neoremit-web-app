@@ -1,21 +1,19 @@
 import { Avatar, HStack, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 import { ISendMoneyForm } from "@neoWeb/pages/Authorized/SendMoney/SendMoney";
-import { baseURL } from "@neoWeb/services/service-axios";
-import { IBeneficiaryResponse } from "@neoWeb/services/service-beneficiary";
-import { Dispatch, SetStateAction } from "react";
+import { IBeneficiaryCheckoutDetailsResponse } from "@neoWeb/services/service-beneficiary";
 
 interface BeneficiaryCardProps extends ISendMoneyForm {
-  data: IBeneficiaryResponse | undefined;
-  setBeneficiaryAccountId: Dispatch<SetStateAction<number | undefined>>;
+  data: IBeneficiaryCheckoutDetailsResponse[] | undefined;
+  // setBeneficiaryAccountId: Dispatch<SetStateAction<number | undefined>>;
 }
 const RecipientAccountCard = ({
   data,
-  setPageName,
-  setBeneficiaryAccountId
+  setPageName
+  // setBeneficiaryAccountId
 }: BeneficiaryCardProps) => {
   return (
     <SimpleGrid columns={3} gap={4}>
-      {data?.beneficiaryCheckoutDetail?.map(item => {
+      {data?.map(item => {
         return (
           <Stack
             key={item.id}
@@ -25,7 +23,7 @@ const RecipientAccountCard = ({
             gap={4}
             cursor={"pointer"}
             onClick={() => {
-              setBeneficiaryAccountId(item?.id ?? 0);
+              // setBeneficiaryAccountId(item?.id ?? 0);
               setPageName("paymentDetails");
             }}
           >
@@ -33,11 +31,11 @@ const RecipientAccountCard = ({
               <Avatar
                 height={"29px"}
                 width={"29px"}
-                src={`${baseURL}/document-service/master/payout/partner/image?fileId=${item?.payoutPartner?.image}`}
+                // src={`${baseURL}/document-service/master/payout/partner/image?fileId=${item?.payoutPartner?.image}`}
               />
-              <Text textStyle={"beneficiaryCard"}>
+              {/* <Text textStyle={"beneficiaryCard"}>
                 {item?.payoutPartner?.name}
-              </Text>
+              </Text> */}
             </HStack>
             <HStack flexDir={"column"} alignItems={"flex-start"}>
               <Stack

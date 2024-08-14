@@ -26,16 +26,18 @@ export const api = {
     get: `${service}/state/list/app/{id}`
   },
   beneficiary: {
-    getAll: `${service}/beneficiary/detail`,
+    getAll: `${service}/beneficiary/detail/list`,
     create: `${service}/beneficiary/detail`,
+    // getBeneficiaryById: `${service}/beneficiary/checkout/detail/all/6f68861f-510e-4662-9783-ca377346b82a`,
     getBeneficiaryById: `${service}/beneficiary/detail/{id}`,
     delete: `${service}/beneficiary/detail/{id}`,
-    updatae: `${service}/beneficiary/detail/{id}`
+    update: `${service}/beneficiary/detail/{id}`
   },
   beneficiary_detail: {
-    getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
+    getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/all/a2753a13-b6f4-43a7-98e3-4a44c83db828`,
+    // getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/all/{beneficiaryDetailId}`,
     createBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
-    updateBeneficiaryDetail: `${service}/beneficiary/checkout/detail/update/{beneficiaryDetailId}`,
+    updateBeneficiaryDetail: `${service}/beneficiary/checkout/detail/update/{beneficiaryDetailId}/{beneficiaryCheckoutId}`,
     getBeneficiaryDetailById: `${service}/beneficiary/checkout/detail/{beneficiaryCheckoutId}`,
     deleteBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryCheckoutId}`
   },
@@ -59,7 +61,9 @@ export const api = {
     beneficiary_validate: `${transaction_service}/trans/validate/beneficiary/account`,
     validate_sender: `${transaction_service}/trans/validate/sender/account`,
     confirm_payment: `${transaction_service}/trans/confirm-payment`,
-    calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`
+    calculated_base_rate: `${service}/master/base-rate-config/getSendAmountCalculationDetails`,
+
+    creat_quote: `${transaction_service}/api/v1/transactions/create-quote`
   },
   support: {
     faq: {
@@ -82,6 +86,10 @@ export const api = {
     user_guide: {
       getAll: `${service}/v1/help/setup/all`
     }
+  },
+  funding_account: {
+    getAll: `${service}/funding-account`,
+    addAccount: `${service}/funding-account/add`
   },
   init: `${service}/users/init`
 };

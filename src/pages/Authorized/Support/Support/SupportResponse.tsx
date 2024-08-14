@@ -92,6 +92,7 @@ const SupportResponse = ({
             wordBreak={"break-all"}
             fontWeight={400}
             fontSize={"14px"}
+            width={"fit-content"}
           >
             {comment}
           </Text>
@@ -111,7 +112,6 @@ const SupportResponse = ({
                 color={"#2D3748"}
                 fontWeight={700}
                 fontSize={"14px"}
-                w={"100px"}
                 textAlign={isCurrentUser ? "start" : "end"}
               >
                 {item.commentUserName}

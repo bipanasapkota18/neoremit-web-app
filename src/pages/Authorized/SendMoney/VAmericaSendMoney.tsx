@@ -7,7 +7,8 @@ import {
   HStack,
   Icon,
   SimpleGrid,
-  Stack
+  Stack,
+  Text
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
@@ -19,24 +20,14 @@ import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
 import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
-import {
-  useCalculatedBaseRate,
-  useCreateQuote
-} from "@neoWeb/services/service-send-money";
+import { useCreateQuote } from "@neoWeb/services/service-send-money";
 import { useSendMoneyStore } from "@neoWeb/store/SendMoney";
 import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
-import { formatAmount } from "@neoWeb/utility/currencyFormat";
+import { currencyFormat, formatAmount } from "@neoWeb/utility/currencyFormat";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
-import { debounce, inRange } from "lodash";
-import {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { debounce } from "lodash";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -58,7 +49,7 @@ export interface PayoutMethod {
   isCash: boolean;
   isActive: boolean;
 }
-export interface ISendMoneyForm {
+export interface IVAmericaSendMoneyForm {
   setPageName: Dispatch<SetStateAction<string>>;
 }
 const defaultValues = {
@@ -69,12 +60,8 @@ const defaultValues = {
   paymentMethod: null as ISelectOptions<number> | null,
   promoCode: ""
 };
-// interface PromoCodeValidationResponse {
-//   promoCode: string;
-//   newCustomerRate: number;
-//   serviceChargeDiscount: number;
-// }
-const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
+
+const VAmericaSendMoneyForm = ({ setPageName }: IVAmericaSendMoneyForm) => {
   const schema = z.object({
     sendFrom: z
       .object({
@@ -113,6 +100,7 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     handleSubmit,
     watch,
     reset,
+    setValue,
     formState: { isValid }
   } = useForm({
     defaultValues: defaultValues,
@@ -120,35 +108,11 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
   });
 
   //Ref for sending amount and receiving amount
-  const sendRef = useRef(null);
-  const receiveRef = useRef(null);
-
-  const [chargeDeatils, setChargeDetails] = useState<IChargeDetails[]>([]);
-
-  const feeDetail = useMemo(
-    () =>
-      chargeDeatils
-        ?.filter(
-          item => item.payoutMethods[0]?.id === watch("paymentMethod")?.value
-        )
-        ?.find(item =>
-          item?.toAmount === null
-            ? +watch("sendAmount") >= item.fromAmount
-            : inRange(+watch("sendAmount") ?? 0, item.fromAmount, item.toAmount)
-        ),
-    [watch("paymentMethod"), watch("sendAmount"), chargeDeatils]
-  );
+  // const sendRef = useRef(null);
+  //   const receiveRef = useRef(null);
 
   const { initData } = useStoreInitData();
   const { setSendMoneyData, sendMoneyData } = useSendMoneyStore();
-  // const {
-  //   mutateAsync: mutateValidatePromoCode,
-  //   isPending: isPromocodeValidationLoading
-  // } = useValidatePromoCode();
-  const { mutateAsync: mutateBaseRate } = useCalculatedBaseRate();
-  //state for promocode response
-  // const [promoCodeResponse, setPromoCodeResponse] =
-  //   useState<PromoCodeValidationResponse | null>(null);
 
   //country list API
   const { data: countriesList } = useGetCountryList();
@@ -163,9 +127,13 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
       iconCode: "flagIcon"
     }
   });
-  // const [flag, setFlag] = useBoolean(false);
   //create Quote API
-  const { mutateAsync } = useCreateQuote();
+  const {
+    mutateAsync,
+    data: createQuoteData,
+    isSuccess,
+    isPending
+  } = useCreateQuote();
 
   const debouncedFunction = debounce(() => {
     mutateAsync({
@@ -183,36 +151,8 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
   }, [watch("sendAmount"), watch("paymentMethod")?.value]);
 
   //sending country currency symbol
-  // const sendingCountryCurrencySymbol =
-  //   initData?.sendingCountry?.currency?.symbol;
-
-  //calculated rate based on base rate and margin rate
-  // const calculatdRate = useMemo(() => {
-  //   return initData?.baseRate?.marginType === "PERCENTAGE"
-  //     ? initData?.baseRate?.baseRate -
-  //         initData?.baseRate?.baseRate * (initData?.baseRate?.marginRate / 100)
-  //     : (initData?.baseRate?.baseRate ?? 0) -
-  //         (initData?.baseRate?.marginRate ?? 0);
-  // }, [initData]);
-
-  //get base rate details according to sending and receiving country
-  const getBaseRateDetails = async () => {
-    const baseRateResponse = await mutateBaseRate({
-      sendingCountryId: initData?.sendingCountry?.id ?? null,
-      receivingCountryId: watch("sendTo")?.value ?? null
-    });
-    if (baseRateResponse?.data?.data) {
-      setChargeDetails(
-        baseRateResponse?.data?.data?.feeAndCharges?.feeAndChargesDetails
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (watch("sendTo")) {
-      getBaseRateDetails();
-    }
-  }, [watch("sendTo")]);
+  const sendingCountryCurrencySymbol =
+    initData?.sendingCountry?.currency?.symbol;
 
   //payout method API
   const { data: Payoutmethoddata } = useGetPayoutMethodById(
@@ -244,26 +184,15 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     }));
   }, [countriesList]);
 
-  // useEffect(() => {
-  //   if (sendRef.current === document.activeElement) {
-  //     setValue(
-  //       "receiveAmount",
-  //       formatAmount(parseFloat(watch("sendAmount")) * calculatdRate) + ""
-  //     );
-  //   }
-  // }, [watch("sendAmount")]);
-
-  // useEffect(() => {
-  //   if (promoCodeResponse) {
-  //     setValue(
-  //       "receiveAmount",
-  //       formatAmount(
-  //         (+watch("sendAmount") ?? 0) *
-  //           (promoCodeResponse?.newCustomerRate ?? 0)
-  //       ) + ""
-  //     );
-  //   }
-  // }, [promoCodeResponse]);
+  useEffect(() => {
+    // if (receiveRef.current === document.activeElement) {
+    setValue(
+      "receiveAmount",
+      formatAmount(isSuccess ? createQuoteData.data?.data?.totalToBePay : "") +
+        ""
+    );
+    // }
+  }, [watch("sendAmount"), isSuccess]);
 
   // useEffect(() => {
   //   if (receiveRef.current === document.activeElement) {
@@ -295,112 +224,75 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     }
   }, [sendMoneyData, Payoutmethoddata]);
 
-  // const validatePromoCode = async (data: typeof defaultValues) => {
-  //   const preparedData = {
-  //     code: data?.promoCode?.trim(),
-  //     amount: data?.sendAmount?.trim() ?? "",
-  //     sendingCountryId: data?.sendFrom?.value ?? null,
-  //     receivingCountryId: data?.sendTo?.value ?? null,
-  //     payoutMethodId: data?.paymentMethod?.value ?? null
-  //   };
-  //   try {
-  //     const response = await mutateValidatePromoCode(preparedData);
-
-  //     setPromoCodeResponse(response?.data?.data);
-  //   } catch (e) {
-  //     console.error(e);
-  //   }
-  // };
-
   const handleSendMoney = (data: typeof defaultValues) => {
-    try {
-      setSendMoneyData({
-        sendingCountry: data?.sendFrom ?? null,
-        receivingCountry: data?.sendTo ?? null,
-        sendingAmount: data?.sendAmount ?? "",
-        receivingAmount: data?.receiveAmount ?? "",
-        payoutMethod: data?.paymentMethod ?? null,
-        promoCode: data?.promoCode ?? "",
-        fee: feeDetail
-          ? formatAmount(
-              feeDetail?.feeAndChargeType === "FLAT"
-                ? feeDetail?.fee
-                : ((feeDetail?.fee ?? 0) / 100) * (+watch("sendAmount") ?? 0) +
-                    ""
-            )
-          : 0,
-        totalAmount: "1",
-        exchangeRate: 0
-        // totalAmount:
-        //   formatAmount(
-        //     +(watch("sendAmount") ?? 0) +
-        //       feeAmount -
-        //       (promoCodeResponse?.serviceChargeDiscount ?? 0)
-        //   ) + "" ?? "",
-        // exchangeRate:
-        //   promoCodeResponse?.newCustomerRate ??
-        //   initData?.baseRate?.baseRate ??
-        //   null
-      });
-      setPageName("selectRecipient");
-    } catch (e) {
-      console.error(e);
+    if (!isSuccess) {
+      return;
+    } else {
+      try {
+        setSendMoneyData({
+          sendingCountry: data?.sendFrom ?? null,
+          receivingCountry: data?.sendTo ?? null,
+          sendingAmount: data?.sendAmount ?? "",
+          receivingAmount: data?.receiveAmount ?? "",
+          payoutMethod: data?.paymentMethod ?? null,
+          promoCode: data?.promoCode ?? "",
+          fee: formatAmount(createQuoteData?.data?.data?.fees ?? 0),
+          totalAmount:
+            formatAmount(createQuoteData?.data?.data?.totalToPay ?? 0) + "",
+          exchangeRate: formatAmount(
+            createQuoteData?.data?.data?.exchangeRate ?? 0
+          )
+        });
+        setPageName("selectRecipient");
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 
-  // const feeAmount =
-  //   feeDetail?.feeAndChargeType === "FLAT"
-  //     ? feeDetail?.fee
-  //     : ((feeDetail?.fee ?? 0) / 100) * +watch("sendAmount");
-
-  // const calculatedValues = [
-  //   {
-  //     label: "Promo Code",
-  //     value: promoCodeResponse ? promoCodeResponse?.promoCode : "--"
-  //   },
-  //   {
-  //     label: "ExchangeRate",
-  //     value: `${sendingCountryCurrencySymbol} 1 =  ${initData?.receivingCountry?.currency?.symbol + " " + (promoCodeResponse?.newCustomerRate ?? calculatdRate)}`
-  //   },
-  //   {
-  //     label: "Fee",
-  //     value: ` ${
-  //       (sendingCountryCurrencySymbol ?? "") +
-  //       (feeDetail
-  //         ? formatAmount(
-  //             feeDetail?.feeAndChargeType === "FLAT"
-  //               ? feeDetail?.fee
-  //               : ((feeDetail?.fee ?? 0) / 100) * (+watch("sendAmount") ?? 0) +
-  //                   ""
-  //           )
-  //         : 0)
-  //     }`
-  //   },
-  //   ...(promoCodeResponse
-  //     ? [
-  //         {
-  //           label: "Discount",
-  //           value: (
-  //             <s>
-  //               {(sendingCountryCurrencySymbol ?? "") +
-  //                 formatAmount(promoCodeResponse?.serviceChargeDiscount + "")}
-  //             </s>
-  //           )
-  //         }
-  //       ]
-  //     : []),
-
-  //   {
-  //     label: "Total Amount",
-  //     value:
-  //       (sendingCountryCurrencySymbol ?? "") +
-  //       formatAmount(
-  //         +(watch("sendAmount") ?? 0) +
-  //           feeAmount -
-  //           (promoCodeResponse?.serviceChargeDiscount ?? 0)
-  //       )
-  //   }
-  // ];
+  const calculatedValues = [
+    {
+      label: "ExchangeRate",
+      value: `${sendingCountryCurrencySymbol} 1 =  ${initData?.receivingCountry?.currency?.symbol + " " + formatAmount(createQuoteData?.data?.data?.exchangeRate ?? 0)}`
+    },
+    {
+      label: "Sending Amount",
+      value:
+        (sendingCountryCurrencySymbol + " " ?? "") +
+        currencyFormat(
+          formatAmount(createQuoteData?.data?.data?.amount ?? 0),
+          true
+        )
+    },
+    {
+      label: "Fee",
+      value: ` ${
+        (sendingCountryCurrencySymbol + " " ?? "") +
+        currencyFormat(
+          formatAmount(createQuoteData?.data?.data?.fees ?? 0),
+          true
+        )
+      }`
+    },
+    {
+      label: "Total Amount To Pay",
+      value:
+        (sendingCountryCurrencySymbol + " " ?? "") +
+        currencyFormat(
+          formatAmount(createQuoteData?.data?.data?.totalToPay ?? 0),
+          true
+        )
+    },
+    {
+      label: "Receiving Amount",
+      value:
+        (createQuoteData?.data?.data?.isoCurrency + " " ?? "") +
+        currencyFormat(
+          formatAmount(createQuoteData?.data?.data?.totalToBePay ?? 0),
+          true
+        )
+    }
+  ];
   const pages = [
     {
       pageName: "Send Money",
@@ -455,6 +347,7 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
                   placeholder="Receiving"
                   control={control}
                   noFloating
+                  isDisabled={isPending}
                 />
               </HStack>
             </GridItem>
@@ -465,116 +358,57 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
                 placeholder="Select Payment Method"
                 control={control}
                 noFloating
+                isDisabled={isPending}
               />
             </GridItem>
             <GridItem colSpan={1}>
               <TextInputWithRef
-                ref={sendRef}
+                // ref={sendRef}
                 control={control}
                 name="sendAmount"
                 type="number"
                 label="You Send"
+                isDisabled={isPending}
               />
             </GridItem>
 
-            <GridItem colSpan={1}>
+            {/* <GridItem colSpan={1}>
               <TextInputWithRef
-                isDisabled
                 ref={receiveRef}
                 control={control}
                 name="receiveAmount"
                 type="number"
                 label="Receiver Receives"
               />
-            </GridItem>
+            </GridItem> */}
           </SimpleGrid>
-          {/* {watch("paymentMethod") && (
+          {createQuoteData && (
             <Stack
               borderRadius={16}
               padding={4}
               gap={4}
               background={colorScheme.gray_50}
             >
-              <Stack gap={3}>
-                <HStack
-                  justifyContent={"space-between"}
-                  borderRadius={8}
-                  border={`1px dashed ${colorScheme.primary_500}`}
-                >
-                  <Box></Box>
-                  <Text
-                    textStyle={"normalStyle"}
-                    color={colorScheme.sideBar_text}
-                    fontWeight={600}
-                    textAlign={"center"}
-                    padding={2}
-                    cursor={"pointer"}
-                    onClick={setFlag.on}
-                  >
-                    Do You have promo code?
-                  </Text>
-                  <CloseIcon
-                    cursor={"pointer"}
-                    onClick={setFlag.off}
-                    height={"10px"}
-                    width={"10px"}
-                    mr={2}
-                  />
-                </HStack>
-                {flag && (
-                  <HStack alignItems={"center"}>
-                    <TextInput
-                      type="text"
-                      label="Enter Promo Code"
-                      control={control}
-                      name="promoCode"
-                    />
-
-                    <Button
-                      flex={"25%"}
-                      mt={1}
-                      py={"25px"}
-                      isDisabled={!watch("promoCode")}
-                      isLoading={isPromocodeValidationLoading}
-                      onClick={handleSubmit(validatePromoCode)}
-                    >
-                      Apply
-                    </Button>
-                  </HStack>
-                )}
-              </Stack>
               <Stack>
                 {calculatedValues.map((item, index) => (
                   <HStack key={index} justifyContent={"space-between"}>
                     <Text textStyle={"beneficiaryCardSubHeader"}>
                       {item.label}
                     </Text>
-                    <Text
-                      backgroundColor={
-                        item.label === "Promo Code"
-                          ? promoCodeResponse?.promoCode
-                            ? "#C6F6D5"
-                            : colorScheme.gray_100
-                          : "inherit"
-                      }
-                      px={item.label === "Promo Code" ? 4 : 0}
-                      py={item.label === "Promo Code" ? 1 : 0}
-                      borderRadius={item.label === "Promo Code" ? 8 : 0}
-                      textStyle={"beneficiaryCardHeader"}
-                    >
+                    <Text textStyle={"beneficiaryCardHeader"}>
                       {item.value}
                     </Text>
                   </HStack>
                 ))}
               </Stack>
             </Stack>
-          )} */}
+          )}
           <HStack justifyContent={"flex-end"}>
             <Button
               type="submit"
               leftIcon={<svgAssets.WalletIcon />}
               variant="send_money"
-              isDisabled={!isValid}
+              isDisabled={!isValid || !createQuoteData}
             >
               Send Money
             </Button>
@@ -584,4 +418,4 @@ const SendMoneyForm = ({ setPageName }: ISendMoneyForm) => {
     </Stack>
   );
 };
-export default SendMoneyForm;
+export default VAmericaSendMoneyForm;

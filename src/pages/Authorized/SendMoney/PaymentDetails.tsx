@@ -22,7 +22,7 @@ import {
 } from "@neoWeb/store/SendMoney";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
-import { useEffect, useMemo } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { ISendMoneyForm } from "./SendMoney";
@@ -37,19 +37,19 @@ const defaultValues = {
 };
 
 interface IPaymentDetailsProps extends ISendMoneyForm {
-  beneficiaryId: number;
-  beneficiaryAccountId: number;
+  beneficiaryId: number | null;
+  // beneficiaryAccountId: number;
   newTransfer: boolean;
 }
 
 const PaymentDetails = ({
   setPageName,
   beneficiaryId,
-  beneficiaryAccountId,
+  // beneficiaryAccountId,
   newTransfer
 }: IPaymentDetailsProps) => {
   const { sendMoneyData } = useSendMoneyStore();
-  const { data: beneficiaryAccountData } = useGetBeneficiaryById(beneficiaryId);
+  const { data: benificiaryAccount } = useGetBeneficiaryById(beneficiaryId);
   const { data: Payoutmethoddata } = useGetPayoutMethodById(
     sendMoneyData?.receivingCountry?.value ?? 0
   );
@@ -57,28 +57,24 @@ const PaymentDetails = ({
   const { data: purposeOfPaymentData } = useGetPurposeOfPayment();
 
   const { setBeneficiaryAccountData } = useBeneficiaryAccountStore();
-  const benificiaryAccount = useMemo(
-    () =>
-      beneficiaryAccountData?.beneficiaryCheckoutDetail?.find(
-        item => item?.id === beneficiaryAccountId
-      ),
-    [beneficiaryAccountData]
-  );
+  // const benificiaryAccount = useMemo(
+  //   () =>
+  //     beneficiaryAccountData?.find(item => item?.id === beneficiaryAccountId),
+  //   [beneficiaryAccountData]
+  // );
   const { beneficiaryAccountData: beneficiaryAccountStoreData } =
     useBeneficiaryAccountStore();
 
-  const beneficiaryAccountOptions = formatSelectOptions<number>({
-    data: beneficiaryAccountData?.beneficiaryCheckoutDetail?.map(
-      item => item?.payoutPartner
-    ),
-    labelKey: "name",
-    valueKey: "id",
-    icon: {
-      iconKey: "image",
-      iconPath: `${baseURL}/document-service/master/payout/partner/image?fileId=`,
-      iconCode: "image"
-    }
-  });
+  // const beneficiaryAccountOptions = formatSelectOptions<number>({
+  //   data: beneficiaryAccountData?.map(item => item?.payoutPartner),
+  //   labelKey: "name",
+  //   valueKey: "id",
+  //   icon: {
+  //     iconKey: "image",
+  //     iconPath: `${baseURL}/document-service/master/payout/partner/image?fileId=`,
+  //     iconCode: "image"
+  //   }
+  // });
   const paymentMethodOptions = formatSelectOptions<number>({
     data: Payoutmethoddata,
     labelKey: "name",
@@ -96,26 +92,22 @@ const PaymentDetails = ({
     valueKey: "id"
   });
   const schema = z.object({
-    payoutMethodId: z
-      .object({
-        label: z.string().min(1),
-        value: z.number().min(0)
-      })
-      .nullable()
-      .refine(data => !!data?.label && !!data?.value, {
-        message: "Please select payment method"
-      }),
-    payoutPartnerId: z
-      .object({
-        label: z.string().min(1),
-        value: z.number().min(0)
-      })
-      .nullable()
-      .refine(data => !!data?.label && !!data?.value, {
-        message: "Please select payout partner"
-      }),
-    accountName: z.string().min(1, { message: "Account Name is required" }),
-    accountNumber: z.string().min(1, { message: "Account Number is required" }),
+    // payoutMethodId: z
+    //   .object({
+    //     label: z.string().min(1),
+    //     value: z.number().min(0)
+    //   })
+    //   .nullable()
+    //   .refine(data => !!data?.label && !!data?.value, {
+    //     message: "Please select payment method"
+    //   }),
+    payoutMethodId: z.object({
+      label: z.string(),
+      value: z.number()
+    }),
+    // payoutPartnerId: z.object({}),
+    accountName: z.string(),
+    accountNumber: z.string(),
     purposeOfPayment: z
       .object({
         label: z.string().min(1),
@@ -136,14 +128,14 @@ const PaymentDetails = ({
     const selectedPaymentMethod = paymentMethodOptions?.find(
       item => item?.value === sendMoneyData?.payoutMethod?.value
     );
-    const selectedPartner = beneficiaryAccountOptions?.find(
-      item => item?.value === benificiaryAccount?.payoutPartner?.id
-    );
+    // const selectedPartner = beneficiaryAccountOptions?.find(
+    //   item => item?.value === benificiaryAccount?.payoutPartner?.id
+    // );
     reset({
       payoutMethodId: selectedPaymentMethod,
-      payoutPartnerId: selectedPartner,
-      accountName: benificiaryAccount?.accountName ?? "",
-      accountNumber: benificiaryAccount?.accountNumber ?? "",
+      // payoutPartnerId: selectedPartner,
+      // accountName: benificiaryAccount?.accountName ?? "",
+      // accountNumber: benificiaryAccount?.accountNumber ?? "",
       purposeOfPayment: beneficiaryAccountStoreData?.purposeOfPayment ?? null,
       remarks: beneficiaryAccountStoreData?.remarks ?? ""
     });
@@ -152,9 +144,9 @@ const PaymentDetails = ({
   const submitDetails = (data: typeof defaultValues) => {
     setBeneficiaryAccountData({
       ...data,
-      mobileNumber: beneficiaryAccountData?.mobileNumber ?? "",
-      country: beneficiaryAccountData?.country?.name ?? "",
-      beneficiaryId: beneficiaryAccountData?.id ?? 0
+      mobileNumber: benificiaryAccount?.mobileNumber ?? "",
+      country: benificiaryAccount?.country?.name ?? "",
+      beneficiaryId: benificiaryAccount?.id ?? 0
     });
     setPageName("cardPayment");
   };
@@ -189,7 +181,7 @@ const PaymentDetails = ({
           <SimpleGrid columns={2} gap={4}>
             <Select
               name="payoutPartnerId"
-              options={beneficiaryAccountOptions}
+              options={[]}
               placeholder="Select Payout Partner"
               control={control}
               noFloating

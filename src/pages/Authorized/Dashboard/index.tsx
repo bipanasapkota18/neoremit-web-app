@@ -80,9 +80,16 @@ function Dashboard() {
           <CardBody>
             <HStack gap={4}>
               <Image src={imageAssets.KycIllustration} />
-              <Stack flex={1} gap={0}>
+              <Stack
+                flex={1}
+                gap={0}
+                display={{
+                  base: "none",
+                  lg: "block"
+                }}
+              >
                 <Text fontWeight={"bold"}>KYC Verification</Text>
-                <Text maxW={"70%"}>
+                <Text wordBreak={"break-all"} maxW={"70%"}>
                   Kindly complete your KYC verification to initiate the money
                   transfer
                 </Text>
@@ -98,7 +105,11 @@ function Dashboard() {
             </HStack>
           </CardBody>
         </Card>
-        <SimpleGrid columns={3} w={"full"} spacing={6}>
+        <SimpleGrid
+          columns={{ base: 1, sm: 1, md: 1, lg: 3 }}
+          w={"full"}
+          spacing={{ base: 4, lg: 6 }}
+        >
           <GridItem colSpan={2}>
             <Center
               sx={{
@@ -108,7 +119,7 @@ function Dashboard() {
                 gap: 4,
                 borderRadius: 8,
                 backgroundImage: `url(${imageAssets.BackgroundImage})`,
-                backgroundSize: "100%, 60%",
+                backgroundSize: "100% 90%",
                 backgroundRepeat: "no-repeat"
               }}
               flexDir={"column"}
