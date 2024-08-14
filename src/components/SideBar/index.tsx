@@ -88,6 +88,8 @@ export default function Sidebar({
       bg="white"
       borderRadius={"24px"}
       transition={animate}
+      position={"sticky"}
+      top={"73px"}
     >
       <VStack
         w="100%"

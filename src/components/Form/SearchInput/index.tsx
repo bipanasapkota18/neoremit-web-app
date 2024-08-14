@@ -10,11 +10,11 @@ import {
   InputProps,
   Spinner
 } from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { debounce } from "lodash";
 import React, { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { Control, Controller } from "react-hook-form";
-import { svgAssets } from "@neoWeb/assets/images/svgs";
 
 interface SearchInputProps {
   name: string;
@@ -124,11 +124,10 @@ const SearchInput: React.FC<SearchInputProps & InputProps> = ({
       id={name}
       maxW={"800px !important"}
     >
-      <InputGroup gap={"8px"} maxW={"800px"} h={"46px"}>
+      <InputGroup gap={"8px"} maxW={"800px"} h={"42px"}>
         <Input
           ml={0.5}
           pl={12}
-          h={"100%"}
           placeholder={label}
           onChange={handleChange}
           value={value}
@@ -145,12 +144,7 @@ const SearchInput: React.FC<SearchInputProps & InputProps> = ({
           {...extraProps}
         />
 
-        <InputLeftElement
-          padding=" 9px 8px 0px 26px"
-          color="#FFFFFF"
-          mr={2}
-          mt={1}
-        >
+        <InputLeftElement padding=" 9px 8px 0px 26px" color="#FFFFFF" mr={2}>
           <IconButton
             type="submit"
             variant={"search"}
