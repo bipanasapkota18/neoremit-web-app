@@ -16,7 +16,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ISendMoneyForm } from "./SendMoney";
 
 interface IReceipientAccountProps extends ISendMoneyForm {
-  setBeneficiaryId: Dispatch<SetStateAction<string | undefined>>;
+  setBeneficiaryId: Dispatch<SetStateAction<number | null>>;
   setNewTransfer: Dispatch<SetStateAction<boolean>>;
 }
 const Recipient = ({
@@ -49,7 +49,7 @@ const Recipient = ({
               <RecipientCard
                 setBeneficiaryId={setBeneficiaryId}
                 setPageName={setPageName}
-                id={item?.recipientUUID}
+                id={item?.id}
                 fullName={item?.fullName}
                 address={item?.address}
                 mobileNumber={item?.mobileNumber}

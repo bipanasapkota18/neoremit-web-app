@@ -11,8 +11,8 @@ import VAmericaSendMoneyForm from "./VAmericaSendMoney";
 
 const SendMoney = () => {
   const [pageName, setPageName] = useState<string>("sendMoney");
-  const [beneficiaryId, setBeneficiaryId] = useState<string>();
-  const [beneficiaryAccountId, setBeneficiaryAccountId] = useState<number>();
+  const [beneficiaryId, setBeneficiaryId] = useState<number | null>(null);
+  // const [beneficiaryAccountId, setBeneficiaryAccountId] = useState<number>();
   const [newTransfer, setNewTransfer] = useState<boolean>(false);
 
   const renderComponent = (name: string) => {
@@ -33,8 +33,8 @@ const SendMoney = () => {
         return (
           <ReceipientAccount
             setPageName={setPageName}
-            beneficiaryId={beneficiaryId ?? ""}
-            setBeneficiaryAccountId={setBeneficiaryAccountId}
+            beneficiaryId={beneficiaryId ?? null}
+            // setBeneficiaryAccountId={setBeneficiaryAccountId}
           />
         );
 
@@ -42,8 +42,8 @@ const SendMoney = () => {
         return (
           <PaymentDetails
             setPageName={setPageName}
-            beneficiaryId={beneficiaryId ?? ""}
-            beneficiaryAccountId={beneficiaryAccountId ?? 0}
+            beneficiaryId={beneficiaryId ?? null}
+            // beneficiaryAccountId={beneficiaryAccountId ?? 0}
             newTransfer={newTransfer}
           />
         );

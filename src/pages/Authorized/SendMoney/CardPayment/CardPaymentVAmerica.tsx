@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Card,
   Center,
@@ -52,7 +51,7 @@ const CardPaymentVAmerica = ({ setPageName }: ISendMoneyForm) => {
                   key={index}
                   width={"280px"}
                   borderRadius={"16px"}
-                  background="linear-gradient(251deg, #45187A 10.68%, #5A2F8D 49.45%, #6D4898 69.19%, #8465A9 100%)"
+                  background={colorScheme.gray_100}
                   padding={"24px"}
                   position={"relative"}
                   overflow={"hidden"}
@@ -62,14 +61,26 @@ const CardPaymentVAmerica = ({ setPageName }: ISendMoneyForm) => {
                     addCardDetails(item?.idPayment);
                   }}
                 >
-                  <Stack gap={"26px"} zIndex={1}>
+                  <Stack gap={4} zIndex={1}>
                     <HStack justifyContent={"space-between"}>
-                      <Box>
-                        <Text textStyle={"cardText"}>{item?.BankName}</Text>
-                      </Box>
+                      <Text color={colorScheme.gray_500}>Bank Name</Text>
+                      <Text
+                        color={colorScheme.gray_700}
+                        fontSize={"14px"}
+                        fontWeight={600}
+                      >
+                        {item?.BankName}
+                      </Text>
                     </HStack>
                     <HStack justifyContent={"space-between"}>
-                      <Text textStyle={"cardText"}>{item?.name}</Text>
+                      <Text color={colorScheme.gray_500}>Account Name</Text>
+                      <Text
+                        color={colorScheme.gray_700}
+                        fontSize={"14px"}
+                        fontWeight={600}
+                      >
+                        {item?.name}
+                      </Text>
                     </HStack>
                   </Stack>
                 </Stack>

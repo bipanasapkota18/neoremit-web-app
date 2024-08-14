@@ -32,8 +32,9 @@ export const ButtonConfig: ComponentStyleConfig = {
       }
     }),
     light: () => ({
-      background: colorScheme.primary_50,
+      background: colorScheme.white,
       color: colorScheme.primary_500,
+      border: `1px solid ${colorScheme.primary_500}`,
       fontSize: "16px",
       fontWeight: 700,
       lineHeight: "17.57px"

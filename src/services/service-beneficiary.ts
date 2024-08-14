@@ -14,7 +14,6 @@ export interface IBeneficiaryRequest {
   relationshipId: number | null;
   countryId: number | null;
   profileImage: string | null;
-  bankId: number | null;
   address: string;
   address2: string;
   nickName: string;
@@ -50,6 +49,7 @@ export interface BeneficiaryDetailList {
   routingNo: string;
   address2: string;
   nickName: string;
+  state: Country;
 }
 export interface BeneficiaryCheckoutDetailRequest {
   name: string;
@@ -145,6 +145,33 @@ export interface IBeneficiaryByIdResponse {
   mobileNumber: string;
   country: Country;
 }
+
+export interface IBeneficiaryCheckoutDetail {
+  payoutMethodId: number | null;
+  accountName: string;
+  accountNumber: string;
+  routingNumber: string;
+  paymentLocationCode: string;
+  accountType: string;
+  phone: string;
+  primary: boolean;
+}
+
+export interface IBeneficiaryCheckoutDetailsResponse {
+  id: number;
+  accountName: string;
+  accountNumber: string;
+  isPrimary: boolean;
+  payoutType: string;
+  partnerAccountNo: number;
+  accountType: string;
+  paymentLocationCode: string;
+  payer: string;
+  type: string;
+  payoutId: number;
+  isActive: boolean;
+}
+
 interface IFilterParams {
   pageParams?: PageParams;
   filterParams: any;
@@ -232,32 +259,6 @@ const useDeleteBeneficiary = () => {
     }
   });
 };
-
-const deleteBeneficiaryDetails = (id: number | null) => {
-  return NeoHttpClient.delete<NeoResponse>(
-    api.beneficiary_detail.deleteBeneficiaryDetail.replace(
-      "{beneficiaryCheckoutId}",
-      id + ""
-    )
-  );
-};
-const useDeleteBeneficiaryDetails = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: deleteBeneficiaryDetails,
-
-    onSuccess: success => {
-      queryClient.invalidateQueries({
-        queryKey: [api.beneficiary.getBeneficiaryById]
-      });
-      toastSuccess(success?.data?.message);
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toastFail(error?.response?.data?.message ?? error?.message);
-    }
-  });
-};
-
 const editBeneficiary = (data: IBeneficiaryRequest) => {
   return NeoHttpClient.post<NeoResponse>(
     api.beneficiary.update,
@@ -284,11 +285,89 @@ const useEditBeneficiary = () => {
   });
 };
 
+//get beneficiary checkout detail
+const getBeneficiaryCheckoutDetails = (id: number | null) => () => {
+  return NeoHttpClient.get<NeoResponse<IBeneficiaryCheckoutDetailsResponse[]>>(
+    api.beneficiary_detail.getBeneficiaryDetail.replace(
+      "{beneficiaryCheckoutId}",
+      id + ""
+    )
+  );
+};
+const useGetBeneficiaryCheckoutDetails = (id: number | null) => {
+  return useQuery({
+    select: data => data?.data?.data,
+    enabled: !!id,
+    queryKey: [api.beneficiary_detail.getBeneficiaryDetail, id],
+    queryFn: getBeneficiaryCheckoutDetails(id)
+  });
+};
+
+//add beneficiary checkout detail
+const addBeneficiaryCheckoutDetails = ({
+  beneficiaryId,
+  data
+}: {
+  beneficiaryId: number | null;
+  data: IBeneficiaryCheckoutDetail;
+}) => {
+  return NeoHttpClient.post<NeoResponse>(
+    api.beneficiary_detail.createBeneficiaryDetail.replace(
+      "{beneficiaryDetailId}",
+      beneficiaryId + ""
+    ),
+    data
+  );
+};
+const useAddBeneficiaryCheckoutDetailsDetails = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addBeneficiaryCheckoutDetails,
+
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+//delete beneficiary checkout detail
+const deleteBeneficiaryDetails = (id: number | null) => {
+  return NeoHttpClient.delete<NeoResponse>(
+    api.beneficiary_detail.deleteBeneficiaryDetail.replace(
+      "{beneficiaryCheckoutId}",
+      id + ""
+    )
+  );
+};
+const useDeleteBeneficiaryDetails = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteBeneficiaryDetails,
+
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+
 export {
   useAddBeneficiary,
+  useAddBeneficiaryCheckoutDetailsDetails,
   useDeleteBeneficiary,
   useDeleteBeneficiaryDetails,
   useEditBeneficiary,
   useGetBeneficiary,
-  useGetBeneficiaryById
+  useGetBeneficiaryById,
+  useGetBeneficiaryCheckoutDetails
 };

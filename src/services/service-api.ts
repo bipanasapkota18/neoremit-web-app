@@ -34,9 +34,10 @@ export const api = {
     update: `${service}/beneficiary/detail/{id}`
   },
   beneficiary_detail: {
-    getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
+    getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/all/a2753a13-b6f4-43a7-98e3-4a44c83db828`,
+    // getBeneficiaryDetail: `${service}/beneficiary/checkout/detail/all/{beneficiaryDetailId}`,
     createBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryDetailId}`,
-    updateBeneficiaryDetail: `${service}/beneficiary/checkout/detail/update/{beneficiaryDetailId}`,
+    updateBeneficiaryDetail: `${service}/beneficiary/checkout/detail/update/{beneficiaryDetailId}/{beneficiaryCheckoutId}`,
     getBeneficiaryDetailById: `${service}/beneficiary/checkout/detail/{beneficiaryCheckoutId}`,
     deleteBeneficiaryDetail: `${service}/beneficiary/checkout/detail/{beneficiaryCheckoutId}`
   },

@@ -19,12 +19,12 @@ import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { useGetBeneficiary } from "@neoWeb/services/service-beneficiary";
 import { PageParams } from "@neoWeb/services/Support/service-faq";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ViAmericaAddBeneficiary from "./ViAmericaAddBeneficiary";
 const BeneficiaryDetails = () => {
-  const [pageParams] = useState<PageParams>({
+  const [pageParams, setPageParams] = useState<PageParams>({
     pageIndex: 0,
-    pageSize: 30
+    pageSize: 20
   });
   const { data, mutateAsync, isPending } = useGetBeneficiary();
 
@@ -45,17 +45,46 @@ const BeneficiaryDetails = () => {
     });
   }, [pageParams]);
 
-  // const listener = e => {
-  //   setPageParams({
-  //     pageIndex: pageParams.pageIndex + 1,
-  //     pageSize: 10
-  //   });
-  //   e.stopImmediatePropagation();
-  // };
+  const lastScrollTop = useRef(0);
+  const scrollTimeout = useRef<number | null>(null);
 
-  // useEffect(() => {
-  //   window.addEventListener("wheel", listener);
-  // });
+  const handleScroll = () => {
+    if (scrollTimeout.current !== null) {
+      window.clearTimeout(scrollTimeout.current);
+    }
+
+    scrollTimeout.current = window.setTimeout(() => {
+      const scrollTop =
+        window.pageYOffset || document.documentElement.scrollTop;
+      const scrollPosition = window.innerHeight + scrollTop;
+      const pageHeight = document.documentElement.scrollHeight;
+      const buffer = 100; // pixels before bottom
+
+      if (
+        scrollTop > lastScrollTop.current &&
+        pageHeight - scrollPosition < buffer
+      ) {
+        setPageParams(prev => ({
+          ...prev,
+          pageSize: prev.pageSize + 10
+        }));
+      }
+
+      lastScrollTop.current = scrollTop;
+    }, 100);
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      if (scrollTimeout.current !== null) {
+        window.clearTimeout(scrollTimeout.current);
+      }
+    };
+  }, [window.scroll]);
+
   return (
     <Stack>
       <BreadCrumbs pages={pages} />

@@ -5,12 +5,16 @@ import {
   GridItem,
   HStack,
   Heading,
+  Icon,
   SimpleGrid,
   Stack,
+  Text,
   VStack,
   useDisclosure
 } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+import CardComponent from "@neoWeb/components/Beneficiary/CardComponent";
 import GoBack from "@neoWeb/components/Button";
 import { DropzoneComponentControlled } from "@neoWeb/components/Form/DropzoneComponent";
 import Select from "@neoWeb/components/Form/SelectComponent";
@@ -26,11 +30,14 @@ import {
   useGetRelationship,
   useGetStateById
 } from "@neoWeb/services/service-common";
+import { useGetPayoutMethodById } from "@neoWeb/services/service-payoutmethod";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { SetStateAction } from "jotai";
-import { Dispatch, useEffect } from "react";
+import { Dispatch, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import ViAmericaAddBeneficiaryAccount from "./ViAmericaAddBeneficiaryAccount";
 
 const defaultValues = {
   name: "",
@@ -62,6 +69,7 @@ const ViAmericaAddBeneficiary = ({
   setBeneficiaryEditId,
   setFlag
 }: IAddBeneficiary) => {
+  const [editId, setEditId] = useState<number | null>(null);
   const schema = z.object({
     name: z.string().min(1, { message: "First name is required" }),
     secondLastName: z.string(),
@@ -101,15 +109,15 @@ const ViAmericaAddBeneficiary = ({
       .refine(data => !!data?.label && !!data?.value, {
         message: "Please select a relationship"
       }),
-    bankId: z
-      .object({
-        label: z.string(),
-        value: z.number()
-      })
-      .nullable()
-      .refine(data => !!data?.label && !!data?.value, {
-        message: "Please select payout method"
-      }),
+    // bankId: z
+    //   .object({
+    //     label: z.string(),
+    //     value: z.number()
+    //   })
+    //   .nullable()
+    //   .refine(data => !!data?.label && !!data?.value, {
+    //     message: "Please select payout method"
+    //   }),
     nickName: z.string().min(1, { message: "Nick name is required" }),
     routingNo: z.string().min(1, { message: "Routing number is required" })
   });
@@ -130,18 +138,33 @@ const ViAmericaAddBeneficiary = ({
   const { data: RelationshipList } = useGetRelationship();
   const {
     mutateAsync: mutateAddBeneficiary,
-    isPending: isAddBeneficiaryLoading
+    isPending: isAddBeneficiaryLoading,
+    isSuccess
   } = useAddBeneficiary();
   const {
     mutateAsync: mutateEditBeneficiary,
     isPending: isEditBeneficiaryPending
   } = useEditBeneficiary();
-  // const { data: Payoutmethoddata } = useGetPayoutMethodById(
-  //   watch("countryId")?.value ?? null
-  // );
+
   const { data: stateData } = useGetStateById(
     watch("countryId")?.value ?? null
   );
+
+  const { data: Payoutmethoddata } = useGetPayoutMethodById(
+    watch("countryId")?.value ?? null
+  );
+  const payout_methodoptions = formatSelectOptions<number>({
+    data: Payoutmethoddata?.filter(item => !item?.isCash),
+    labelKey: "name",
+    valueKey: "id",
+    defaultValue: Payoutmethoddata?.filter(item => !item?.isCash)[0]?.id,
+    icon: {
+      iconKey: "icon",
+      iconPath: `${baseURL}/document-service/payout/method/icon/master?fileId=`,
+      iconCode: "icon"
+    }
+  });
+
   useEffect(() => {
     if (editBeneficiaryId) {
       reset({
@@ -159,20 +182,24 @@ const ViAmericaAddBeneficiary = ({
           value: beneficiaryData?.relationship?.id
         },
         routingNo: beneficiaryData?.routingNo,
-        nickName: beneficiaryData?.nickName
-        // bankId: {
-        //   label: (
-        //     beneficiaryData?.beneficiaryCheckoutDetail[0]
-        //       ?.payoutMethod as PayoutMethod
-        //   )?.name,
-        //   value: (
-        //     beneficiaryData?.beneficiaryCheckoutDetail[0]
-        //       ?.payoutMethod as PayoutMethod
-        //   )?.id
-        // }
+        nickName: beneficiaryData?.nickName,
+        stateId: {
+          label: beneficiaryData?.state?.name,
+          value: beneficiaryData?.state?.id
+        }
       });
     }
   }, [beneficiaryData]);
+
+  useEffect(() => {
+    reset(oldValues => {
+      return {
+        ...oldValues,
+        bankId:
+          payout_methodoptions?.find(item => item.label === "Bank") ?? null
+      };
+    });
+  }, [Payoutmethoddata]);
 
   const countryOptions = formatSelectOptions<number>({
     data: countriesList,
@@ -184,16 +211,7 @@ const ViAmericaAddBeneficiary = ({
       iconCode: "shortName"
     }
   });
-  // const payout_methodoptions = formatSelectOptions<number>({
-  //   data: Payoutmethoddata?.filter(item => !item?.isCash),
-  //   labelKey: "name",
-  //   valueKey: "id",
-  //   icon: {
-  //     iconKey: "icon",
-  //     iconPath: `${baseURL}/document-service/payout/method/icon/master?fileId=`,
-  //     iconCode: "icon"
-  //   }
-  // });
+
   const stateOptions = formatSelectOptions<number>({
     data: stateData?.data?.data,
     labelKey: "name",
@@ -208,7 +226,6 @@ const ViAmericaAddBeneficiary = ({
   const addBeneficiaryy = async (data: typeof defaultValues) => {
     const preparedData = {
       ...data,
-      bankId: data.bankId?.value ?? null,
       countryId: data.countryId?.value ?? null,
       relationshipId: data.relationshipId?.value ?? null,
       profileImage: data?.profileImage ? data.profileImage[0] : null,
@@ -222,12 +239,11 @@ const ViAmericaAddBeneficiary = ({
           beneficiaryDetailId: editBeneficiaryId
         });
       } else {
-        await mutateAddBeneficiary({
+        const addRes = await mutateAddBeneficiary({
           ...preparedData
         });
+        if (addRes?.status === 200) onOpenAddAccountModal();
       }
-
-      handleClose();
     } catch (error) {
       console.error(error);
     }
@@ -359,30 +375,32 @@ const ViAmericaAddBeneficiary = ({
               </GridItem>
             </SimpleGrid>
 
-            {/* <Heading fontSize={"14px"}>Account Details</Heading>
-            <SimpleGrid>
-              <GridItem>
-                <Select
-                  noFloating
-                  name="bankId"
-                  placeholder="Select Payout method"
-                  control={control}
-                  options={payout_methodoptions}
-                />
-              </GridItem>
-            </SimpleGrid>
-            <Button
-              variant="light"
-              isDisabled={editBeneficiaryId ? false : !watch("bankId")}
-              leftIcon={<svgAssets.AddCircle color={colorScheme.primary_500} />}
-              onClick={onOpenAddAccountModal}
-              width={"max-content"}
-            >
-              Add {watch("bankId")?.label ?? ""} Account
-            </Button>
-            <HStack gap={4} wrap={"wrap"}>
-              {tableData?.length === 0 &&
-                beneficiaryData?.beneficiaryCheckoutDetail.length === 0 && (
+            {editBeneficiaryId && (
+              <>
+                <Heading fontSize={"14px"}>Account Details</Heading>
+                <SimpleGrid>
+                  <GridItem>
+                    <Select
+                      noFloating
+                      name="bankId"
+                      placeholder="Select Payout method"
+                      control={control}
+                      options={payout_methodoptions}
+                    />
+                  </GridItem>
+                </SimpleGrid>
+                <Button
+                  variant="light"
+                  isDisabled={!watch("bankId")}
+                  leftIcon={
+                    <svgAssets.AddCircle color={colorScheme.primary_500} />
+                  }
+                  onClick={onOpenAddAccountModal}
+                  width={"max-content"}
+                >
+                  Add {watch("bankId")?.label ?? ""} Account
+                </Button>
+                <HStack gap={4} wrap={"wrap"}>
                   <Stack
                     borderRadius={"16px"}
                     bg={"#EDF2F7"}
@@ -398,13 +416,14 @@ const ViAmericaAddBeneficiary = ({
                     />
                     <Text>Account Details Will be shown here</Text>
                   </Stack>
-                )}
-              <CardComponent
-                setEditDetailId={setEditId}
-                data={tableData}
-                onOpen={onOpenAddAccountModal}
-              />
-            </HStack> */}
+                  <CardComponent
+                    setEditDetailId={setEditId}
+                    data={[]}
+                    onOpen={onOpenAddAccountModal}
+                  />
+                </HStack>
+              </>
+            )}
           </Stack>
           <HStack justifyContent={"space-between"} padding={"16px"}>
             <GoBack onClick={handleClose} />
@@ -418,17 +437,15 @@ const ViAmericaAddBeneficiary = ({
           </HStack>
         </VStack>
       </Card>
-      {/* <AddBeneficiaryAccount
-        accountData={editedAccountData}
+      <ViAmericaAddBeneficiaryAccount
         editDetailId={editId}
         setEditDetailId={setEditId}
-        tableData={tableData}
-        setTableData={setTableData}
         payoutMethodId={watch("bankId")}
         isOpen={isOpenAddAccountModal}
         onClose={onCloseAddAccountModal}
-        setAccountData={setEditedAccountData}
-      /> */}
+        isNewBeneficiary={isSuccess}
+        beneficiaryId={editBeneficiaryId}
+      />
     </Flex>
   );
 };

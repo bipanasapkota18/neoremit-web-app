@@ -133,7 +133,11 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
       }));
     }
   }, [kycData, maritalList, occupationList]);
-
+  const checkRequired = (fieldName: string) => {
+    return formFieldData?.find(
+      item => convertToCamelCase(item?.keyField?.name) === fieldName
+    )?.isRequired;
+  };
   const personalDataFormFields = {
     firstName: {
       validation: {
@@ -148,6 +152,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             label="First Name"
             control={control}
             disabled={editId && editDisabled}
+            required={checkRequired("firstName")}
           />
         </GridItem>
       )
@@ -165,6 +170,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             label="Middle Name"
             control={control}
             disabled={editId && editDisabled}
+            required={checkRequired("middleName")}
           />
         </GridItem>
       )
@@ -182,6 +188,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             label="Last Name"
             control={control}
             disabled={editId && editDisabled}
+            required={checkRequired("lastName")}
           />
         </GridItem>
       )
@@ -202,6 +209,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             label="Email Address"
             control={control}
             disabled={editId && editDisabled}
+            required={checkRequired("emailAddress")}
           />
         </GridItem>
       )
@@ -232,6 +240,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             control={control}
             options={maritalOptions}
             isDisabled={editId && editDisabled}
+            required={checkRequired("maritalStatus")}
           />
         </GridItem>
       )
@@ -249,6 +258,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             label="DOB"
             control={control}
             disabled={editId && editDisabled}
+            required={checkRequired("dateOfBirth")}
           />
         </GridItem>
       )
@@ -278,6 +288,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             control={control}
             options={occupationOptions}
             isDisabled={editId && editDisabled}
+            required={checkRequired("occupation")}
           />
         </GridItem>
       )
@@ -295,6 +306,7 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
             label="Contact Number"
             control={control}
             isDisabled={editId && editDisabled}
+            required={checkRequired("phoneNumber")}
           />
         </GridItem>
       )
@@ -309,9 +321,10 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
           <TextInput
             type="text"
             name="ssnNumber"
-            label="SSN Number (optional)"
+            label="SSN Number"
             control={control}
             disabled={editId && editDisabled}
+            required={checkRequired("ssnNumber")}
           />
         </GridItem>
       )
@@ -367,27 +380,35 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
       personalDataFormFields
     )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
   }, [formFieldData, gender]);
-
   useEffect(() => {
-    const requiredFieldValidations = personalDetailFieldList?.reduce(
-      (acc: any, item) => {
-        if (item?.isRequired && item?.display) {
-          acc[convertToCamelCase(item?.name)] =
-            personalDataFormFields[
-              convertToCamelCase(item?.name)
-            ]?.validation?.required;
-        } else {
-          acc[convertToCamelCase(item?.name)] =
-            personalDataFormFields[
-              convertToCamelCase(item?.name)
-            ]?.validation?.notRequired;
-        }
-        return acc;
-      },
-      {}
-    );
-    setSchema(z.object(requiredFieldValidations));
-    // kycSchema.object(requiredFieldValidations);
+    try {
+      const requiredFieldValidations = personalDetailFieldList.reduce(
+        (acc: any, item) => {
+          const fieldName = convertToCamelCase(item?.name);
+          const fieldValidation = personalDataFormFields[fieldName]?.validation;
+
+          if (fieldValidation) {
+            if (item?.isRequired && item?.display) {
+              acc[fieldName] = fieldValidation.required;
+            } else {
+              acc[fieldName] = fieldValidation.notRequired;
+            }
+          }
+          return acc;
+        },
+        {}
+      );
+
+      // Only create the schema if we have validations
+      if (Object.keys(requiredFieldValidations).length > 0) {
+        const newSchema = z.object(requiredFieldValidations);
+        setSchema(newSchema);
+      } else {
+        console.warn("No field validations were generated");
+      }
+    } catch (error) {
+      console.error("Error creating schema:", error);
+    }
   }, [personalDetailFieldList]);
 
   const onSubmitPersonalDetails = async (data: typeof defaultValues) => {
@@ -397,7 +418,8 @@ const PersonalDetails = ({ stepProps, formFieldData }: IStepProps) => {
       email: data?.emailAddress,
       gender: data?.gender,
       maritalStatusId: data?.maritalStatus?.value,
-      occupationId: data?.occupation?.value
+      occupationId: data?.occupation?.value,
+      dateOfBirth: data?.dateOfBirth ?? ""
     };
     try {
       await mutateKycCreate(preparedData);
