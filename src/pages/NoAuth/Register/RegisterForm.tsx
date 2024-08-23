@@ -6,7 +6,6 @@ import {
   GridItem,
   HStack,
   SimpleGrid,
-  Stack,
   Text,
   VStack
 } from "@chakra-ui/react";
@@ -26,12 +25,13 @@ import { Link } from "react-router-dom";
 import { z } from "zod";
 
 const defaultValues = {
-  fullName: "",
+  firstName: "",
+  middleName: "",
+  lastName: "",
   email: "",
   sendFrom: null as ISelectOptions<number> | null,
   receiveIn: null as ISelectOptions<number> | null,
-  phoneNumber: "",
-  referralCode: ""
+  phoneNumber: ""
 };
 export interface AuthPageProps {
   type?: string;
@@ -42,17 +42,18 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
   const { setEmail } = useStore();
 
   const signUpSchema = z.object({
-    fullName: z.string().min(1, { message: "Full name is required" }),
+    firstName: z.string().min(1, { message: "First name is required" }),
+    middleName: z.string(),
+    lastName: z.string().min(1, { message: "Last name is required" }),
     email: z
       .string()
       .email({ message: "Invalid email format" })
       .min(1, { message: "Please enter your email address" }),
     phoneNumber: z
       .string()
-      .min(10, { message: "Phone number must be at least 10 digits" })
+      .min(10, { message: "Phone number must be 10 digits" })
       .max(10, { message: "Phone number cannot exceed 10 digits" })
       .min(1, { message: "Phone number is required" }),
-    referralCode: z.string(),
     sendFrom: z
       .object({
         label: z.string().min(1),
@@ -79,9 +80,8 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
     defaultValues,
     resolver: zodResolver(signUpSchema)
   });
-
   const countryOptions = formatSelectOptions<number>({
-    data: countriesList?.data?.data,
+    data: countriesList,
     labelKey: "name",
     valueKey: "id",
     icon: {
@@ -130,17 +130,35 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
         gap={8}
         onSubmit={handleSubmit(handleSignup)}
       >
-        <Stack gap={6} width={"100%"}>
-          <HStack>
+        <SimpleGrid columns={2} rowGap={6} columnGap={2}>
+          <GridItem colSpan={2}>
             <TextInput
               startIcon={<svgAssets.ProfileIcon />}
               type="text"
-              name="fullName"
-              placeholder="Full Name"
+              name="firstName"
+              placeholder="First Name"
               control={control}
             />
-          </HStack>
-          <HStack>
+          </GridItem>
+          <GridItem>
+            <TextInput
+              startIcon={<svgAssets.ProfileIcon />}
+              type="text"
+              name="middleName"
+              placeholder="Middle Name"
+              control={control}
+            />
+          </GridItem>
+          <GridItem>
+            <TextInput
+              startIcon={<svgAssets.ProfileIcon />}
+              type="text"
+              name="lastName"
+              placeholder="Last Name"
+              control={control}
+            />
+          </GridItem>
+          <GridItem colSpan={2}>
             <TextInput
               startIcon={<svgAssets.EmailIcon />}
               type="email"
@@ -148,11 +166,12 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
               placeholder="Email"
               control={control}
             />
-          </HStack>
+          </GridItem>
 
           <SimpleGrid columns={2} gap={"20px"}>
             <GridItem colSpan={1}>
               <Select
+                noFloating
                 name="sendFrom"
                 placeholder="Send From"
                 control={control}
@@ -160,35 +179,25 @@ const RegisterForm = ({ setScreen }: AuthPageProps) => {
               />
             </GridItem>
 
-            <GridItem colSpan={1}>
-              <Select
-                noFloating
-                name="receiveIn"
-                placeholder="Receive In"
-                control={control}
-                options={countryOptions}
-              />
-            </GridItem>
-            <GridItem colSpan={1}>
-              <TextInput
-                startIcon={<svgAssets.CallIcon />}
-                type="number"
-                name="phoneNumber"
-                placeholder="Phone Number"
-                control={control}
-              />
-            </GridItem>
-            <GridItem>
-              <TextInput
-                startIcon={<svgAssets.SecurityIcon />}
-                type="text"
-                name="referralCode"
-                placeholder="Referral Code"
-                control={control}
-              />
-            </GridItem>
-          </SimpleGrid>
-        </Stack>
+          <GridItem colSpan={1}>
+            <Select
+              noFloating
+              name="receiveIn"
+              placeholder="Receive In"
+              control={control}
+              options={countryOptions}
+            />
+          </GridItem>
+          <GridItem colSpan={2}>
+            <TextInput
+              startIcon={<svgAssets.CallIcon />}
+              type="number"
+              name="phoneNumber"
+              placeholder="Phone Number"
+              control={control}
+            />
+          </GridItem>
+        </SimpleGrid>
         <Button isDisabled={isSignUpLoading} type="submit" size="lg">
           Proceed
         </Button>

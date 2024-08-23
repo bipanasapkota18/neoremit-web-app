@@ -1,21 +1,23 @@
 import { toastFail, toastSuccess } from "@neoWeb/utility/Toast";
-import { ISelectOptions } from "@neoWeb/utility/format";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { BeneficiaryPayoutDetail } from "./CommonInterface";
 import { NeoResponse, api } from "./service-api";
 import { NeoHttpClient, toFormData } from "./service-axios";
+import { PageParams } from "./Support/service-faq";
 
 export interface IBeneficiaryRequest {
-  beneficiaryDetailId?: number;
-  fullName: string;
+  beneficiaryDetailId?: number | null;
+  name: string;
+  lastName: string;
+  secondLastName: string;
   mobileNumber: string;
-  relationshipId: number;
-  countryId: number;
-  profileImage: string;
-  bankId: number;
+  relationshipId: number | null;
+  countryId: number | null;
+  profileImage: string | null;
   address: string;
-  beneficiaryCheckoutDetail: BeneficiaryCheckoutDetail[];
+  address2: string;
+  nickName: string;
+  routingNo: string;
 }
 
 export interface BeneficiaryCheckoutDetail {
@@ -28,26 +30,41 @@ export interface BeneficiaryCheckoutDetail {
 }
 
 export interface IBeneficiaryResponse {
+  totalItems: number;
+  beneficiaryDetailList: BeneficiaryDetailList[];
+}
+
+export interface BeneficiaryDetailList {
   id: number;
   userId: number;
   fullName: string;
+  secondLastName: string;
+  lastName: string;
   mobileNumber: string;
   relationship: Relationship;
   country: Country;
   address: string;
   profileImage: string;
-  beneficiaryCheckoutDetail: BeneficiaryCheckoutDetailRequest[];
+  recipientUUID?: any;
+  routingNo: string;
+  address2: string;
+  nickName: string;
+  state: Country;
 }
-
 export interface BeneficiaryCheckoutDetailRequest {
-  addId?: number;
-  id?: number | null;
-  beneficiaryDetail?: BeneficiaryPayoutDetail;
-  payoutMethod: PayoutMethod | ISelectOptions<number> | null;
-  payoutPartner: PayoutPartner;
-  accountName: string;
-  accountNumber: string;
-  isPrimary: boolean;
+  name: string;
+  lastName: string;
+  secondLastName: string;
+  mobileNumber: string;
+  relationshipId: number;
+  countryId: number;
+  stateId: number;
+  cityName: string;
+  profileImage: string;
+  address: string;
+  address2: string;
+  nickName: string;
+  routingNo: string;
 }
 
 export interface PayoutPartner {
@@ -108,21 +125,80 @@ export interface Relationship {
   code: string;
   isActive: boolean;
 }
-const getBeneficiary = () => {
-  return NeoHttpClient.get<NeoResponse<IBeneficiaryResponse[]>>(
-    api.beneficiary.getAll
+
+export interface IBeneficiaryByIdResponse {
+  id?: any;
+  beneficiaryDetail?: any;
+  payoutMethod?: any;
+  payoutPartner?: any;
+  accountName?: any;
+  accountNumber?: any;
+  isPrimary: boolean;
+  payoutType: string;
+  partnerAccountNo: string;
+  accountType: string;
+  paymentLocationCode: string;
+  payer: string;
+  type: string;
+  payoutId: number;
+  isActive: boolean;
+  mobileNumber: string;
+  country: Country;
+}
+
+export interface IBeneficiaryCheckoutDetail {
+  payoutMethodId: number | null;
+  accountName: string;
+  accountNumber: string;
+  routingNumber: string;
+  paymentLocationCode: string;
+  accountType: string;
+  phone: string;
+  primary: boolean;
+}
+
+export interface IBeneficiaryCheckoutDetailsResponse {
+  id: number;
+  accountName: string;
+  accountNumber: string;
+  isPrimary: boolean;
+  payoutType: string;
+  partnerAccountNo: number;
+  accountType: string;
+  paymentLocationCode: string;
+  payer: string;
+  type: string;
+  payoutId: number;
+  isActive: boolean;
+}
+
+interface IFilterParams {
+  pageParams?: PageParams;
+  filterParams: any;
+}
+const getBeneficiary = ({ pageParams, filterParams }: IFilterParams) => {
+  return NeoHttpClient.post<NeoResponse<IBeneficiaryResponse>>(
+    api.beneficiary.getAll,
+    {
+      ...filterParams
+    },
+    {
+      params: {
+        page: pageParams?.pageIndex,
+        size: pageParams?.pageSize
+      }
+    }
   );
 };
 
 const useGetBeneficiary = () => {
-  return useQuery({
-    select: data => data?.data?.data,
-    queryKey: [api.beneficiary.getAll],
-    queryFn: getBeneficiary
+  return useMutation({
+    mutationKey: [api.beneficiary.getAll],
+    mutationFn: getBeneficiary
   });
 };
 
-const addBeneficiary = (data: any) => {
+const addBeneficiary = (data: IBeneficiaryRequest) => {
   return NeoHttpClient.post<NeoResponse>(
     api.beneficiary.create,
     toFormData(data)
@@ -149,7 +225,7 @@ const useAddBeneficiary = () => {
 };
 
 const getBeneficiaryDetail = (id: number | null) => () => {
-  return NeoHttpClient.get<NeoResponse<IBeneficiaryResponse>>(
+  return NeoHttpClient.get<NeoResponse<BeneficiaryDetailList>>(
     api.beneficiary.getBeneficiaryById.replace("{id}", id + "")
   );
 };
@@ -183,7 +259,83 @@ const useDeleteBeneficiary = () => {
     }
   });
 };
+const editBeneficiary = (data: IBeneficiaryRequest) => {
+  return NeoHttpClient.post<NeoResponse>(
+    api.beneficiary.update,
+    toFormData(data)
+  );
+};
+const useEditBeneficiary = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: editBeneficiary,
 
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      queryClient.refetchQueries({
+        queryKey: [api.beneficiary.getAll]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+
+//get beneficiary checkout detail
+const getBeneficiaryCheckoutDetails = (id: number | null) => () => {
+  return NeoHttpClient.get<NeoResponse<IBeneficiaryCheckoutDetailsResponse[]>>(
+    api.beneficiary_detail.getBeneficiaryDetail.replace(
+      "{beneficiaryCheckoutId}",
+      id + ""
+    )
+  );
+};
+const useGetBeneficiaryCheckoutDetails = (id: number | null) => {
+  return useQuery({
+    select: data => data?.data?.data,
+    enabled: !!id,
+    queryKey: [api.beneficiary_detail.getBeneficiaryDetail, id],
+    queryFn: getBeneficiaryCheckoutDetails(id)
+  });
+};
+
+//add beneficiary checkout detail
+const addBeneficiaryCheckoutDetails = ({
+  beneficiaryId,
+  data
+}: {
+  beneficiaryId: number | null;
+  data: IBeneficiaryCheckoutDetail;
+}) => {
+  return NeoHttpClient.post<NeoResponse>(
+    api.beneficiary_detail.createBeneficiaryDetail.replace(
+      "{beneficiaryDetailId}",
+      beneficiaryId + ""
+    ),
+    data
+  );
+};
+const useAddBeneficiaryCheckoutDetailsDetails = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addBeneficiaryCheckoutDetails,
+
+    onSuccess: success => {
+      queryClient.invalidateQueries({
+        queryKey: [api.beneficiary.getBeneficiaryById]
+      });
+      toastSuccess(success?.data?.message);
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toastFail(error?.response?.data?.message ?? error?.message);
+    }
+  });
+};
+//delete beneficiary checkout detail
 const deleteBeneficiaryDetails = (id: number | null) => {
   return NeoHttpClient.delete<NeoResponse>(
     api.beneficiary_detail.deleteBeneficiaryDetail.replace(
@@ -211,8 +363,11 @@ const useDeleteBeneficiaryDetails = () => {
 
 export {
   useAddBeneficiary,
+  useAddBeneficiaryCheckoutDetailsDetails,
   useDeleteBeneficiary,
   useDeleteBeneficiaryDetails,
+  useEditBeneficiary,
   useGetBeneficiary,
-  useGetBeneficiaryById
+  useGetBeneficiaryById,
+  useGetBeneficiaryCheckoutDetails
 };

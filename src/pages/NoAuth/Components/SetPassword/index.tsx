@@ -9,21 +9,24 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import TextInput from "@neoWeb/components/Form/TextInput";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
+import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 import { useStore, useTokenStore } from "@neoWeb/store/store";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { AuthPageProps } from "../../Register/RegisterForm";
 import PasswordStrength from "./passwordStrength";
-import { useResetPassword } from "@neoWeb/services/service-forgot-password";
 const defaultValues = {
   password: "",
   confirm_password: ""
 };
 
-const SetPassword = ({ setScreen }: AuthPageProps) => {
+const SetPassword = ({ setScreen, type }: AuthPageProps) => {
   const { mutateAsync, isPending: isPasswordLoading } = useResetPassword();
   const { email } = useStore();
   const { setToken } = useTokenStore();
+  const navigate = useNavigate();
 
   const passwordSchema = z
     .object({
@@ -47,11 +50,16 @@ const SetPassword = ({ setScreen }: AuthPageProps) => {
       const passwordSetResponse = await mutateAsync({
         email: email,
         newPassword: data.password,
-        changePasswordFor: "USER_REGISTRATION"
+        changePasswordFor: type ?? ""
       });
-      if (passwordSetResponse?.data?.responseStatus == "SUCCESS") {
+      if (
+        type === "USER_REGISTRATION" &&
+        passwordSetResponse?.data?.responseStatus == "SUCCESS"
+      ) {
         setToken(passwordSetResponse?.data?.data?.accessToken);
         setScreen("setmpin");
+      } else {
+        navigate(NAVIGATION_ROUTES.LOGIN);
       }
     } catch (error) {
       console.error("Error setting Password:", error);

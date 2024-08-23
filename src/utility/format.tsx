@@ -42,7 +42,7 @@ export function formatSelectOptions<T extends string | number | object>({
           ? {
               icon: (
                 <Image
-                  minW={"30px"}
+                  height={"20px"}
                   width={"30px"}
                   src={`${icon?.iconPath}${item?.[icon.iconKey]}`}
                   fallback={

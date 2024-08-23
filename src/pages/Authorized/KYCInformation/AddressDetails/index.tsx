@@ -1,11 +1,4 @@
-import {
-  Button,
-  Card,
-  Flex,
-  Heading,
-  SimpleGrid,
-  VStack
-} from "@chakra-ui/react";
+import { Button, Card, Flex, SimpleGrid, Text, VStack } from "@chakra-ui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import GoBack from "@neoWeb/components/Button";
 import Select from "@neoWeb/components/Form/SelectComponent";
@@ -16,6 +9,7 @@ import {
 } from "@neoWeb/services/service-common";
 import { useCreateAddressData } from "@neoWeb/services/service-kyc";
 import { useKycStoreData } from "@neoWeb/store/kycData";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
 import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -70,7 +64,7 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
   const [editId] = useState();
 
   const countryOptions = formatSelectOptions<number>({
-    data: countryList?.data?.data,
+    data: countryList,
     labelKey: "name",
     valueKey: "id"
   });
@@ -97,7 +91,7 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
         postalCode: addressInfo?.postalCode ?? ""
       });
     }
-  }, [kycData]);
+  }, [kycData, countryList, stateList]);
 
   const AddressDataFormFields = {
     country: {
@@ -253,6 +247,7 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       AddressDataFormFields
     )?.sort((a, b) => a?.displayOrder - b?.displayOrder);
   }, [formFieldData, countryList, stateList]);
+
   useEffect(() => {
     const requiredFieldValidations = AddressDataFormFieldList?.reduce(
       (acc: any, item) => {
@@ -281,7 +276,6 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
       countryId: data?.country?.value,
       stateId: data?.state?.value
     };
-    console.log(preparedData);
     try {
       await mutateAddressData(preparedData);
       stepProps.nextStep();
@@ -292,8 +286,10 @@ const AddressDetails = ({ stepProps, formFieldData }: IStepProps) => {
 
   return (
     <Flex direction={"column"}>
-      <Card borderRadius={"16px"} p={5}>
-        <Heading size={"lg"}>Adress Details</Heading>
+      <Card p={5} boxShadow={"none"}>
+        <Text fontSize={"14px"} fontWeight={700} color={colorScheme.gray_700}>
+          Adress Details
+        </Text>
         <VStack
           as={"form"}
           onSubmit={handleSubmit(onSubmitAddressDetails)}

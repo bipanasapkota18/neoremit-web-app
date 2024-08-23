@@ -1,8 +1,11 @@
 import {
   Avatar,
   AvatarBadge,
+  Badge,
+  Box,
   HStack,
   IconButton,
+  keyframes,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -10,14 +13,14 @@ import {
   PopoverHeader,
   PopoverTrigger,
   Stack,
-  Text,
-  Tooltip
+  Text
 } from "@chakra-ui/react";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { FC, useRef } from "react";
 
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { BsCheck2Circle, BsChevronDown } from "react-icons/bs";
-import { GoBell } from "react-icons/go";
 import { HeaderAnchor } from "./Header";
 
 interface IRightHeader {
@@ -26,27 +29,62 @@ interface IRightHeader {
   mobileMenuId: string;
   handleMobileMenuClose: () => void;
 }
+const shake = keyframes({
+  "0%": {
+    transform: "rotate(0)"
+  },
+  "15%": {
+    transform: "rotate(15deg)"
+  },
+  "30%": {
+    transform: "rotate(-15deg)"
+  },
+  "45%": {
+    transform: "rotate(14deg)"
+  },
+  "60%": {
+    transform: "rotate(-14deg)"
+  },
 
+  "100%": {
+    transform: "rotate(0)"
+  }
+});
 export const RightHeader: FC<IRightHeader> = () => {
   const initialFocusRef = useRef();
-  // const { initData } = useStoreInitData();
+  const { initData } = useStoreInitData();
 
   return (
     <HStack gap={8}>
       <Popover initialFocusRef={initialFocusRef.current} placement="bottom">
         <PopoverTrigger>
-          <IconButton
-            aria-label="notification"
-            borderRadius={"full"}
-            bg={"white"}
-            _hover={{
-              boxShadow: `0 0 6px 1px ${colorScheme.gray_400}`
-            }}
-            _expanded={{
-              boxShadow: `0 0 6px 1px ${colorScheme.gray_400}`
-            }}
-            icon={<GoBell color={colorScheme.blue_700} size={24} />}
-          ></IconButton>
+          <Box position={"relative"}>
+            <IconButton
+              variant={"light"}
+              aria-label="notification"
+              border={"1px solid #E2E8F0"}
+              borderRadius={"full"}
+              bg={"white"}
+              _hover={{
+                animation: `${shake} 1s `
+              }}
+              _expanded={{
+                transform: "rotate(15deg)"
+              }}
+              icon={<svgAssets.NotificationIcon />}
+            />
+            <Badge
+              position={"absolute"}
+              height={"10px"}
+              w={"10px"}
+              background={"red"}
+              zIndex={1}
+              top={"8%"}
+              borderRadius={"120%"}
+              right={"1%"}
+              border={"1px solid #E2E8F0"}
+            />
+          </Box>
         </PopoverTrigger>
         <PopoverContent
           color={colorScheme.gray_800}
@@ -156,19 +194,21 @@ export const RightHeader: FC<IRightHeader> = () => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      <Tooltip label="View Profile">
+      <HStack>
         <Avatar
           cursor={"pointer"}
-          // onClick={() => navigate("/user-profile")}
-          src={""}
+          height={"40px"}
+          width={"40px"}
+          name={initData?.firstName}
           // src={
           //   initData?.profileImage &&
           //   `${baseURL}document/internal-user/profile?image=${initData?.profileImage}`
           // }
-        >
-          <AvatarBadge boxSize="1.25em" bg="green.500" />
-        </Avatar>
-      </Tooltip>
+        ></Avatar>
+        <Text fontWeight={500} color={colorScheme.sideBar_text}>
+          {initData?.firstName}
+        </Text>
+      </HStack>
     </HStack>
   );
 };

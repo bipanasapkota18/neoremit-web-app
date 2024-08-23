@@ -1,5 +1,7 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Stack } from "@chakra-ui/react";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
+import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import {
   KycFormField,
   useGetCountryFields
@@ -48,7 +50,6 @@ export default function KYCInformation() {
   const categorizedFields = categorizeKycFields(
     countryKycFieldValues?.data?.data?.kycFormField ?? []
   );
-
   const steps = [
     {
       label: "Personal Detail",
@@ -88,72 +89,45 @@ export default function KYCInformation() {
   //   navigate(NAVIGATION_ROUTES.KYC);
   // }
   const bg = "white";
-
-  // const { pathname } = useLocation();
-  // const activePath = breadcrumbTitle(pathname);
-
+  const pages = [
+    {
+      pageName: "Account",
+      href: NAVIGATION_ROUTES.ACCOUNT
+    },
+    {
+      pageName: "KYC",
+      href: NAVIGATION_ROUTES.KYC_INFORMATION,
+      isCurrentPage: true
+    }
+  ];
   return (
-    <Flex flexDir="column" gap={"16px"} width="100%" userSelect={"none"}>
+    <Stack gap={0} width="100%" userSelect={"none"}>
+      <BreadCrumbs pages={pages} />
       <Steps
         onClickStep={i => {
           activeStep > i ? setStep(i) : null;
         }}
         pointerEvents={"auto"}
         variant={"circles-alt"}
-        colorScheme="none"
+        colorScheme="primary"
         sx={{
-          backgroundColor: "#FFF",
-          padding: "24px",
-          borderRadius: "32px",
-          border: "1px solid  #E2E8F0",
-          boxShadow: "md",
-
-          "& .cui-steps__horizontal-step-container": {
-            display: "flex",
-            width: "100%",
-            justifyContent: "flex-start",
-            columnGap: 3,
-            position: "relative"
-          },
-          "& .cui-steps__horizontal-step": {
-            "&::after": {
-              backgroundColor: "#CBD5E0 !important",
-              borderRadius: "4px !important"
-            },
-            display: "flex",
-            justifyContent: "space-between",
-            padding: "0 1%",
-            minWidth: "230px",
-            "& .cui-steps__step-icon-container": {
-              backgroundColor: `${colorScheme.primary_100}`,
-              _activeStep: {
-                backgroundColor: `${colorScheme.primary_500}`,
-                svg: {
-                  path: {
-                    fill: "#EFEAF4"
-                  }
-                }
-              }
-            },
-            _active: {
-              span: {
-                color: "#2D3748"
-              }
-            }
-          }
+          backgroundColor: "#FFFFFF",
+          paddingTop: "24px"
         }}
+        trackColor={colorScheme.primary_200}
         activeStep={activeStep}
       >
         {steps.map(({ label, icon, component }) => (
           <Step checkIcon={icon} label={label} key={label} icon={icon}>
-            <Box sx={{ bg, my: 8, rounded: "md" }}>{component}</Box>
+            <Box sx={{ bg, rounded: "md" }}>{component}</Box>
           </Step>
         ))}
       </Steps>
-    </Flex>
+    </Stack>
   );
 }
 
+//Util Functions for KYCInformation
 function categorizeKycFields(fields: KycFormField[]): CategorizedKycFields {
   const personalDetails: KycFormField[] = [];
   const addressDetails: KycFormField[] = [];

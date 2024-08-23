@@ -49,6 +49,7 @@ const getCountryList = () => {
 };
 const useGetCountryList = () => {
   return useQuery({
+    select: data => data.data.data,
     queryKey: [api.common.getAllCountryList],
     queryFn: getCountryList
   });
@@ -96,10 +97,23 @@ const useGetStateById = (id: number | null) => {
     enabled: !!id
   });
 };
+
+const getPurposeOfPayment = () => {
+  return NeoHttpClient.get<NeoResponse>(api.purpose_of_payment.get);
+};
+const useGetPurposeOfPayment = () => {
+  return useQuery({
+    select: data => data.data.data,
+    queryKey: [api.purpose_of_payment.get],
+    queryFn: getPurposeOfPayment
+  });
+};
+
 export {
   useGetCountryList,
   useGetMaritalStatus,
   useGetOccupation,
+  useGetPurposeOfPayment,
   useGetRelationship,
   useGetStateById
 };

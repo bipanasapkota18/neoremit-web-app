@@ -1,16 +1,60 @@
 import {
-  Box,
+  Avatar,
   Card,
-  Flex,
   HStack,
+  IconButton,
+  SimpleGrid,
+  Stack,
   Text,
-  useDisclosure,
-  useMediaQuery
+  useDisclosure
 } from "@chakra-ui/react";
-import FilterButton from "@neoWeb/components/Button/filterButton";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
+import BreadCrumbs from "@neoWeb/components/BreadCrumbs";
 import SearchInput from "@neoWeb/components/Form/SearchInput";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
 import AddFilterModal from "./AddFilterModal";
 
+const TransactionCards = ({ transactions }: any) => {
+  return (
+    <SimpleGrid columns={2} gap={4}>
+      {transactions.map((transaction: any) => (
+        <Card
+          key={transaction.id}
+          padding={4}
+          borderRadius={"8px"}
+          boxShadow={"4px 0px 26px 0px rgba(0, 0, 0, 0.06)"}
+        >
+          <HStack justifyContent={"space-between"}>
+            <HStack>
+              <Avatar name={transaction.name} />
+              <Stack gap={0}>
+                <Text textStyle={"paymentDetailsHeader"}>
+                  {transaction.name}
+                </Text>
+                <Text textStyle={"transaction_date"}>{transaction.date}</Text>
+              </Stack>
+            </HStack>
+            <Stack gap={0}>
+              <Text textStyle={"cardText"} color={"#38A169"}>
+                {transaction.amount}
+                <Text
+                  as={"sup"}
+                  fontSize={"10px"}
+                  fontWeight={400}
+                  color={colorScheme.gray_700}
+                >
+                  {"USD"}
+                </Text>
+              </Text>
+              <Text textStyle={"transaction_date"}>{transaction.time}</Text>
+            </Stack>
+          </HStack>
+        </Card>
+      ))}
+    </SimpleGrid>
+  );
+};
 const Transaction = () => {
   const {
     isOpen: isOpenAddFilterButtonModalOpen,
@@ -18,54 +62,108 @@ const Transaction = () => {
     onClose: onCloseAddFilterButtonModal
   } = useDisclosure();
   // const [searchText, setSearchText] = useState<string>("");
-  const [isDesktop] = useMediaQuery("(min-width:1000px)");
   // for static data in transactions  historyyyy
-  // const staticTransactions = [
-  //   {
-  //     id: "1",
-  //     name: "Alina Shrestha ",
-  //     data: "july 2 , 2024"
-  //   }
-  // ];
 
+  const staticTransactions = [
+    {
+      id: 1,
+      name: "Alina Shrestha ",
+      date: "12th June, 2024",
+      time: "12:00 PM",
+      amount: "$5000"
+    },
+    {
+      id: 2,
+      name: "Ali Khan ",
+      date: "13th June, 2024",
+      time: "1:00 AM",
+      amount: "$1000"
+    },
+    {
+      id: 3,
+      name: "Sara Khan",
+      date: "14th June, 2024",
+      time: "2:00 PM",
+      amount: "$2000"
+    },
+    {
+      id: 4,
+      name: "Rahul Shrestha",
+      date: "15th June, 2024",
+      time: "3:00 PM",
+      amount: "$3000"
+    },
+    {
+      id: 5,
+      name: "Alina Shrestha ",
+      date: "12th June, 2024",
+      time: "12:00 PM",
+      amount: "$5000"
+    },
+    {
+      id: 6,
+      name: "Ali Khan ",
+      date: "13th June, 2024",
+      time: "1:00 AM",
+      amount: "$1000"
+    },
+    {
+      id: 7,
+      name: "Sara Khan",
+      date: "14th June, 2024",
+      time: "2:00 PM",
+      amount: "$2000"
+    },
+    {
+      id: 8,
+      name: "Rahul Shrestha",
+      date: "15th June, 2024",
+      time: "3:00 PM",
+      amount: "$3000"
+    }
+  ];
+  const pages = [
+    {
+      pageName: "Transaction History",
+      href: NAVIGATION_ROUTES.TRANSACTION_HISTORY,
+      isCurrentPage: true
+    }
+  ];
   return (
-    <Flex direction={"column"}>
-      <Text>Transaction history</Text>
-      <Card borderRadius={"24px"} mt={5}>
-        <Text fontSize={17} fontWeight={700} color={"#2D3748"} mt={8} pl={4}>
-          Transaction History
-        </Text>
+    <Stack>
+      <BreadCrumbs pages={pages} />
 
-        <HStack justifyContent={"space-between"}>
-          <HStack
-            display="flex"
-            alignItems={"center"}
-            padding="24px 20px"
-            gap={"8px"}
-            alignSelf={"stretch"}
-          >
-            {isDesktop ? (
-              <SearchInput
-                width={"824px"}
-                label="Search"
-                name="search"
-                // onSearch={setSearchText}
-                type="text"
-              />
-            ) : null}
+      <Card padding={6} display={"flex"} gap={4}>
+        <Text textStyle={"paymentDetailsHeader"}>Transaction History</Text>
 
-            <FilterButton onClick={onOpenAddFilterButtonModal} />
-          </HStack>
+        <HStack display="flex" alignItems={"center"} gap={"8px"} width={"50%"}>
+          <SearchInput
+            label="Search"
+            name="search"
+            // onSearch={setSearchText}
+            type="text"
+          />
+          <IconButton
+            mt={2}
+            aria-label="Search"
+            icon={<svgAssets.Filter width={"24px"} height={"24px"} />}
+            width={"36px"}
+            height={"36px"}
+            borderRadius={"8px"}
+            onClick={onOpenAddFilterButtonModal}
+          />
         </HStack>
-        <Box pl={4} fontSize={17} color={"#2D3748"}>
-          <Text>Latest Transactions</Text>
-        </Box>
+        <Stack mt={3}>
+          <Text textStyle={"paymentDetailsHeader"}>Latest Transactions</Text>
+
+          <TransactionCards transactions={staticTransactions} />
+        </Stack>
         <AddFilterModal
           isOpen={isOpenAddFilterButtonModalOpen}
           onClose={onCloseAddFilterButtonModal}
         />
       </Card>
-    </Flex>
+    </Stack>
   );
 };
 

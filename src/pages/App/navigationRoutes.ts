@@ -1,11 +1,17 @@
 export const NAVIGATION_ROUTES = {
+  //Parent Routes
+  ACCOUNT: "/account",
+
+  //Auth not required Routes
   LOGIN: "/login",
   REGISTER: "/register",
   FORGOT_PASSWORD: "/forgot-password",
   ADDITIONALINFORMATION: "/additionalinformation",
-  ACCOUNT: {
-    KYC_INFORMATION: "/kycinformation"
-  },
+
+  //account Routes
+  KYC_INFORMATION: "/account/kycinformation",
+
+  //Authorized Routes
   HOME: "/",
   SERVICES: "/services",
   SEND_MONEY: "/send-money",
@@ -13,7 +19,15 @@ export const NAVIGATION_ROUTES = {
   TRANSACTION_HISTORY: "/transaction-history",
   SETTINGS: "/settings",
   SUPPORT: "/support",
-  NEO_SETTINGS: "/neo-settings",
+  NEO_SETTINGS: "/settings",
+
+  FAQS: "/faqs",
   CONTACT: "/contact",
-  EXAMPLE: "/example"
+  PRIVACY_POLICY: "/privacy-policy",
+  EXAMPLE: "/example",
+  GOOGLE_REDIRECT: "/google-signup-success",
+
+  //fundingaccound add
+  SUCCESS: "/success",
+  FAIL: "/error"
 };

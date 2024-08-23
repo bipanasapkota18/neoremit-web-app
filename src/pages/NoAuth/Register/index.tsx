@@ -13,7 +13,7 @@ const Register = () => {
       case "otp":
         return <OTP setScreen={setScreen} type="USER_REGISTRATION" />;
       case "passwordForm":
-        return <SetPassword setScreen={setScreen} />;
+        return <SetPassword setScreen={setScreen} type="USER_REGISTRATION" />;
       case "setmpin":
         return <SetupPin />;
       default:

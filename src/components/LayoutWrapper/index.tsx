@@ -14,15 +14,10 @@ const LayoutWrapper: React.FC = () => {
   return (
     <ErrorBoundary>
       <Flex direction="column" gap={5}>
-        <AppBar p={0} position="sticky">
+        <AppBar zIndex={1} p={0} position="sticky">
           <Header />
         </AppBar>
-        <Flex
-          // flexDir={"column"}
-          gap={5}
-          justifyContent={"center"}
-          alignItems={"center"}
-        >
+        <Flex gap={5} justifyContent={"center"} alignItems={"center"}>
           <Container>
             <Box display={"flex"} gap={6} w="full" maxW={"100%"}>
               <Sidebar animate={sidebarAnimate} />

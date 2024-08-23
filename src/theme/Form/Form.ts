@@ -11,7 +11,7 @@ const Form = {
         _focusWithin: {
           label: {
             ...activeLabelStyles,
-            color: `${colorScheme.gray_700}`
+            color: `${colorScheme.gray_500}`
           }
         },
         "input:not(:placeholder-shown) + label, input:-webkit-autofill ~ label, .chakra-select__wrapper + label, textarea:not(:placeholder-shown) ~ label":

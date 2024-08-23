@@ -16,17 +16,32 @@ import {
 import { imageAssets } from "@neoWeb/assets/images";
 import { svgAssets } from "@neoWeb/assets/images/svgs";
 import Select from "@neoWeb/components/Form/SelectComponent";
+import { NAVIGATION_ROUTES } from "@neoWeb/pages/App/navigationRoutes";
 import { baseURL } from "@neoWeb/services/service-axios";
 import { useGetCountryList } from "@neoWeb/services/service-common";
+import { useStoreInitData } from "@neoWeb/store/initData";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
-import { formatSelectOptions } from "@neoWeb/utility/format";
+import { formatAmount } from "@neoWeb/utility/currencyFormat";
+import { ISelectOptions, formatSelectOptions } from "@neoWeb/utility/format";
+import { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
+const defaultValues = {
+  sendFrom: null as ISelectOptions<number> | null,
+  sendTo: null as ISelectOptions<number> | null
+};
 function Dashboard() {
+  const navigate = useNavigate();
   const { data: countriesList } = useGetCountryList();
+  const { initData } = useStoreInitData();
+
+  const { control, reset } = useForm({
+    defaultValues: defaultValues
+  });
 
   const countryOptions = formatSelectOptions<number>({
-    data: countriesList?.data?.data,
+    data: countriesList,
     labelKey: "name",
     valueKey: "id",
     icon: {
@@ -36,7 +51,25 @@ function Dashboard() {
     }
   });
 
-  const { control } = useForm();
+  useEffect(() => {
+    reset({
+      sendFrom: countryOptions?.find(
+        item => item.value === initData?.sendingCountry?.id
+      ),
+      sendTo: countryOptions?.find(
+        item => item.value === initData?.receivingCountry?.id
+      )
+    });
+  }, [countriesList]);
+
+  const calculatdRate = useMemo(() => {
+    return initData?.baseRate?.marginType === "PERCENTAGE"
+      ? initData?.baseRate?.baseRate -
+          initData?.baseRate?.baseRate * (initData?.baseRate?.marginRate / 100)
+      : (initData?.baseRate?.baseRate ?? 0) -
+          (initData?.baseRate?.marginRate ?? 0);
+  }, [initData]);
+
   return (
     <>
       <VStack w="full" gap={6}>
@@ -47,20 +80,36 @@ function Dashboard() {
           <CardBody>
             <HStack gap={4}>
               <Image src={imageAssets.KycIllustration} />
-              <Stack flex={1} gap={0}>
+              <Stack
+                flex={1}
+                gap={0}
+                display={{
+                  base: "none",
+                  lg: "block"
+                }}
+              >
                 <Text fontWeight={"bold"}>KYC Verification</Text>
-                <Text maxW={"70%"}>
+                <Text wordBreak={"break-all"} maxW={"70%"}>
                   Kindly complete your KYC verification to initiate the money
                   transfer
                 </Text>
               </Stack>
-              <Button px={8} py={4} size={"sm"}>
+              <Button
+                px={8}
+                py={4}
+                size={"sm"}
+                onClick={() => navigate(NAVIGATION_ROUTES.KYC_INFORMATION)}
+              >
                 Verify KYC
               </Button>
             </HStack>
           </CardBody>
         </Card>
-        <SimpleGrid columns={3} w={"full"} spacing={6}>
+        <SimpleGrid
+          columns={{ base: 1, sm: 1, md: 1, lg: 3 }}
+          w={"full"}
+          spacing={{ base: 4, lg: 6 }}
+        >
           <GridItem colSpan={2}>
             <Center
               sx={{
@@ -70,16 +119,19 @@ function Dashboard() {
                 gap: 4,
                 borderRadius: 8,
                 backgroundImage: `url(${imageAssets.BackgroundImage})`,
-                backgroundSize: "100%, 60%",
+                backgroundSize: "100% 90%",
                 backgroundRepeat: "no-repeat"
               }}
               flexDir={"column"}
             >
               <VStack gap={0}>
                 <Text>Conversion Rate</Text>
-                <Text fontSize={"large"}>1.00 USD = 132.00 NPR</Text>
+                <Text fontSize={"large"}>
+                  1.00 {`${initData?.sendingCountry?.currency?.shortName}`} ={" "}
+                  {formatAmount(calculatdRate)}{" "}
+                  {`${initData?.receivingCountry?.currency?.shortName}`}
+                </Text>
               </VStack>
-              {/* PLEASE FIX THE REACT SELECT COMPOEMENT */}
               <HStack gap={4} w={"full"}>
                 <Select
                   name="sendFrom"
@@ -125,6 +177,7 @@ function Dashboard() {
                 py={4}
                 size={"sm"}
                 leftIcon={<svgAssets.SendIcon />}
+                onClick={() => navigate(NAVIGATION_ROUTES.SEND_MONEY)}
               >
                 Send Money
               </Button>

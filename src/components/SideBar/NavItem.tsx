@@ -132,14 +132,14 @@ export default function NavItem({
             : {
                 "&:hover": {
                   borderRadius: 10,
-
-                  background: colorScheme.primary_500,
-                  color: colorScheme.white,
+                  fontWeight: 700,
+                  background: isChild ? "white" : colorScheme.primary_500,
+                  color: isChild ? colorScheme.primary_500 : colorScheme.white,
                   "& p": {
-                    color: colorScheme.white
+                    color: isChild ? colorScheme.primary_500 : colorScheme.white
                   },
                   "svg > *": {
-                    filter: "brightness(10)"
+                    filter: isChild ? "inherit" : "brightness(10)"
                   }
                 }
               }
@@ -149,12 +149,15 @@ export default function NavItem({
             ? notActiveLink
             : {
                 borderRadius: 10,
-                background: colorScheme.primary_500,
+                background: isChild ? "white" : colorScheme.primary_500,
                 "& p": {
-                  color: colorScheme.white
+                  color: isChild ? colorScheme.primary_500 : colorScheme.white,
+                  fontWeight: 700
                 },
                 "svg > *": {
-                  filter: "brightness(10)"
+                  transform: isChild ? "scale(1.1)" : "none",
+                  filter: isChild ? "inherit" : "brightness(10)",
+                  ...(isChild ? { fill: colorScheme.primary_500 } : {})
                 }
               }
         }

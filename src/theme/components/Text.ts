@@ -24,18 +24,27 @@ export const TextStyles = {
   beneficiaryCardHeader: {
     fontSize: "14px",
     fontWeight: 600,
-    color: colorScheme.gray_700
+    color: colorScheme.gray_700,
+    wordBreak: "break-all"
   },
   beneficiaryCardSubHeader: {
     fontSize: "14px",
     fontWeight: 400,
     color: colorScheme.normalTextColor
+  },
+  paymentDetailsHeader: {
+    fontSize: "14px",
+    fontWeight: 700,
+    color: colorScheme.gray_700
+  },
+  cardText: {
+    fontSize: "17px",
+    fontWeight: 600,
+    color: "#F7FAFC"
+  },
+  transaction_date: {
+    fontSize: "12px",
+    fontWeight: 400,
+    color: colorScheme.sideBar_text
   }
-
-  //   h2: {
-  //     fontSize: ["36px", "48px"],
-  //     fontWeight: "semibold",
-  //     lineHeight: "110%",
-  //     letterSpacing: "-1%"
-  //   }
 };

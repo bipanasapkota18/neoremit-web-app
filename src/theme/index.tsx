@@ -1,5 +1,4 @@
 import { extendTheme } from "@chakra-ui/react";
-import { StepsTheme as Steps } from "chakra-ui-steps";
 import { FormComponent } from "./Form/Form";
 import { RadioTheme } from "./Form/Radio";
 import { colorScheme } from "./colorScheme";
@@ -9,6 +8,9 @@ import { CheckboxConfig } from "./components/Checkbox";
 import { ContainerConfig } from "./components/Container";
 import Input from "./components/Input";
 import { modalConfig } from "./components/Modal";
+
+import { AccordionConfig } from "./components/Accordion";
+import { CustomSteps } from "./components/Steps";
 import Switch from "./components/Switch";
 import { TableConfig } from "./components/Table";
 import { TextStyles } from "./components/Text";
@@ -16,6 +18,20 @@ export { globalStyles } from "./global";
 
 export const theme = extendTheme(
   {
+    colors: {
+      primary: {
+        50: "#EFEAF4",
+        100: "#CCBFDC",
+        200: "#B39FCB",
+        300: "#7B59A4",
+        400: "#5A2F8D",
+        500: "#5A2F8D",
+        600: "#522B80",
+        700: "#402164",
+        800: "#321A4E",
+        900: "#26143B"
+      }
+    },
     fonts: {
       heading: "Mulish",
       body: "Mulish"
@@ -32,7 +48,8 @@ export const theme = extendTheme(
       Checkbox: CheckboxConfig,
       Card: CardConfig,
       Modal: modalConfig,
-      Steps
+      Steps: CustomSteps,
+      Accordion: AccordionConfig
     },
     breakpoints: {
       sm: "320px",

@@ -1,0 +1,44 @@
+import { Stack, Text } from "@chakra-ui/react";
+import { HelpSetupResponseDtoList } from "@neoWeb/services/Support/service-support";
+import { colorScheme } from "@neoWeb/theme/colorScheme";
+import parse from "html-react-parser";
+
+interface UserGuideDetailsProps {
+  guideId: number | null;
+  guideData: HelpSetupResponseDtoList[];
+}
+
+const UserGuideDetails = ({ guideData, guideId }: UserGuideDetailsProps) => {
+  const selectedGuide = guideData?.find(item => item.id === guideId);
+  const youtubeId = selectedGuide?.link?.slice(
+    selectedGuide?.link?.indexOf("=") + 1,
+    selectedGuide?.link?.indexOf("=") + 12
+  );
+
+  return (
+    <Stack gap={2}>
+      <iframe
+        width="790"
+        height="480"
+        src={`https://www.youtube.com/embed/${youtubeId}?autoplay=1`}
+        allow="autoplay; encrypted-media; "
+        allowFullScreen
+        title="Youtube Video"
+      />
+      <Text
+        fontSize={"17px"}
+        fontWeight={700}
+        color={colorScheme.gray_700}
+        maxW={"790px"}
+        pl={2}
+      >
+        {selectedGuide?.title}
+      </Text>
+      <Text fontSize={"14px"} pl={2} fontWeight={400} maxW={"790px"}>
+        {parse(selectedGuide?.description ?? "")}
+      </Text>
+    </Stack>
+  );
+};
+
+export default UserGuideDetails;

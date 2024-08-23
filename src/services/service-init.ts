@@ -9,6 +9,9 @@ export interface Module {
   scopes: string;
 }
 export interface IInitData {
+  firstName: string;
+  lastName: string;
+  middleName: string;
   fullName: string;
   username: string;
   profilePicture?: any;

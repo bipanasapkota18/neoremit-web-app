@@ -71,7 +71,7 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
 
   return (
     <>
-      <VStack alignItems={"flex-start"} gap={8} w={"1000px"}>
+      <VStack alignItems={"flex-start"} gap={8}>
         <Text
           fontSize="2xl"
           color={colorScheme.gray_700}
@@ -103,7 +103,6 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
             justifyContent="space-between"
             alignItems="center"
             alignSelf="stretch"
-            gap={"24px"}
           >
             <OTPComponent
               control={control}
@@ -135,7 +134,11 @@ const OTP = ({ setScreen, type }: AuthPageProps) => {
           </Flex>
         </Stack>
 
-        <Button type="submit" isDisabled={isOTPLoading} width={"100%"}>
+        <Button
+          type="submit"
+          isDisabled={isOTPLoading || isResendLoading}
+          width={"100%"}
+        >
           Confirm
         </Button>
       </VStack>

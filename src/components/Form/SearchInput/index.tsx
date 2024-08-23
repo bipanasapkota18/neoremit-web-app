@@ -10,10 +10,12 @@ import {
   InputProps,
   Spinner
 } from "@chakra-ui/react";
+import { svgAssets } from "@neoWeb/assets/images/svgs";
 import { colorScheme } from "@neoWeb/theme/colorScheme";
 import { debounce } from "lodash";
 import React, { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { Control, Controller } from "react-hook-form";
+
 interface SearchInputProps {
   name: string;
   control?: Control<any>;
@@ -75,7 +77,7 @@ const SearchInput: React.FC<SearchInputProps & InputProps> = ({
               id={name}
               maxW={"350px !important"}
             >
-              <InputGroup h={"56px"}>
+              <InputGroup>
                 <InputLeftElement color="#FFFFFF">
                   <IconButton
                     type="submit"
@@ -93,7 +95,6 @@ const SearchInput: React.FC<SearchInputProps & InputProps> = ({
                   />
                 </InputLeftElement>
                 <Input
-                  h={"98%"}
                   placeholder={label}
                   onChange={e => {
                     onSearch(e.target.value);
@@ -123,11 +124,10 @@ const SearchInput: React.FC<SearchInputProps & InputProps> = ({
       id={name}
       maxW={"800px !important"}
     >
-      <InputGroup gap={"8px"} maxW={"800px"} h={"46px"}>
+      <InputGroup gap={"8px"} maxW={"800px"} h={"42px"}>
         <Input
           ml={0.5}
           pl={12}
-          h={"100%"}
           placeholder={label}
           onChange={handleChange}
           value={value}
@@ -158,7 +158,7 @@ const SearchInput: React.FC<SearchInputProps & InputProps> = ({
               isDebouncing ? (
                 <Spinner pos="absolute" size="md" />
               ) : (
-                <SearchIcon width={"24px"} height={"24px"} />
+                <svgAssets.SearchIcon width={"24px"} height={"24px"} />
               )
             }
           />
